@@ -30,7 +30,7 @@ public class Data {
 	/**
 	 * Constructor for a data instance for the uncertainty model 
 	 */
-	Data () {
+	public Data () {
 
 		parameter_planningHorizon = 10;
 		parameter_discountFactor = 1.0;
@@ -419,7 +419,7 @@ public class Data {
 	 * @param former_investmentDecision
 	 * @return
 	 */
-	public double calculateV (int period, double result_for_a_0, double result_for_a_1, int former_gamma, int former_s, int former_investmentDecision) {
+	/*public double calculateV (int period, double result_for_a_0, double result_for_a_1, int former_gamma, int former_s, int former_investmentDecision) {
 		
 		double finalResult = 0.0;
 		
@@ -447,7 +447,7 @@ public class Data {
 		
 		return finalResult;
 		
-	}
+	}*/
 	
 	
 	/**
