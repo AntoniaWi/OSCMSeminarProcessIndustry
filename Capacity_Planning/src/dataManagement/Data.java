@@ -1,5 +1,8 @@
 package dataManagement;
 
+import helper.Event;
+import java.util.*;
+
 public class Data {
 	
 	// Timing Model
@@ -21,16 +24,20 @@ public class Data {
 	
 	private int parameter_preliminaryKnowledgeAboutSuccessfulTests;	// Gamma_0
 	private int parameter_preliminaryKnowledgeAboutFailedTests;		// Zeta_0
+	private int parameter_thresholdSuccessfulTests;					// Gamma_c
 	
 	private int [] testResults;										// Delta_t
 	private int [] countSuccessfulTests;								// Gamma_t
 	private int [] countFailedTests;									// Zeta_t
 	private int [] remainingYearsToBuildPrimaryFacility;				// s_p_t
+	private double [] testProbability;								// p
 	
 	private int [] investmentDecisionPrimaryFacility;					// a_p_t
 	private int investmentDecisionSecondaryFacility;					// a_s_T+1 - secondary facility is built in period T+1 if clinical trails are successful
 	
 	private int countPeriods;										// t
+	
+	private ArrayList<Event> scenarioTree;							// needed to calculate
 								
 	
 	/**
@@ -55,6 +62,7 @@ public class Data {
 		
 		this.parameter_preliminaryKnowledgeAboutSuccessfulTests = 1;
 		this.parameter_preliminaryKnowledgeAboutFailedTests = 1;
+		this.parameter_thresholdSuccessfulTests = 5;
 		
 		// Currently no test results are available
 		
@@ -96,6 +104,13 @@ public class Data {
 		this.investmentDecisionPrimaryFacility = new int [this.parameter_planningHorizon + 1];
 		for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
 			this.investmentDecisionPrimaryFacility[i] = -1;
+		}
+		
+		// Currently no test probability is calculated
+		
+		this.testProbability = new double [this.parameter_planningHorizon + 1];
+		for (int i = 0; i < this.testProbability.length; i++) {
+			this.testProbability[i] = -1;
 		}
 		
 		// Currently no investment decision about secondary facility made
@@ -287,6 +302,22 @@ public class Data {
 
 
 	/**
+	 * @return the parameter_thresholdSuccessfulTests
+	 */
+	public int getParameter_thresholdSuccessfulTests() {
+		return parameter_thresholdSuccessfulTests;
+	}
+
+
+	/**
+	 * @param parameter_thresholdSuccessfulTests the parameter_thresholdSuccessfulTests to set
+	 */
+	public void setParameter_thresholdSuccessfulTests(int parameter_thresholdSuccessfulTests) {
+		this.parameter_thresholdSuccessfulTests = parameter_thresholdSuccessfulTests;
+	}
+
+
+	/**
 	 * @return the testResults
 	 */
 	public int[] getTestResults() {
@@ -347,6 +378,22 @@ public class Data {
 	 */
 	public void setRemainingYearsToBuildPrimaryFacility(int[] remainingYearsToBuildPrimaryFacility) {
 		this.remainingYearsToBuildPrimaryFacility = remainingYearsToBuildPrimaryFacility;
+	}
+
+
+	/**
+	 * @return the testProbability
+	 */
+	public double[] getTestProbability() {
+		return testProbability;
+	}
+
+
+	/**
+	 * @param testProbability the testProbability to set
+	 */
+	public void setTestProbability(double[] testProbability) {
+		this.testProbability = testProbability;
 	}
 
 
@@ -450,41 +497,15 @@ public class Data {
 	
 	/**
 	 * 
-	 * @param period
-	 * @param former_gamma
-	 * @param former_s
-	 * @param former_investmentDecision
 	 * @return
 	 */
-	/*public double calculateV (int period, double result_for_a_0, double result_for_a_1, int former_gamma, int former_s, int former_investmentDecision) {
+	public ArrayList<Event> generateScenarioTree () {
 		
-		double finalResult = 0.0;
-		
-		// a_t = 0
-		
-		int tmp_period = period + 1;
-		
-		if (period < this.parameter_planningHorizon+1) {
-			
-			result_for_a_0 += this.parameter_discountFactor * this.calculateV(tmp_period + 1, former_gamma + 1, former_s, 0);
-		}
-		
-		else {
-			
-			result_for_a_0 += finalCost
-			
-		}
+		ArrayList<Event> list = new ArrayList<Event> ();
 		
 		
-		
-		
-		
-		// a_t = 1
-		
-		
-		return finalResult;
-		
-	}*/
+		return list;
+	}
 	
 	
 	/**
@@ -500,6 +521,26 @@ public class Data {
 		return result;
 	}
 	
+
+	/**
+	 * 
+	 * @return
+	 */
+	public double calculateTestProbability () {
+		
+		double gamma = this.countSuccessfulTests[this.countPeriods-1];
+		double zeta = this.countFailedTests[this.countPeriods-1];
+		
+		double p = gamma / (gamma + zeta);
+		
+		this.testProbability[this.countPeriods] = p;
+		
+		return p;		
+	}
+	
+	
+	
+	// TODO RAMONA: create several toString Method for console output
 	
 
 }
