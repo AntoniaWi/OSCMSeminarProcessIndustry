@@ -3,9 +3,9 @@ package helper;
 
 public class Event {
 	
-	private boolean finalEvent;
+	private int index;
 	
-	private int threshold;
+	private boolean finalEvent;
 	
 	private int period;
 	private int testResult;
@@ -31,12 +31,12 @@ public class Event {
 	 * @param nextFailedTestResult
 	 * @param previousEvent
 	 */
-	public Event(boolean finalEvent, int threshold, int period, int testResult, int countSuccessfulTestResults,
+	public Event(int index, boolean finalEvent, int period, int testResult, int countSuccessfulTestResults,
 			int countFailedTestResults, double nextProbability, Event nextSuccessfulTestResult,
 			Event nextFailedTestResult, Event previousEvent) {
 		
+		this.index = index;
 		this.finalEvent = finalEvent;
-		this.threshold = threshold;
 		this.period = period;
 		this.testResult = testResult;
 		this.countSuccessfulTestResults = countSuccessfulTestResults;
@@ -53,8 +53,8 @@ public class Event {
 	 */
 	public Event () {
 		
+		this.index = -1;
 		this.finalEvent = false;
-		this.threshold = -1;
 		this.period = -1;
 		this.testResult = -1;
 		this.countSuccessfulTestResults = -1;
@@ -63,6 +63,22 @@ public class Event {
 		this.nextSuccessfulTestResult = null;
 		this.nextFailedTestResult = null;
 		this.previousEvent = null;
+	}
+
+
+	/**
+	 * @return the index
+	 */
+	public int getIndex() {
+		return index;
+	}
+
+
+	/**
+	 * @param index the index to set
+	 */
+	public void setIndex(int index) {
+		this.index = index;
 	}
 
 
@@ -79,22 +95,6 @@ public class Event {
 	 */
 	public void setFinalEvent(boolean finalEvent) {
 		this.finalEvent = finalEvent;
-	}
-
-
-	/**
-	 * @return the threshold
-	 */
-	public int getThreshold() {
-		return threshold;
-	}
-
-
-	/**
-	 * @param threshold the threshold to set
-	 */
-	public void setThreshold(int threshold) {
-		this.threshold = threshold;
 	}
 
 

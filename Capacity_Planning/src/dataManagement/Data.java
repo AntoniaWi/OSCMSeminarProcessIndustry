@@ -39,7 +39,7 @@ public class Data {
 	
 	private int countPeriods;										// t
 	
-	private ArrayList<Event> scenarioTree;							// needed to calculate
+	private ArrayList<ArrayList<Event>> scenarioTree;				// needed to calculate E[V]
 								
 	//Location Planning Model
 
@@ -161,6 +161,10 @@ public class Data {
 		// Start in period t = 0
 		
 		this.countPeriods = 0;
+		
+		// Initialize ArrayList
+		
+		this.scenarioTree = new ArrayList<ArrayList<Event>>();
 				
 	}
 
@@ -483,6 +487,22 @@ public class Data {
 	 */
 	public void setCountPeriods(int countPeriods) {
 		this.countPeriods = countPeriods;
+	}
+
+
+	/**
+	 * @return the scenarioTree
+	 */
+	public ArrayList<ArrayList<Event>> getScenarioTree() {
+		return scenarioTree;
+	}
+
+
+	/**
+	 * @param scenarioTree the scenarioTree to set
+	 */
+	public void setScenarioTree(ArrayList<ArrayList<Event>> scenarioTree) {
+		this.scenarioTree = scenarioTree;
 	}
 
 
@@ -989,13 +1009,82 @@ public class Data {
 	 * 
 	 * @return
 	 */
-	public ArrayList<Event> generateScenarioTree () {
+	public ArrayList<ArrayList<Event>> generateScenarioTree () {
 		
-		ArrayList<Event> list = new ArrayList<Event> ();
+		ArrayList<ArrayList<Event>> list = new ArrayList<ArrayList<Event>>();
+		
+		// ArrayList for period t = 0 with one element (without any test result)
+		
+		ArrayList<Event> level0 = new ArrayList<Event>();
+		
+		Event event1_level0 = new Event();
+		
+		event1_level0.setIndex(0);
+		event1_level0.setFinalEvent(false);
+		event1_level0.setPeriod(0);
+		event1_level0.setTestResult(-1);
+		event1_level0.setCountSuccessfulTestResults(this.parameter_preliminaryKnowledgeAboutSuccessfulTests);
+		event1_level0.setCountFailedTestResults(this.parameter_preliminaryKnowledgeAboutFailedTests);
+		event1_level0.setNextProbability(this.calculateTestProbability(event1_level0.getCountSuccessfulTestResults(), event1_level0.getCountFailedTestResults()));
+		//TODO: 		nextSuccessfulTestResult
+		//TODO: 		nextFailedTestResult
+		event1_level0.setPreviousEvent(null);
+		
+		level0.add(event1_level0);
+		
+		// ArrayList for period t = 1 with two elements
+		
+		ArrayList<Event> level1 = new ArrayList<Event>();
+		
+		Event event1_level1 = new Event();
+		
+		event1_level1.setIndex(0);
+		event1_level1.setFinalEvent(false);
+		event1_level1.setPeriod(1);
+		event1_level1.setTestResult(1);
+		
+		event1_level1.setPreviousEvent(event1_level0);
+		
+		event1_level1.setCountSuccessfulTestResults(event1_level1.getTestResult() + event1_level1.getPreviousEvent().getCountSuccessfulTestResults());
+		event1_level1.setCountFailedTestResults((1-event1_level1.getTestResult()) + event1_level1.getPreviousEvent().getCountFailedTestResults());
+		event1_level1.setNextProbability(this.calculateTestProbability(event1_level1.getCountSuccessfulTestResults(), event1_level1.getCountFailedTestResults()));
+		//TODO: 		nextSuccessfulTestResult
+		//TODO: 		nextFailedTestResult
+		event1_level0.setPreviousEvent(null);
+		
+		level0.add(event1_level0);
+		
+		
 		
 		
 		return list;
+		
+		
+		
+		
+		
+		/*
+		this.index = index;
+		this.finalEvent = finalEvent;
+		this.period = period;
+		this.testResult = testResult;
+		this.countSuccessfulTestResults = countSuccessfulTestResults;
+		this.countFailedTestResults = countFailedTestResults;
+		this.nextProbability = nextProbability;
+		this.nextSuccessfulTestResult = nextSuccessfulTestResult;
+		this.nextFailedTestResult = nextFailedTestResult;
+		this.previousEvent = previousEvent;
+		 * 
+		 * 
+		 * 
+		 */
+		
+		
+		
+		
+		
 	}
+	
 	
 	
 	/**
@@ -1028,6 +1117,18 @@ public class Data {
 		return p;		
 	}
 	
+	
+	/**
+	 * 
+	 * @param gamma
+	 * @param zeta
+	 * @return
+	 */
+	public double calculateTestProbability (int gamma, int zeta) {
+		
+		return gamma / (gamma + zeta);
+		
+	}
 	
 	
 	// TODO RAMONA: create several toString Method for console output
