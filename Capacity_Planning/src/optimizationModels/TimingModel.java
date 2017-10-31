@@ -25,7 +25,9 @@ public class TimingModel {
 		
 		System.out.println("");
 		
-		System.out.println("Planning horizon (T): " + dataInstance.getParameter_planningHorizon());
+		// TODO Ramona: neue Parameter ausgeben
+		
+		/*System.out.println("Planning horizon (T): " + dataInstance.getParameter_planningHorizon());
 		System.out.println("Discount factor (alpha): " + dataInstance.getParameter_discountFactor());
 		System.out.println("Number of periods to build (s): " + dataInstance.getParameter_periodsToBuild());
 		System.out.println("Construction cost (c): " + dataInstance.getParameter_constructionCost());
@@ -34,7 +36,7 @@ public class TimingModel {
 		System.out.println("Preliminary knowledge of successful tests (gamma): " + dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests());
 		System.out.println("Preliminary knowledge of failed tests (zeta): " + dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests());
 
-		System.out.println("");
+		System.out.println("");*/
 		
 		System.out.println("Model 'Planning under Uncertainty' starts.");
 		
@@ -88,7 +90,7 @@ public class TimingModel {
 		
 		Beta b = new Beta (dataInstance.getCountSuccessfulTests()[dataInstance.getCountPeriods() -1], dataInstance.getCountFailedTests()[dataInstance.getCountPeriods() -1]);
 		
-		double p = b.mean(); // TODO: Preliminary (8) letzte Formel
+		double p = b.mean(); // TODO: Ramona in Data Preliminary (8) letzte Formel
 		
 		boolean newTestResult = StdRandom.bernoulli(p); //TODO: ŸberprŸfen, ob das wirklich die richtige Bernoulli-Formel ist
 		
@@ -131,34 +133,7 @@ public class TimingModel {
 	}
 	
 
-	
-	/**
-	 * Should go into ReadAndWrite-Class later
-	 * @param array
-	 * @param title
-	 */
-	public static void printArrayWithPeriods (int [] array, String title) {
-		
-		System.out.println("\n" + title);
-		
-		System.out.println("--------------------------------------------------------------------------");
-		
-		System.out.print("Periods ");
-		
-		for (int i = 0; i < array.length; i++) {
-			
-			System.out.print("| " + i + "\t");
-		}
-		
-		System.out.println("");
-		
-		System.out.print("Results ");
-		
-		for (int i = 0; i < array.length; i++) {
-			
-			System.out.print("| " + array[i] + "\t");
-		}
-	}
+
 	
 	
 	
