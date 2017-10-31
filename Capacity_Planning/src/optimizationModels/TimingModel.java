@@ -21,22 +21,28 @@ public class TimingModel {
 		
 		// Generate console output
 		
-		System.out.println("Model 'Planning under Uncertainty' starts with following parameters:");
+		System.out.println("Timing Model starts with following parameters:");
 		
 		System.out.println("");
 		
-		// TODO Ramona: neue Parameter ausgeben
-		
-		/*System.out.println("Planning horizon (T): " + dataInstance.getParameter_planningHorizon());
+		System.out.println("Planning horizon (T): " + dataInstance.getParameter_planningHorizon());
 		System.out.println("Discount factor (alpha): " + dataInstance.getParameter_discountFactor());
-		System.out.println("Number of periods to build (s): " + dataInstance.getParameter_periodsToBuild());
-		System.out.println("Construction cost (c): " + dataInstance.getParameter_constructionCost());
-		System.out.println("Setup cost (K): " + dataInstance.getParameter_setupCost());
+		
+		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstance.getParameter_yearsToBuildPrimaryFacilities());
+		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstance.getParameter_yearsToBuildSecondaryFacilities());
+		
+		System.out.println("Construction cost of a primary facility (c_p): " + dataInstance.getParameter_constructionCostPrimaryFacility());
+		System.out.println("Construction cost of a secondary facility (c_s): " + dataInstance.getParameter_constructionCostSecondaryFacility());
+		
+		System.out.println("Setup cost for a primary facility (K_p): " + dataInstance.getParameter_setupCostPrimaryFacility());
+		System.out.println("Setup cost for a secondary facility (K_s): " + dataInstance.getParameter_setupCostSecondaryFacility());
+		
 		System.out.println("Penalty cost (Phi): " + dataInstance.getParameter_penaltyCost());
+		
 		System.out.println("Preliminary knowledge of successful tests (gamma): " + dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests());
 		System.out.println("Preliminary knowledge of failed tests (zeta): " + dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests());
 
-		System.out.println("");*/
+		System.out.println("");
 		
 		System.out.println("Model 'Planning under Uncertainty' starts.");
 		
@@ -49,14 +55,20 @@ public class TimingModel {
 			
 		}
 		
+		System.out.println("");
+		
+		System.out.println("************************************************************");
+		
+		System.out.println("\nEnd of experiment run:");
+		
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountSuccessfulTests(), "Successful Tests (gamma)");
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountFailedTests(), "Failed Tests (zeta)");
+		ReadAndWrite.printArrayWithPeriodsDouble(dataInstance.getTestProbability(), "Test Probability (p)");
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getTestResults(), "Test Results (delta)");
+		
 		
 		
 	}
-	
-	
-	
-
-
 	
 	
 	/**
@@ -88,11 +100,9 @@ public class TimingModel {
 		
 		// Create new test result
 		
-		Beta b = new Beta (dataInstance.getCountSuccessfulTests()[dataInstance.getCountPeriods() -1], dataInstance.getCountFailedTests()[dataInstance.getCountPeriods() -1]);
+		double p = dataInstance.calculateTestProbability();
 		
-		double p = b.mean(); // TODO: Ramona in Data Preliminary (8) letzte Formel
-		
-		boolean newTestResult = StdRandom.bernoulli(p); //TODO: ŸberprŸfen, ob das wirklich die richtige Bernoulli-Formel ist
+		boolean newTestResult = StdRandom.bernoulli(p); 
 		
 		if (newTestResult == true) {
 			
@@ -113,21 +123,18 @@ public class TimingModel {
 		
 		System.out.println("");
 		System.out.println("Gamma " + (dataInstance.getCountPeriods() - 1) + ": " + dataInstance.getCountSuccessfulTests()[dataInstance.getCountPeriods() -1]);
-		//printArrayWithPeriods(countSuccessfulTests, "Count of successful test results");
 		
 		System.out.println("");
 		
 		System.out.println("Zeta " + (dataInstance.getCountPeriods() - 1) + ": " + dataInstance.getCountFailedTests()[dataInstance.getCountPeriods() -1]);
-		//printArrayWithPeriods(countFailedTests, "Count of failed test results");
-	
+		
 		System.out.println("");
 	
-		System.out.println("Probability p = " + p);
+		System.out.println("Probability p = " + dataInstance.getTestProbability()[dataInstance.getCountPeriods()]);
 	
 		System.out.println("");
 		
 		System.out.println("New test result: " + dataInstance.getTestResults()[dataInstance.getCountPeriods() ]);
-		//printArrayWithPeriods(testResults, "Test Results");
 		
 
 	}
