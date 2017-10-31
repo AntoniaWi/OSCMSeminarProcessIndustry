@@ -22,6 +22,8 @@ public class Data {
 	private int parameter_preliminaryKnowledgeAboutSuccessfulTests;	// Gamma_0
 	private int parameter_preliminaryKnowledgeAboutFailedTests;		// Zeta_0
 	
+	private double parameter_capacityDemand;							//q_d (LocationPlanningModel)
+	
 	private int [] testResults;										// Delta_t
 	private int [] countSuccessfulTests;								// Gamma_t
 	private int [] countFailedTests;									// Zeta_t
@@ -32,7 +34,46 @@ public class Data {
 	
 	private int countPeriods;										// t
 								
-	
+	//Location Planning Model
+
+    // Indices
+    private int i; // number of material types
+    private int f; // number of internal facilities
+    private int g; // number of external facilities
+    private int s; // number of suppliers //TODO: stimmt das?
+    private int c; // number of customers //TODO: stimmt das?
+    private int t; //number of fiscal years in planning horizon
+    private int tau; ////TODO:??
+    private int n; //number of nations 
+    
+    //Sets 
+    
+    
+    // Daten
+    private double [] capitalBudget;//capitalBudget[t]								CB_t
+    private double [] capitalExpenditure ; // capitalExpenditure[t]					CE_t
+	private double [][][][]costInsuranceFreight; //costInsuranceFreight[i][s][f][t]	CIF_isft
+    private double [][][]demand;//demand[i][c][t]										D_ict
+    private double [][][][]importDuty[][][][]; //importDuty[i][s][f][t]				ID_isft
+    private double []projectLife;//projectLife[t]										L_f
+    private double variableProductionCostsPrimaryFacility;//							MC_p_f
+    private double variableProductionCostsSecondaryFacility;//						MC_s_f
+    private double [][][][]unitSellingPrice;//unitSellingPrice[i][f][g][t]			P_ifgt
+    private double []lowerLimitExpansionSize;//lowerLimitExpansionSize[f]				g_L_f
+    private double []initialCapacity;//initialCapacity[f] at time zero				Q_f0
+    private double []upperLimitCapacity;//upperLimitCapacity[f]						Q_U_f
+    private double [][][]supply;//supply[i][s][t]										S_ist
+    private double [][]corporateTax;//corporateTax[n][t]								TR_nt
+    private double []lowerLimitProductionAPI;//lowerLimitProductionAPI[f]				X_L_f
+    private int API; //TODO: one material from set i									pi
+    private double [][]materialCoefficient; //materialCoeeficient[i][f]				sigma_if
+    private double [][]capacityExpansionAmount;//capacityExpansionAmount[f][t]		q_ft
+    
+    //Transfer parameter
+    private int remainingTimeOfClinicalTrials;//T*-t*									delta_t*
+    
+    
+
 	/**
 	 * 
 	 */
@@ -396,6 +437,455 @@ public class Data {
 	public void setCountPeriods(int countPeriods) {
 		this.countPeriods = countPeriods;
 	}
+
+
+	/**
+	 * @return the parameter_capacityDemand
+	 */
+	public double getParameter_capacityDemand() {
+		return parameter_capacityDemand;
+	}
+
+
+	/**
+	 * @param parameter_capacityDemand the parameter_capacityDemand to set
+	 */
+	public void setParameter_capacityDemand(double parameter_capacityDemand) {
+		this.parameter_capacityDemand = parameter_capacityDemand;
+	}
+
+
+	/**
+	 * @return the i
+	 */
+	public int getI() {
+		return i;
+	}
+
+
+	/**
+	 * @param i the i to set
+	 */
+	public void setI(int i) {
+		this.i = i;
+	}
+
+
+	/**
+	 * @return the f
+	 */
+	public int getF() {
+		return f;
+	}
+
+
+	/**
+	 * @param f the f to set
+	 */
+	public void setF(int f) {
+		this.f = f;
+	}
+
+
+	/**
+	 * @return the g
+	 */
+	public int getG() {
+		return g;
+	}
+
+
+	/**
+	 * @param g the g to set
+	 */
+	public void setG(int g) {
+		this.g = g;
+	}
+
+
+	/**
+	 * @return the s
+	 */
+	public int getS() {
+		return s;
+	}
+
+
+	/**
+	 * @param s the s to set
+	 */
+	public void setS(int s) {
+		this.s = s;
+	}
+
+
+	/**
+	 * @return the c
+	 */
+	public int getC() {
+		return c;
+	}
+
+
+	/**
+	 * @param c the c to set
+	 */
+	public void setC(int c) {
+		this.c = c;
+	}
+
+
+	/**
+	 * @return the t
+	 */
+	public int getT() {
+		return t;
+	}
+
+
+	/**
+	 * @param t the t to set
+	 */
+	public void setT(int t) {
+		this.t = t;
+	}
+
+
+	/**
+	 * @return the tau
+	 */
+	public int getTau() {
+		return tau;
+	}
+
+
+	/**
+	 * @param tau the tau to set
+	 */
+	public void setTau(int tau) {
+		this.tau = tau;
+	}
+
+
+	/**
+	 * @return the n
+	 */
+	public int getN() {
+		return n;
+	}
+
+
+	/**
+	 * @param n the n to set
+	 */
+	public void setN(int n) {
+		this.n = n;
+	}
+
+
+	/**
+	 * @return the capitalBudget
+	 */
+	public double[] getCapitalBudget() {
+		return capitalBudget;
+	}
+
+
+	/**
+	 * @param capitalBudget the capitalBudget to set
+	 */
+	public void setCapitalBudget(double[] capitalBudget) {
+		this.capitalBudget = capitalBudget;
+	}
+
+
+	/**
+	 * @return the capitalExpenditure
+	 */
+	public double[] getCapitalExpenditure() {
+		return capitalExpenditure;
+	}
+
+
+	/**
+	 * @param capitalExpenditure the capitalExpenditure to set
+	 */
+	public void setCapitalExpenditure(double[] capitalExpenditure) {
+		this.capitalExpenditure = capitalExpenditure;
+	}
+
+
+	/**
+	 * @return the costInsuranceFreight
+	 */
+	public double[][][][] getCostInsuranceFreight() {
+		return costInsuranceFreight;
+	}
+
+
+	/**
+	 * @param costInsuranceFreight the costInsuranceFreight to set
+	 */
+	public void setCostInsuranceFreight(double[][][][] costInsuranceFreight) {
+		this.costInsuranceFreight = costInsuranceFreight;
+	}
+
+
+	/**
+	 * @return the demand
+	 */
+	public double[][][] getDemand() {
+		return demand;
+	}
+
+
+	/**
+	 * @param demand the demand to set
+	 */
+	public void setDemand(double[][][] demand) {
+		this.demand = demand;
+	}
+
+
+	/**
+	 * @return the importDuty
+	 */
+	public double[][][][][][][][] getImportDuty() {
+		return importDuty;
+	}
+
+
+	/**
+	 * @param importDuty the importDuty to set
+	 */
+	public void setImportDuty(double[][][][][][][][] importDuty) {
+		this.importDuty = importDuty;
+	}
+
+
+	/**
+	 * @return the projectLife
+	 */
+	public double[] getProjectLife() {
+		return projectLife;
+	}
+
+
+	/**
+	 * @param projectLife the projectLife to set
+	 */
+	public void setProjectLife(double[] projectLife) {
+		this.projectLife = projectLife;
+	}
+
+
+	/**
+	 * @return the variableProductionCostsPrimaryFacility
+	 */
+	public double getVariableProductionCostsPrimaryFacility() {
+		return variableProductionCostsPrimaryFacility;
+	}
+
+
+	/**
+	 * @param variableProductionCostsPrimaryFacility the variableProductionCostsPrimaryFacility to set
+	 */
+	public void setVariableProductionCostsPrimaryFacility(double variableProductionCostsPrimaryFacility) {
+		this.variableProductionCostsPrimaryFacility = variableProductionCostsPrimaryFacility;
+	}
+
+
+	/**
+	 * @return the variableProductionCostsSecondaryFacility
+	 */
+	public double getVariableProductionCostsSecondaryFacility() {
+		return variableProductionCostsSecondaryFacility;
+	}
+
+
+	/**
+	 * @param variableProductionCostsSecondaryFacility the variableProductionCostsSecondaryFacility to set
+	 */
+	public void setVariableProductionCostsSecondaryFacility(double variableProductionCostsSecondaryFacility) {
+		this.variableProductionCostsSecondaryFacility = variableProductionCostsSecondaryFacility;
+	}
+
+
+	/**
+	 * @return the unitSellingPrice
+	 */
+	public double[][][][] getUnitSellingPrice() {
+		return unitSellingPrice;
+	}
+
+
+	/**
+	 * @param unitSellingPrice the unitSellingPrice to set
+	 */
+	public void setUnitSellingPrice(double[][][][] unitSellingPrice) {
+		this.unitSellingPrice = unitSellingPrice;
+	}
+
+
+	/**
+	 * @return the lowerLimitExpansionSize
+	 */
+	public double[] getLowerLimitExpansionSize() {
+		return lowerLimitExpansionSize;
+	}
+
+
+	/**
+	 * @param lowerLimitExpansionSize the lowerLimitExpansionSize to set
+	 */
+	public void setLowerLimitExpansionSize(double[] lowerLimitExpansionSize) {
+		this.lowerLimitExpansionSize = lowerLimitExpansionSize;
+	}
+
+
+	/**
+	 * @return the initialCapacity
+	 */
+	public double[] getInitialCapacity() {
+		return initialCapacity;
+	}
+
+
+	/**
+	 * @param initialCapacity the initialCapacity to set
+	 */
+	public void setInitialCapacity(double[] initialCapacity) {
+		this.initialCapacity = initialCapacity;
+	}
+
+
+	/**
+	 * @return the upperLimitCapacity
+	 */
+	public double[] getUpperLimitCapacity() {
+		return upperLimitCapacity;
+	}
+
+
+	/**
+	 * @param upperLimitCapacity the upperLimitCapacity to set
+	 */
+	public void setUpperLimitCapacity(double[] upperLimitCapacity) {
+		this.upperLimitCapacity = upperLimitCapacity;
+	}
+
+
+	/**
+	 * @return the supply
+	 */
+	public double[][][] getSupply() {
+		return supply;
+	}
+
+
+	/**
+	 * @param supply the supply to set
+	 */
+	public void setSupply(double[][][] supply) {
+		this.supply = supply;
+	}
+
+
+	/**
+	 * @return the corporateTax
+	 */
+	public double[][] getCorporateTax() {
+		return corporateTax;
+	}
+
+
+	/**
+	 * @param corporateTax the corporateTax to set
+	 */
+	public void setCorporateTax(double[][] corporateTax) {
+		this.corporateTax = corporateTax;
+	}
+
+
+	/**
+	 * @return the lowerLimitProductionAPI
+	 */
+	public double[] getLowerLimitProductionAPI() {
+		return lowerLimitProductionAPI;
+	}
+
+
+	/**
+	 * @param lowerLimitProductionAPI the lowerLimitProductionAPI to set
+	 */
+	public void setLowerLimitProductionAPI(double[] lowerLimitProductionAPI) {
+		this.lowerLimitProductionAPI = lowerLimitProductionAPI;
+	}
+
+
+	/**
+	 * @return the aPI
+	 */
+	public int getAPI() {
+		return API;
+	}
+
+
+	/**
+	 * @param aPI the aPI to set
+	 */
+	public void setAPI(int aPI) {
+		API = aPI;
+	}
+
+
+	/**
+	 * @return the materialCoefficient
+	 */
+	public double[][] getMaterialCoefficient() {
+		return materialCoefficient;
+	}
+
+
+	/**
+	 * @param materialCoefficient the materialCoefficient to set
+	 */
+	public void setMaterialCoefficient(double[][] materialCoefficient) {
+		this.materialCoefficient = materialCoefficient;
+	}
+
+
+	/**
+	 * @return the capacityExpansionAmount
+	 */
+	public double[][] getCapacityExpansionAmount() {
+		return capacityExpansionAmount;
+	}
+
+
+	/**
+	 * @param capacityExpansionAmount the capacityExpansionAmount to set
+	 */
+	public void setCapacityExpansionAmount(double[][] capacityExpansionAmount) {
+		this.capacityExpansionAmount = capacityExpansionAmount;
+	}
+
+
+	/**
+	 * @return the remainingTimeOfClinicalTrials
+	 */
+	public int getRemainingTimeOfClinicalTrials() {
+		return remainingTimeOfClinicalTrials;
+	}
+
+
+	/**
+	 * @param remainingTimeOfClinicalTrials the remainingTimeOfClinicalTrials to set
+	 */
+	public void setRemainingTimeOfClinicalTrials(int remainingTimeOfClinicalTrials) {
+		this.remainingTimeOfClinicalTrials = remainingTimeOfClinicalTrials;
+	}
+
 
 
 	/**
