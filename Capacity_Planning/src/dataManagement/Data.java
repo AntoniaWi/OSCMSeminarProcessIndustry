@@ -75,6 +75,7 @@ public class Data {
     private int API; //TODO: one material from set i									pi
     private double [][]materialCoefficient; //materialCoeeficient[i][f]				sigma_if
     private double [][]capacityExpansionAmount;//capacityExpansionAmount[f][t]		q_ft
+    private int planninghorizonLPM;//T
     
     //Transfer parameter
     private int remainingTimeOfClinicalTrials;//T*-t*									delta_t*
@@ -953,6 +954,46 @@ public class Data {
 		this.remainingTimeOfClinicalTrials = remainingTimeOfClinicalTrials;
 	}
 
+
+
+	/**
+	 * @return the planninghorizonLPM
+	 */
+	public int getPlanninghorizonLPM() {
+		return planninghorizonLPM;
+	}
+
+
+	/**
+	 * @param planninghorizonLPM the planninghorizonLPM to set
+	 */
+	public void setPlanninghorizonLPM(int planninghorizonLPM) {
+		this.planninghorizonLPM = planninghorizonLPM;
+	}
+
+
+	/**
+	 * @param parameter_constructionCostPrimaryFacility the parameter_constructionCostPrimaryFacility to set
+	 */
+	public void setParameter_constructionCostPrimaryFacility(double parameter_constructionCostPrimaryFacility) {
+		this.parameter_constructionCostPrimaryFacility = parameter_constructionCostPrimaryFacility;
+	}
+
+
+	/**
+	 * @param parameter_setupCostPrimaryFacility the parameter_setupCostPrimaryFacility to set
+	 */
+	public void setParameter_setupCostPrimaryFacility(double parameter_setupCostPrimaryFacility) {
+		this.parameter_setupCostPrimaryFacility = parameter_setupCostPrimaryFacility;
+	}
+
+
+	/**
+	 * @param parameter_setupCostSecondaryFacility the parameter_setupCostSecondaryFacility to set
+	 */
+	public void setParameter_setupCostSecondaryFacility(double parameter_setupCostSecondaryFacility) {
+		this.parameter_setupCostSecondaryFacility = parameter_setupCostSecondaryFacility;
+	}
 
 
 	/**
