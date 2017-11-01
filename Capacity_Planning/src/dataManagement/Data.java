@@ -14,11 +14,11 @@ public class Data {
 	private int parameter_yearsToBuildPrimaryFacilities;				// s_p_0 - in whole years
 	private double parameter_yearsToBuildSecondaryFacilities;			// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
 	
-	private int parameter_constructionCostPrimaryFacility;			// c_p
-	private int parameter_constructionCostSecondaryFacility;			// c_s
+	private double parameter_constructionCostPrimaryFacility;			// c_p
+	private double parameter_constructionCostSecondaryFacility;			// c_s
 	
-	private int parameter_setupCostPrimaryFacility;					// K_p
-	private int parameter_setupCostSecondaryFacility;					// K_s
+	private double parameter_setupCostPrimaryFacility;					// K_p
+	private double parameter_setupCostSecondaryFacility;					// K_s
 	
 	private int parameter_penaltyCost;								// Phi(s_t) = Phi*s_t
 	
@@ -236,7 +236,7 @@ public class Data {
 	/**
 	 * @return the parameter_constructionCostPrimaryFacility
 	 */
-	public int getParameter_constructionCostPrimaryFacility() {
+	public double getParameter_constructionCostPrimaryFacility() {
 		return parameter_constructionCostPrimaryFacility;
 	}
 
@@ -252,7 +252,7 @@ public class Data {
 	/**
 	 * @return the parameter_constructionCostSecondaryFacility
 	 */
-	public int getParameter_constructionCostSecondaryFacility() {
+	public double getParameter_constructionCostSecondaryFacility() {
 		return parameter_constructionCostSecondaryFacility;
 	}
 
@@ -260,7 +260,7 @@ public class Data {
 	/**
 	 * @param parameter_constructionCostSecondaryFacility the parameter_constructionCostSecondaryFacility to set
 	 */
-	public void setParameter_constructionCostSecondaryFacility(int parameter_constructionCostSecondaryFacility) {
+	public void setParameter_constructionCostSecondaryFacility(double parameter_constructionCostSecondaryFacility) {
 		this.parameter_constructionCostSecondaryFacility = parameter_constructionCostSecondaryFacility;
 	}
 
@@ -268,7 +268,7 @@ public class Data {
 	/**
 	 * @return the parameter_setupCostPrimaryFacility
 	 */
-	public int getParameter_setupCostPrimaryFacility() {
+	public double getParameter_setupCostPrimaryFacility() {
 		return parameter_setupCostPrimaryFacility;
 	}
 
@@ -284,7 +284,7 @@ public class Data {
 	/**
 	 * @return the parameter_setupCostSecondaryFacility
 	 */
-	public int getParameter_setupCostSecondaryFacility() {
+	public double getParameter_setupCostSecondaryFacility() {
 		return parameter_setupCostSecondaryFacility;
 	}
 
