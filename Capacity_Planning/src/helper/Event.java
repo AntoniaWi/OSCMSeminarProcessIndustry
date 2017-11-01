@@ -3,66 +3,102 @@ package helper;
 
 public class Event {
 	
+	private int period;
 	private int index;
 	
 	private boolean finalEvent;
+	private double finalCost;
 	
-	private int period;
+	private double probability;
 	private int testResult;
+	
 	private int countSuccessfulTestResults;
 	private int countFailedTestResults;
-	private double nextProbability;
 	
-	private Event nextSuccessfulTestResult;
-	private Event nextFailedTestResult;
+	private double nextProbabilitySuccessful_left;
+	private double nextProbabilityFailed_right;
 	
+	private Event left_nextSuccessfulTestResult;
+	private Event right_nextFailedTestResult;
 	private Event previousEvent;
 	
-
+	
 	/**
-	 * @param finalEvent
-	 * @param threshold
 	 * @param period
+	 * @param index
+	 * @param finalEvent
+	 * @param finalCost
+	 * @param probability
 	 * @param testResult
 	 * @param countSuccessfulTestResults
 	 * @param countFailedTestResults
-	 * @param nextProbability
-	 * @param nextSuccessfulTestResult
-	 * @param nextFailedTestResult
+	 * @param nextProbability_Successful
+	 * @param nextProbability_Failed
+	 * @param left_nextSuccessfulTestResult
+	 * @param right_nextFailedTestResult
 	 * @param previousEvent
 	 */
-	public Event(int index, boolean finalEvent, int period, int testResult, int countSuccessfulTestResults,
-			int countFailedTestResults, double nextProbability, Event nextSuccessfulTestResult,
-			Event nextFailedTestResult, Event previousEvent) {
+	public Event(int period, int index, boolean finalEvent, double finalCost, double probability, int testResult,
+			int countSuccessfulTestResults, int countFailedTestResults, double nextProbability_Successful,
+			double nextProbability_Failed, Event left_nextSuccessfulTestResult, Event right_nextFailedTestResult,
+			Event previousEvent) {
 		
+		this.period = period;
 		this.index = index;
 		this.finalEvent = finalEvent;
-		this.period = period;
+		this.finalCost = finalCost;
+		this.probability = probability;
 		this.testResult = testResult;
 		this.countSuccessfulTestResults = countSuccessfulTestResults;
 		this.countFailedTestResults = countFailedTestResults;
-		this.nextProbability = nextProbability;
-		this.nextSuccessfulTestResult = nextSuccessfulTestResult;
-		this.nextFailedTestResult = nextFailedTestResult;
+		this.nextProbabilitySuccessful_left = nextProbability_Successful;
+		this.nextProbabilityFailed_right = nextProbability_Failed;
+		this.left_nextSuccessfulTestResult = left_nextSuccessfulTestResult;
+		this.right_nextFailedTestResult = right_nextFailedTestResult;
 		this.previousEvent = previousEvent;
 	}
-
+	
 	
 	/**
 	 * 
 	 */
 	public Event () {
 		
-		this.index = -1;
-		this.finalEvent = false;
 		this.period = -1;
+		this.index = -1;
+		
+		this.finalEvent = false;
+		this.finalCost = -1;
+		
+		this.probability = -1;
 		this.testResult = -1;
+		
 		this.countSuccessfulTestResults = -1;
 		this.countFailedTestResults = -1;
-		this.nextProbability = -1;
-		this.nextSuccessfulTestResult = null;
-		this.nextFailedTestResult = null;
+		
+		nextProbabilitySuccessful_left = -1;
+		nextProbabilityFailed_right = -1;
+		
+		this.left_nextSuccessfulTestResult = null;
+		this.right_nextFailedTestResult = null;
 		this.previousEvent = null;
+		
+	}
+
+
+	/**
+	 * @return the period
+	 */
+	public int getPeriod() {
+		return period;
+	}
+
+
+	/**
+	 * @param period the period to set
+	 */
+	public void setPeriod(int period) {
+		this.period = period;
 	}
 
 
@@ -99,18 +135,34 @@ public class Event {
 
 
 	/**
-	 * @return the period
+	 * @return the finalCost
 	 */
-	public int getPeriod() {
-		return period;
+	public double getFinalCost() {
+		return finalCost;
 	}
 
 
 	/**
-	 * @param period the period to set
+	 * @param finalCost the finalCost to set
 	 */
-	public void setPeriod(int period) {
-		this.period = period;
+	public void setFinalCost(double finalCost) {
+		this.finalCost = finalCost;
+	}
+
+
+	/**
+	 * @return the probability
+	 */
+	public double getProbability() {
+		return probability;
+	}
+
+
+	/**
+	 * @param probability the probability to set
+	 */
+	public void setProbability(double probability) {
+		this.probability = probability;
 	}
 
 
@@ -163,50 +215,66 @@ public class Event {
 
 
 	/**
-	 * @return the nextProbability
+	 * @return the nextProbability_Successful
 	 */
-	public double getNextProbability() {
-		return nextProbability;
+	public double getNextProbability_Successful() {
+		return nextProbabilitySuccessful_left;
 	}
 
 
 	/**
-	 * @param nextProbability the nextProbability to set
+	 * @param nextProbability_Successful the nextProbability_Successful to set
 	 */
-	public void setNextProbability(double nextProbability) {
-		this.nextProbability = nextProbability;
+	public void setNextProbability_Successful(double nextProbability_Successful) {
+		this.nextProbabilitySuccessful_left = nextProbability_Successful;
 	}
 
 
 	/**
-	 * @return the nextSuccessfulTestResult
+	 * @return the nextProbability_Failed
 	 */
-	public Event getNextSuccessfulTestResult() {
-		return nextSuccessfulTestResult;
+	public double getNextProbability_Failed() {
+		return nextProbabilityFailed_right;
 	}
 
 
 	/**
-	 * @param nextSuccessfulTestResult the nextSuccessfulTestResult to set
+	 * @param nextProbability_Failed the nextProbability_Failed to set
 	 */
-	public void setNextSuccessfulTestResult(Event nextSuccessfulTestResult) {
-		this.nextSuccessfulTestResult = nextSuccessfulTestResult;
+	public void setNextProbability_Failed(double nextProbability_Failed) {
+		this.nextProbabilityFailed_right = nextProbability_Failed;
 	}
 
 
 	/**
-	 * @return the nextFailedTestResult
+	 * @return the left_nextSuccessfulTestResult
 	 */
-	public Event getNextFailedTestResult() {
-		return nextFailedTestResult;
+	public Event getLeft_nextSuccessfulTestResult() {
+		return left_nextSuccessfulTestResult;
 	}
 
 
 	/**
-	 * @param nextFailedTestResult the nextFailedTestResult to set
+	 * @param left_nextSuccessfulTestResult the left_nextSuccessfulTestResult to set
 	 */
-	public void setNextFailedTestResult(Event nextFailedTestResult) {
-		this.nextFailedTestResult = nextFailedTestResult;
+	public void setLeft_nextSuccessfulTestResult(Event left_nextSuccessfulTestResult) {
+		this.left_nextSuccessfulTestResult = left_nextSuccessfulTestResult;
+	}
+
+
+	/**
+	 * @return the right_nextFailedTestResult
+	 */
+	public Event getRight_nextFailedTestResult() {
+		return right_nextFailedTestResult;
+	}
+
+
+	/**
+	 * @param right_nextFailedTestResult the right_nextFailedTestResult to set
+	 */
+	public void setRight_nextFailedTestResult(Event right_nextFailedTestResult) {
+		this.right_nextFailedTestResult = right_nextFailedTestResult;
 	}
 
 
@@ -226,7 +294,109 @@ public class Event {
 	}
 	
 	
-	
-	
 
+	
+	
+	
+	/**
+	 * Adjusts the links and the corresponding probabilities
+	 * @param parent
+	 */
+	public void addPreviousEvent (Event parent) {
+		
+		this.previousEvent = parent;
+		
+		if (this.testResult == 1) {
+			
+			parent.left_nextSuccessfulTestResult = this;
+			this.probability = parent.nextProbabilitySuccessful_left;
+		}
+		
+		else if (this.testResult == 0) {
+			
+			parent.right_nextFailedTestResult = this;
+			this.probability = parent.nextProbabilityFailed_right;
+		}
+	}
+	
+	
+	/**
+	 * Adjusts the links and the corresponding probabilities
+	 * @param child
+	 */
+	public void addNextEvent (Event child) {
+		
+		if (child.testResult == 1) {
+			
+			this.left_nextSuccessfulTestResult = child;
+			
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param s_T 	Remaining periods (years) to build primary facility in period T
+	 * @param a_T 	Investment decision about primary facility in period T
+	 * @param c		Construction cost of primary facility		
+	 * @param K		Setup cost of primary facility
+	 * @param phi	Penalty cost when construction of primary facility is not finished 
+	 * @return		Final cost in T+1 -> F(s_T, a_T)
+	 */
+	public double calculateF (int s_T, int a_T, int c, int K, int phi, int gamma_c) {
+	
+		double F = -1;
+		
+		if (this.finalEvent == true) {
+			
+			if (this.countSuccessfulTestResults >= gamma_c) {
+				
+				F = s_T * c + s_T * phi + K * Math.max((1 - a_T), 0);
+				
+			}
+			
+			else if (this.countSuccessfulTestResults < gamma_c) {
+				
+				F = 0;
+			}			
+		}
+		
+		else {
+			
+			System.out.println ("ERROR - this event is not a final event and cost cannot be calculated!");
+			
+		}
+		
+		return F;
+	}
+
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

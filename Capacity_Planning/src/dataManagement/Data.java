@@ -1011,80 +1011,121 @@ public class Data {
 	 */
 	public ArrayList<ArrayList<Event>> generateScenarioTree () {
 		
-		ArrayList<ArrayList<Event>> list = new ArrayList<ArrayList<Event>>();
+		ArrayList<ArrayList<Event>> scenarioTree = new ArrayList<ArrayList<Event>>();
 		
-		// ArrayList for period t = 0 with one element (without any test result)
+		// Create an ArrayList for period t element of {1,...,T} which is added to the scenario tree
 		
-		ArrayList<Event> level0 = new ArrayList<Event>();
+		for (int t = 1; t <= this.parameter_planningHorizon; t++) {
+			
+			ArrayList<Event> period_t = new ArrayList<Event>();
+			scenarioTree.add(period_t);
+			
+			int numberOfEvents = (int) Math.pow(2.0, t);
+			
+			// For each period the events are created and put into the ArrayList period_t
+			
+			for (int index = 0; index < numberOfEvents; index++) {
+				
+				Event tmp_event = new Event ();
+				
+				tmp_event.setPeriod(t);
+				tmp_event.setIndex(index);
+				
+				// Is it a final event for which cost can be calculated?
+				
+				if (t == this.parameter_planningHorizon) {
+					tmp_event.setFinalEvent(true);
+				}
+				else {
+					tmp_event.setFinalEvent(false);
+				}
+				
+				// Is it the left (successful) or the right (failed) event 
+				
+				if ((index % 2) == 0) {
+					tmp_event.setTestResult(1);
+				}
+				else {
+					tmp_event.setTestResult(0);
+				}
+				
+				period_t.add(tmp_event);	
+			}
+		}
 		
-		Event event1_level0 = new Event();
+		// Setting all children - final events in T do not have children, "-1" in the for-loop
 		
-		event1_level0.setIndex(0);
-		event1_level0.setFinalEvent(false);
-		event1_level0.setPeriod(0);
-		event1_level0.setTestResult(-1);
-		event1_level0.setCountSuccessfulTestResults(this.parameter_preliminaryKnowledgeAboutSuccessfulTests);
-		event1_level0.setCountFailedTestResults(this.parameter_preliminaryKnowledgeAboutFailedTests);
-		event1_level0.setNextProbability(this.calculateTestProbability(event1_level0.getCountSuccessfulTestResults(), event1_level0.getCountFailedTestResults()));
-		//TODO: 		nextSuccessfulTestResult
-		//TODO: 		nextFailedTestResult
-		event1_level0.setPreviousEvent(null);
+		for (int t = 0; t < scenarioTree.size()-1; t++) {
+			
+			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
+			
+				Event tmp_event = scenarioTree.get(t).get(index);
+				
+				ArrayList<Event> period_tplus1 = scenarioTree.get(t+1);
+				
+				tmp_event.setLeft_nextSuccessfulTestResult(period_tplus1.get(index*2));
+				tmp_event.setRight_nextFailedTestResult(period_tplus1.get(index*2 +1));
+			}
+		}
 		
-		level0.add(event1_level0);
+		// Setting all parents - first events in t = 1 do not have any parents
 		
-		// ArrayList for period t = 1 with two elements
+		for (int t = scenarioTree.size()-1; t > 0; t--) {
+			
+			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
+			
+				Event tmp_event = scenarioTree.get(t).get(index);
+				
+				int index_parent = -1;
+				
+				if ((index % 2) == 0) {
+					index_parent = index / 2;
+				}
+				else {
+					index_parent = (index-1)/2;
+				}
+				
+				ArrayList<Event> period_tminus1 = scenarioTree.get(t-1);
+				tmp_event.setPreviousEvent(period_tminus1.get(index_parent));
+			}
+		}
 		
-		ArrayList<Event> level1 = new ArrayList<Event>();
+		// Setting all countSuccessfulTestResults and countFailedTestResults
 		
-		Event event1_level1 = new Event();
-		
-		event1_level1.setIndex(0);
-		event1_level1.setFinalEvent(false);
-		event1_level1.setPeriod(1);
-		event1_level1.setTestResult(1);
-		
-		event1_level1.setPreviousEvent(event1_level0);
-		
-		event1_level1.setCountSuccessfulTestResults(event1_level1.getTestResult() + event1_level1.getPreviousEvent().getCountSuccessfulTestResults());
-		event1_level1.setCountFailedTestResults((1-event1_level1.getTestResult()) + event1_level1.getPreviousEvent().getCountFailedTestResults());
-		event1_level1.setNextProbability(this.calculateTestProbability(event1_level1.getCountSuccessfulTestResults(), event1_level1.getCountFailedTestResults()));
-		//TODO: 		nextSuccessfulTestResult
-		//TODO: 		nextFailedTestResult
-		event1_level0.setPreviousEvent(null);
-		
-		level0.add(event1_level0);
-		
-		
-		
-		
-		return list;
-		
-		
-		
-		
-		
-		/*
-		this.index = index;
-		this.finalEvent = finalEvent;
-		this.period = period;
-		this.testResult = testResult;
-		this.countSuccessfulTestResults = countSuccessfulTestResults;
-		this.countFailedTestResults = countFailedTestResults;
-		this.nextProbability = nextProbability;
-		this.nextSuccessfulTestResult = nextSuccessfulTestResult;
-		this.nextFailedTestResult = nextFailedTestResult;
-		this.previousEvent = previousEvent;
-		 * 
-		 * 
-		 * 
-		 */
-		
-		
-		
-		
+		for (int t = 0; t < scenarioTree.size(); t++) {
+			
+			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
+				
+				
+			}
+			
+		}
+				
+				
+				
+				
+				
+				
+				/**
+				 * 
+				 * 
+	private double probability;
+	
+	private int countSuccessfulTestResults;
+	private int countFailedTestResults;
+	
+	private double nextProbabilitySuccessful_left;
+	private double nextProbabilityFailed_right;
+	
+
+				 */
+				
+		return scenarioTree;
 		
 	}
 	
+	
+	//TODO: final cost with each scenario
 	
 	
 	/**
@@ -1134,4 +1175,13 @@ public class Data {
 	// TODO RAMONA: create several toString Method for console output
 	
 
+	public static void main(String[] args) {
+		
+		System.out.println (0 % 2);
+		
+		
+	}
+	
+	
+	
 }
