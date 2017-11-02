@@ -352,9 +352,20 @@ public class TimingModel {
 				System.out.println(dataInstance.getScenarioTree().get(t).get(index).toString());
 			}
 		}
-		
 	}
 	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	//public static int[][] generateAllPossibleStrategiesInPeriod_t() {
+		
+		
+		
+		
+		
+	//}
 	
 	
 
