@@ -369,6 +369,36 @@ public class Event {
 		
 		return F;
 	}
+	
+	
+	/**
+	 * 
+	 */
+	public String toString () {
+		
+		String string = "";
+		
+		string += "\n\n**********      EVENT      **********\n\n";
+		
+		if (this.previousEvent != null) {
+			
+			string += "Previous Event - Period: " + this.previousEvent.period + ", index: " + this.previousEvent.index + "\n";
+		}
+		
+		string += "Period: " + this.period + "\n";
+		string += "Index: " + this.index + "\n";
+		string += "Probability: " + this.probability + "\n";
+		string += "Test result: " + this.testResult + "\n";
+		string += "Gamma: " + this.countSuccessfulTestResults + "\n";
+		string += "Zeta: " + this.countFailedTestResults + "\n";
+		string += "Next probability (success): " + this.nextProbabilitySuccessful_left + "\n";
+		string += "Next probability (fail): " + this.nextProbabilityFailed_right + "\n";
+		
+		return string;
+		
+	}
+	
+
 
 	
 }
