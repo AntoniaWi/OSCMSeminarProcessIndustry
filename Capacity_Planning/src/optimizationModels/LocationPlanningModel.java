@@ -19,7 +19,7 @@ public class LocationPlanningModel extends IloCplex {
 	// Indices
 	private int i; // number of material types
 	private int f; // number of all facilities
-	// private int f;//number of all internal facilities
+	private int fi;// number of internal facilities
 	private int g; // number of external facilities
 	private int s; // number of suppliers //TODO: stimmt das?
 	private int c; // number of customers //TODO: stimmt das?
@@ -192,7 +192,7 @@ public class LocationPlanningModel extends IloCplex {
 		// 5th constraint
 		this.addConstraintMinimumExpansion();
 		// 6th constraint
-		this.addConstraintExpansionSize();
+		// this.addConstraintExpansionSize();
 		// 7th constraint
 		this.addConstraintAvailableCapacity();
 		// 8th constraint
@@ -205,6 +205,14 @@ public class LocationPlanningModel extends IloCplex {
 		this.addConstraintSupplyAndDemand();
 		// 12th constraint
 		this.addConstraintCapitalExpenditure();
+		// 13th constraint
+		this.addConstraintBudgetConstraint();
+		//14th constraint
+		this.addConstraintGrossIncome();
+		// 15th constraint
+		this.addConstraintDepreciationCharge();
+		// 16th constraint
+		this.addConstraintTaxableIncome();
 		// TODO:nächste Nebenbedingungen
 
 		String path = "./logs/model.lp";
@@ -404,40 +412,38 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintExpansionSize() throws IloException {
-
-		IloLinearNumExpr numberSecondaryFacilities = linearNumExpr();
-
-		
-			// TODO: muss anders gelöst werden. GetConstant holt nur den konstanten Term
-			// raus
-			
-		
-
-		// create constraint
-		this.expansionSize.clear();
-		for (int j = 0; j < this.t; j++) {
-			for (int i = 0; i < this.f; i++) {
-				
-				numberSecondaryFacilities.clear();
-				for (int k = 0; k < this.f; k++) {
-					if (IF[k]) {
-						numberSecondaryFacilities.addTerm(1, this.constructionStartSecondaryFacility[k][j]);
-					}
-				}
-			
-			//IloNumExpr capacityDemandPartlySF = 1/numberSecondaryFacilities;
-			if (IF[i]) {
-
-				this.expansionSize.addTerm(this.capacityDemand, this.constructionStartPrimaryFacility[i][j]);
-				//this.expansionSize.addTerm(capacityDemandPartlySF, this.constructionStartSecondaryFacility[i][j]);
-
-				addEq(this.expansionSize, this.capacityExpansionAmount[i][j]);
-			}
-		}
-	}
-
-	}
+	/*
+	 * private void addConstraintExpansionSize() throws IloException {
+	 * 
+	 * IloLinearNumExpr numberSecondaryFacilities = linearNumExpr();
+	 * IloLinearNumExpr one = linearNumExpr(); one.setConstant(1);
+	 * 
+	 * 
+	 * // TODO: funktioniert noch nicht
+	 * 
+	 * 
+	 * 
+	 * 
+	 * // create constraint this.expansionSize.clear(); for (int j = 0; j < this.t;
+	 * j++) { for (int i = 0; i < this.f; i++) {
+	 * 
+	 * numberSecondaryFacilities.clear(); for (int k = 0; k < this.f; k++) { if
+	 * (IF[k]) { numberSecondaryFacilities.addTerm(1,
+	 * this.constructionStartSecondaryFacility[k][j]); } }
+	 * 
+	 * 
+	 * //IloNumExpr capacityDemandPartlySF = one/numberSecondaryFacilities; if
+	 * (IF[i]) {
+	 * 
+	 * this.expansionSize.addTerm(this.capacityDemand,
+	 * this.constructionStartPrimaryFacility[i][j]);
+	 * //this.expansionSize.addTerm(capacityDemandPartlySF,
+	 * this.constructionStartSecondaryFacility[i][j]);
+	 * 
+	 * addEq(this.expansionSize, this.capacityExpansionAmount[i][j]); } } }
+	 * 
+	 * }
+	 */
 
 	/**
 	 * 7th constraint: available capacity
@@ -569,12 +575,12 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	// TODO: OM IM integrierenn
+	// TODO: noch nicht gemacht
 	private void addConstraintSupplyAndDemand() throws IloException {
 
 		this.demandAndSupply.clear();
 
-		for (int i = 0; i < this.f; i++) {
+		for (int i = 0; i < this.f; i++) {// f
 			if (EF[i]) {
 				for (int j = 0; j < this.t; j++) {
 
@@ -629,6 +635,27 @@ public class LocationPlanningModel extends IloCplex {
 
 		this.budget.clear();
 
+		for (int i = 0; i < this.t; i++) {
+			for (int j = 0; j < this.f; j++) {
+				if (IF[i]) {
+					for (int k = 0; k < i; k++) {//t<tau
+						this.budget.addTerm(this.setupCostPrimaryFacility, this.constructionStartPrimaryFacility[j][k]);
+
+						double variableCostPF = this.yearsToBuildPrimaryFacility
+								* this.variableProductionCostsPrimaryFacility;
+						this.budget.addTerm(variableCostPF, this.constructionStartPrimaryFacility[j][k]);
+
+						this.budget.addTerm(this.setupCostSecondaryFacility,
+								this.constructionStartSecondaryFacility[j][k]);
+
+						double variableCostSF = this.yearsToBuildSecondaryFacility
+								* this.variableProductionCostsSecondaryFacility;
+						this.budget.addTerm(variableCostSF, this.constructionStartSecondaryFacility[j][k]);
+					}
+				}
+			}
+			addLe(this.budget, this.capitalExpenditure[i]);
+		}
 	}
 
 	/**
