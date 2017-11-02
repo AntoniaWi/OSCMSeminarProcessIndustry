@@ -415,29 +415,27 @@ public class LocationPlanningModel extends IloCplex {
 		
 
 		// create constraint
-		/*this.expansionSize.clear();
+		this.expansionSize.clear();
 		for (int j = 0; j < this.t; j++) {
 			for (int i = 0; i < this.f; i++) {
 				
 				numberSecondaryFacilities.clear();
 				for (int k = 0; k < this.f; k++) {
 					if (IF[k]) {
-						double numSecFaci = 1/this.constructionStartSecondaryFacility[k][j];
 						numberSecondaryFacilities.addTerm(1, this.constructionStartSecondaryFacility[k][j]);
 					}
 				}
-			}
-			IloNumExpr numSecFaci = 1/numberSecondaryFacilities;
-			IloNumExpr capacityDemandPartlySF = prod(this.capacityDemand,1/numberSecondaryFacilities);
+			
+			//IloNumExpr capacityDemandPartlySF = 1/numberSecondaryFacilities;
 			if (IF[i]) {
 
 				this.expansionSize.addTerm(this.capacityDemand, this.constructionStartPrimaryFacility[i][j]);
-				this.expansionSize.addTerm(capacityDemandPartlySF, this.constructionStartSecondaryFacility[i][j]);
+				//this.expansionSize.addTerm(capacityDemandPartlySF, this.constructionStartSecondaryFacility[i][j]);
 
 				addEq(this.expansionSize, this.capacityExpansionAmount[i][j]);
 			}
 		}
-	}*/
+	}
 
 	}
 
