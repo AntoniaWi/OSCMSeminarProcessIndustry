@@ -6,57 +6,57 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-javadoc.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-javadoc.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-tools.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-sources.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-tests.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-tests.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-sources.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-test-sources.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-test-sources.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/commons-math3-3.6.1-tools.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/cplex.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/cplex.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/jxl.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/jsc.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/lombok.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/jxl.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/ssj.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/lombok.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/jsc.jar">
+	<classpathentry kind="lib" path="C:/Users/Sarah/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/ssj.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
