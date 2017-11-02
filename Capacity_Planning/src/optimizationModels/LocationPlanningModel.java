@@ -419,6 +419,7 @@ public class LocationPlanningModel extends IloCplex {
 					numberSecondaryFacilities.addTerm(1, this.constructionStartSecondaryFacility[i][j]);
 				}
 			}
+		//TODO: muss anders gelöst werden. GetConstant holt nur den konstanten Term raus
 		zValues[j]= (int) numberSecondaryFacilities.getConstant();
 		}
 
