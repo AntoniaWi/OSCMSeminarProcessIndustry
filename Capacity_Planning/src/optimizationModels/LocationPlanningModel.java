@@ -419,6 +419,7 @@ public class LocationPlanningModel extends IloCplex {
 					numberSecondaryFacilities.addTerm(1, this.constructionStartSecondaryFacility[i][j]);
 				}
 			}
+		//TODO: muss man anders lösen
 		zValues[j]= (int) numberSecondaryFacilities.getConstant();
 		}
 
