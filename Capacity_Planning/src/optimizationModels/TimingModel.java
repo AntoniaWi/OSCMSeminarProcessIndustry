@@ -256,8 +256,8 @@ public class TimingModel {
 				double p = TimingModel.calculateTestProbability(gamma, zeta);
 				double p_counter = TimingModel.calculateTestProbability(zeta, gamma);
 				
-				event_tmp.setNextProbability_Successful(p);
-				event_tmp.setNextProbability_Failed(p_counter);
+				event_tmp.setNextProbabilitySuccessful_left(p);
+				event_tmp.setNextProbabilityFailed_right(p_counter);
 			}
 			
 		}
@@ -294,12 +294,12 @@ public class TimingModel {
 					
 				if (event_tmp.getTestResult() == 1) {
 						
-						event_tmp.setProbability(event_parent.getNextProbability_Successful());
+						event_tmp.setProbability(event_parent.getNextProbabilitySuccessful_left());
 					}
 					
 					else {
 						
-						event_tmp.setProbability(event_parent.getNextProbability_Failed());
+						event_tmp.setProbability(event_parent.getNextProbabilityFailed_right());
 					}
 				}
 			}

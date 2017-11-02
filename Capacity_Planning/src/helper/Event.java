@@ -8,6 +8,7 @@ public class Event {
 	
 	private boolean finalEvent;
 	private double finalCost;
+	private double expectedCost;
 	
 	private double probability;
 	private int testResult;
@@ -38,7 +39,7 @@ public class Event {
 	 * @param right_nextFailedTestResult
 	 * @param previousEvent
 	 */
-	public Event(int period, int index, boolean finalEvent, double finalCost, double probability, int testResult,
+	public Event(int period, int index, boolean finalEvent, double finalCost, double expectedCost, double probability, int testResult,
 			int countSuccessfulTestResults, int countFailedTestResults, double nextProbability_Successful,
 			double nextProbability_Failed, Event left_nextSuccessfulTestResult, Event right_nextFailedTestResult,
 			Event previousEvent) {
@@ -47,6 +48,7 @@ public class Event {
 		this.index = index;
 		this.finalEvent = finalEvent;
 		this.finalCost = finalCost;
+		this.expectedCost = expectedCost;
 		this.probability = probability;
 		this.testResult = testResult;
 		this.countSuccessfulTestResults = countSuccessfulTestResults;
@@ -69,6 +71,7 @@ public class Event {
 		
 		this.finalEvent = false;
 		this.finalCost = -1;
+		this.expectedCost = -1;
 		
 		this.probability = -1;
 		this.testResult = -1;
@@ -85,7 +88,7 @@ public class Event {
 		
 	}
 
-
+	
 	/**
 	 * @return the period
 	 */
@@ -147,6 +150,22 @@ public class Event {
 	 */
 	public void setFinalCost(double finalCost) {
 		this.finalCost = finalCost;
+	}
+
+
+	/**
+	 * @return the expectedCost
+	 */
+	public double getExpectedCost() {
+		return expectedCost;
+	}
+
+
+	/**
+	 * @param expectedCost the expectedCost to set
+	 */
+	public void setExpectedCost(double expectedCost) {
+		this.expectedCost = expectedCost;
 	}
 
 
@@ -215,34 +234,34 @@ public class Event {
 
 
 	/**
-	 * @return the nextProbability_Successful
+	 * @return the nextProbabilitySuccessful_left
 	 */
-	public double getNextProbability_Successful() {
+	public double getNextProbabilitySuccessful_left() {
 		return nextProbabilitySuccessful_left;
 	}
 
 
 	/**
-	 * @param nextProbability_Successful the nextProbability_Successful to set
+	 * @param nextProbabilitySuccessful_left the nextProbabilitySuccessful_left to set
 	 */
-	public void setNextProbability_Successful(double nextProbability_Successful) {
-		this.nextProbabilitySuccessful_left = nextProbability_Successful;
+	public void setNextProbabilitySuccessful_left(double nextProbabilitySuccessful_left) {
+		this.nextProbabilitySuccessful_left = nextProbabilitySuccessful_left;
 	}
 
 
 	/**
-	 * @return the nextProbability_Failed
+	 * @return the nextProbabilityFailed_right
 	 */
-	public double getNextProbability_Failed() {
+	public double getNextProbabilityFailed_right() {
 		return nextProbabilityFailed_right;
 	}
 
 
 	/**
-	 * @param nextProbability_Failed the nextProbability_Failed to set
+	 * @param nextProbabilityFailed_right the nextProbabilityFailed_right to set
 	 */
-	public void setNextProbability_Failed(double nextProbability_Failed) {
-		this.nextProbabilityFailed_right = nextProbability_Failed;
+	public void setNextProbabilityFailed_right(double nextProbabilityFailed_right) {
+		this.nextProbabilityFailed_right = nextProbabilityFailed_right;
 	}
 
 
@@ -292,47 +311,7 @@ public class Event {
 	public void setPreviousEvent(Event previousEvent) {
 		this.previousEvent = previousEvent;
 	}
-	
-	
 
-	
-	
-	
-	/**
-	 * Adjusts the links and the corresponding probabilities
-	 * @param parent
-	 */
-	public void addPreviousEvent (Event parent) {
-		
-		this.previousEvent = parent;
-		
-		if (this.testResult == 1) {
-			
-			parent.left_nextSuccessfulTestResult = this;
-			this.probability = parent.nextProbabilitySuccessful_left;
-		}
-		
-		else if (this.testResult == 0) {
-			
-			parent.right_nextFailedTestResult = this;
-			this.probability = parent.nextProbabilityFailed_right;
-		}
-	}
-	
-	
-	/**
-	 * Adjusts the links and the corresponding probabilities
-	 * @param child
-	 */
-	public void addNextEvent (Event child) {
-		
-		if (child.testResult == 1) {
-			
-			this.left_nextSuccessfulTestResult = child;
-			
-		}
-	}
-	
 	
 	/**
 	 * 
