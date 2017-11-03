@@ -19,19 +19,14 @@ public class LocationPlanningModel extends IloCplex {
 	// Indices
 	private int i; // number of material types
 	private int f; // number of all facilities
-	private int fi;// number of internal facilities
-	private int g; // number of external facilities
-	private int s; // number of suppliers //TODO: stimmt das?
-	private int c; // number of customers //TODO: stimmt das?
 	private int t; // number of fiscal years in planning horizon
-	private int tau; //// TODO:??
 	private int n; // number of nations
 
 	// Sets
-	private int[] F; // F[f]: all(internal and external) facilities
+	//private int[] F; // F[f]: all(internal and external) facilities
 	private boolean[] IF; // IF[f] internal facilities
 	private boolean[] EF; // EF[f] external facilities
-	private int[] I; // I[i] all material types
+	//private int[] I; // I[i] all material types
 	private boolean[][] OM;// OM[f][i] outgoing material
 	private boolean[][] IM;// IM[f][i]incoming material
 	private boolean[][] Fn;// Fn[f][n] nations
@@ -53,12 +48,12 @@ public class LocationPlanningModel extends IloCplex {
 	private int API; // TODO: one material from set i pi
 	private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
 	private double[][] capacityExpansionAmount;// capacityExpansionAmount[f][t] q_ft
-	private int planninghorizonLPM; // T
+
 
 	// Transfer parameter
 	private int remainingTimeOfClinicalTrials;// T*-t* delta_t*
 	private double discountfactor;
-	private double capacityDemand;
+	//private double capacityDemand;
 	private int yearsToBuildPrimaryFacility;
 	private double yearsToBuildSecondaryFacility;
 	private double setupCostPrimaryFacility;
@@ -92,7 +87,7 @@ public class LocationPlanningModel extends IloCplex {
 	private IloLinearNumExpr noDoubleOccupationOfFacilities = linearNumExpr();
 	private IloLinearNumExpr capacityExpansionOnlyIfPlanned = linearNumExpr();
 	private IloLinearNumExpr minimumExpansion = linearNumExpr();
-	private IloLinearNumExpr expansionSize = linearNumExpr();
+	//private IloLinearNumExpr expansionSize = linearNumExpr();
 	private IloLinearNumExpr availableCapacity = linearNumExpr();
 	private IloLinearNumExpr massbalanceEquation1 = linearNumExpr();
 	private IloLinearNumExpr massbalanceEquation2 = linearNumExpr();
@@ -113,11 +108,7 @@ public class LocationPlanningModel extends IloCplex {
 		// Indices
 		i = datainstanz.getI();
 		f = datainstanz.getF();
-		g = datainstanz.getG();
-		s = datainstanz.getS();
-		c = datainstanz.getC();
 		t = datainstanz.getT();
-		tau = datainstanz.getTau();
 		n = datainstanz.getN();
 
 		// Sets
@@ -139,12 +130,12 @@ public class LocationPlanningModel extends IloCplex {
 		this.API = datainstanz.getAPI();
 		this.materialCoefficient = datainstanz.getMaterialCoefficient();
 		this.capacityExpansionAmount = datainstanz.getCapacityExpansionAmount();
-		this.planninghorizonLPM = datainstanz.getPlanninghorizonLPM();
+		
 
 		// Transfer parameter
 		this.remainingTimeOfClinicalTrials = datainstanz.getRemainingTimeOfClinicalTrials();
 		this.discountfactor = datainstanz.getParameter_discountFactor();
-		this.capacityDemand = datainstanz.getParameter_capacityDemand();
+		//this.capacityDemand = datainstanz.getParameter_capacityDemand();
 		this.yearsToBuildPrimaryFacility = datainstanz.getParameter_yearsToBuildPrimaryFacilities();
 		this.yearsToBuildSecondaryFacility = datainstanz.getParameter_yearsToBuildSecondaryFacilities();
 		this.setupCostPrimaryFacility = datainstanz.getParameter_setupCostPrimaryFacility();
@@ -214,7 +205,6 @@ public class LocationPlanningModel extends IloCplex {
 		this.addConstraintDepreciationCharge();
 		// 16th constraint
 		this.addConstraintTaxableIncome();
-		// TODO:nächste Nebenbedingungen
 
 		String path = "./logs/model.lp";
 		exportModel(path);
@@ -437,7 +427,6 @@ public class LocationPlanningModel extends IloCplex {
 	 * IloLinearNumExpr one = linearNumExpr(); one.setConstant(1);
 	 * 
 	 * 
-	 * // TODO: funktioniert noch nicht
 	 * 
 	 * 
 	 * 
@@ -599,7 +588,7 @@ public class LocationPlanningModel extends IloCplex {
 					for (int k = 0; k < tau1; k++) {
 
 						this.lowerLimitForProductionPF.addTerm(this.lowerLimitProductionAPI[i],
-								this.constructionStartPrimaryFacility[i][tau]);
+								this.constructionStartPrimaryFacility[i][k]);
 
 					}
 
@@ -612,7 +601,7 @@ public class LocationPlanningModel extends IloCplex {
 					for (int k = 0; k < tau2; k++) {
 
 						this.lowerLimitForProductionSF.addTerm(this.lowerLimitProductionAPI[i],
-								this.constructionStartSecondaryFacility[i][tau]);
+								this.constructionStartSecondaryFacility[i][k]);
 
 					}
 					this.lowerLimitForProductionSUM.add(this.lowerLimitForProductionSF);
