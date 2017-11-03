@@ -502,6 +502,29 @@ public class LocationPlanningModel extends IloCplex {
 			if (IF[i]) {
 				for (int j = 0; j < this.t; j++) {
 
+					
+						
+					this.availableCapacity.addTerm(1,this.availableProductionCapacity[i][j-1]);
+					
+					this.availableCapacity.addTerm(this.lowerLimitExpansionSize[i],
+								this.constructionStartPrimaryFacility[i][j-this.yearsToBuildPrimaryFacility]);
+					this.availableCapacity.addTerm(this.lowerLimitExpansionSize[i],
+							this.constructionStartSecondaryFacility[i][j-(int)this.yearsToBuildSecondaryFacility]);	
+					
+					this.availableCapacity.addTerm(1, this.deltaCapacityExpansion[i][j-this.yearsToBuildPrimaryFacility]);
+				
+
+						//TODO: passt noch nicht!!!! Unterscheidung zwischen primary und secondary notwendig!
+
+					
+					addEq(this.availableCapacity, this.availableProductionCapacity[i][j]);
+				}
+			}
+		}
+		/*for (int i = 0; i < this.f; i++) {
+			if (IF[i]) {
+				for (int j = 0; j < this.t; j++) {
+
 					int tau1 = this.t - this.yearsToBuildPrimaryFacility;
 					if (tau1 < 0) {
 						tau1 = 0;
@@ -527,7 +550,7 @@ public class LocationPlanningModel extends IloCplex {
 					addEq(this.availableCapacity, this.availableProductionCapacity[i][j]);
 				}
 			}
-		}
+		}*/
 
 	}
 
