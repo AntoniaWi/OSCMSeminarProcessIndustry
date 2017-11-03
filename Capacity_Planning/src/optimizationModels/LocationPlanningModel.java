@@ -47,8 +47,7 @@ public class LocationPlanningModel extends IloCplex {
 	private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
 	private int API; // TODO: one material from set i pi
 	private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
-	private double[][] capacityExpansionAmount;// capacityExpansionAmount[f][t] q_ft//TODO:Variable?
-
+	
 
 	// Transfer parameter
 	private int remainingTimeOfClinicalTrials;// T*-t* delta_t*
@@ -76,6 +75,7 @@ public class LocationPlanningModel extends IloCplex {
 	private IloNumVar[] capitalExpenditure;
 	private IloNumVar[][] grossIncome;
 	private IloNumVar[][] deltaCapacityExpansion;
+	private IloNumVar[][] capacityExpansionAmount;
 
 	private IloIntVar[][] constructionStartPrimaryFacility;
 	private IloIntVar[][] constructionStartSecondaryFacility;
@@ -131,7 +131,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.lowerLimitProductionAPI = datainstanz.getLowerLimitProductionAPI();
 		this.API = datainstanz.getAPI();
 		this.materialCoefficient = datainstanz.getMaterialCoefficient();
-		this.capacityExpansionAmount = datainstanz.getCapacityExpansionAmount();
+		
 		
 
 		// Transfer parameter
@@ -508,11 +508,12 @@ public class LocationPlanningModel extends IloCplex {
 					}
 					for (int k = 0; k < tau1; k++) {
 
+						//TODO: nicht mehr linear!!
 						this.availableCapacity.addTerm(this.capacityExpansionAmount[i][k],
 								this.constructionStartPrimaryFacility[i][k]);
-
+						
 					}
-
+						//TODO: nicht mehr linear!!
 					double tau2 = this.t - this.yearsToBuildSecondaryFacility;// TODO: oder zu int casten?
 					if (tau2 < 0) {
 						tau2 = 0;
