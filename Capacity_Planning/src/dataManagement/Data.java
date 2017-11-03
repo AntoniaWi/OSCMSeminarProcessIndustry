@@ -69,7 +69,7 @@ public class Data {
     private double []lowerLimitExpansionSize;//lowerLimitExpansionSize[f]				g_L_f
     private double []initialCapacity;//initialCapacity[f] at time zero				Q_f0
     private double []upperLimitCapacity;//upperLimitCapacity[f]						Q_U_f
-    private double [][][]supply;//supply[i][s][t]										S_ist
+    private double [][]supply;//supply[i][s]									S_ist
     private double [][]corporateTax;//corporateTax[n][t]								TR_nt
     private double []lowerLimitProductionAPI;//lowerLimitProductionAPI[f]				X_L_f
     private int API; //TODO: one material from set i									pi
@@ -846,7 +846,7 @@ public class Data {
 	/**
 	 * @return the supply
 	 */
-	public double[][][] getSupply() {
+	public double[][] getSupply() {
 		return supply;
 	}
 
@@ -854,7 +854,7 @@ public class Data {
 	/**
 	 * @param supply the supply to set
 	 */
-	public void setSupply(double[][][] supply) {
+	public void setSupply(double[][] supply) {
 		this.supply = supply;
 	}
 

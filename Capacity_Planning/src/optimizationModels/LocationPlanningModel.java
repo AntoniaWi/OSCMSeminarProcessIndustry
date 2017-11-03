@@ -28,11 +28,11 @@ public class LocationPlanningModel extends IloCplex {
 	private int n; // number of nations
 
 	// Sets
-	private int[] F; // F[fa]: all(internal and external) facilities
-	private boolean[] IF; // IF[fa] internal facilities
-	private boolean[] EF; // EF[fa] external facilities
-	private boolean[] OM;// OM[fa] outgoing material
-	private boolean[] IM;// IM[fa] incoming material
+	private int[] F; // F[f]: all(internal and external) facilities
+	private boolean[] IF; // IF[f] internal facilities
+	private boolean[] EF; // EF[f] external facilities
+	private boolean[] OM;// OM[f] outgoing material
+	private boolean[] IM;// IM[f] incoming material
 
 	// Daten
 	private double[] capitalBudget;// capitalBudget[t] CB_t
@@ -46,7 +46,7 @@ public class LocationPlanningModel extends IloCplex {
 	private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
 	// private double[] initialCapacity;// initialCapacity[f] at time zero Q_f0
 	private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
-	private double[][][] supply;// supply[i][s][t] S_ist
+	private double[][] supply;// supply[i][s] S_ist
 	private double[][] corporateTax;// corporateTax[n][t] TR_nt
 	private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
 	private int API; // TODO: one material from set i pi
@@ -229,12 +229,12 @@ public class LocationPlanningModel extends IloCplex {
 				if (IF[i]) {
 					constructionStartPrimaryFacility[i][j] = intVar(0, 1);
 					constructionStartSecondaryFacility[i][j] = intVar(0, 1);
-				} // TODO: sonst sollen die nicht existieren?
+				} 
 			}
 		}
 
 	}
-
+	//add Objective 
 	private void addObjective() throws IloException {
 
 		IloLinearNumExpr expr = linearNumExpr();
@@ -326,8 +326,9 @@ public class LocationPlanningModel extends IloCplex {
 					this.limitationOfConstructionStartsSecondaryFacilities.addTerm(1,
 							this.constructionStartSecondaryFacility[i][j]);
 				}
+				addLe(this.limitationOfConstructionStartsSecondaryFacilities, 1);
 			}
-			addLe(this.limitationOfConstructionStartsSecondaryFacilities, 1);
+			
 		}
 
 	}
@@ -575,16 +576,34 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	// TODO: noch nicht gemacht
 	private void addConstraintSupplyAndDemand() throws IloException {
 
 		this.demandAndSupply.clear();
 
 		for (int i = 0; i < this.f; i++) {// f
 			if (EF[i]) {
-				for (int j = 0; j < this.t; j++) {
-
-					addLe(this.consumedOrProducedAPI[i][j], this.availableProductionCapacity[i][j]);
+				for (int j = 0; j < this.t; j++) {//t
+					for (int k=0;k<this.i;k++) {//material i
+						if(OM[i]||IM[i]) {
+							
+							for (int l=0;l<this.f;l++) {
+								if(IF[l]&&OM[l]) {//facility to customer
+									demandAndSupply.addTerm(1, this.shippedMaterialUnitsFacilityToCustomer[k][l][i][j]);
+									
+								}
+								if(IF[l]&&IM[l]) {//supplier to facility
+									demandAndSupply.addTerm(1, this.shippedMaterialUnitsSupplierToFacility[k][i][l][j]);
+									
+								}
+							}
+							double sumDS = this.supply[k][i]+this.demand[k][i][j];
+							
+							addLe(demandAndSupply, sumDS);
+							
+						}
+						
+					}
+					
 				}
 			}
 		}
@@ -632,7 +651,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * @throws IloException
 	 */
 	private void addConstraintBudgetConstraint() throws IloException {
-
+		double budgetUntilTau=0;
 		this.budget.clear();
 
 		for (int i = 0; i < this.t; i++) {
@@ -651,10 +670,12 @@ public class LocationPlanningModel extends IloCplex {
 						double variableCostSF = this.yearsToBuildSecondaryFacility
 								* this.variableProductionCostsSecondaryFacility;
 						this.budget.addTerm(variableCostSF, this.constructionStartSecondaryFacility[j][k]);
+						
+						budgetUntilTau=+this.capitalBudget[k];
 					}
 				}
 			}
-			addLe(this.budget, this.capitalExpenditure[i]);
+			addLe(this.budget,budgetUntilTau);
 		}
 	}
 
@@ -693,6 +714,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	// TODO:nächste Nebenbedingungen
+	
 	public void writeMatrix(int[] numbers) throws IloException {
 		String path = "./logs/model.lp";
 
