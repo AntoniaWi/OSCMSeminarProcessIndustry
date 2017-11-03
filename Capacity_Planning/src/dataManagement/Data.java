@@ -65,7 +65,7 @@ public class Data {
     private double []projectLife;//projectLife[t]										L_f
     private double variableProductionCostsPrimaryFacility;//							MC_p_f
     private double variableProductionCostsSecondaryFacility;//						MC_s_f
-    private double [][][][]unitSellingPrice;//unitSellingPrice[i][f][g][t]			P_ifgt
+    private double [][]unitSellingPrice;//unitSellingPrice[i][f]					P_if
     private double []lowerLimitExpansionSize;//lowerLimitExpansionSize[f]				g_L_f
     private double []initialCapacity;//initialCapacity[f] at time zero				Q_f0
     private double []upperLimitCapacity;//upperLimitCapacity[f]						Q_U_f
@@ -782,7 +782,7 @@ public class Data {
 	/**
 	 * @return the unitSellingPrice
 	 */
-	public double[][][][] getUnitSellingPrice() {
+	public double[][] getUnitSellingPrice() {
 		return unitSellingPrice;
 	}
 
@@ -790,7 +790,7 @@ public class Data {
 	/**
 	 * @param unitSellingPrice the unitSellingPrice to set
 	 */
-	public void setUnitSellingPrice(double[][][][] unitSellingPrice) {
+	public void setUnitSellingPrice(double[][] unitSellingPrice) {
 		this.unitSellingPrice = unitSellingPrice;
 	}
 

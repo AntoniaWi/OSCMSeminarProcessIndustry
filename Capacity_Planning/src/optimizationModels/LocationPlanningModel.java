@@ -42,7 +42,7 @@ public class LocationPlanningModel extends IloCplex {
 	private double[] projectLife;// projectLife[t] L_f
 	private double variableProductionCostsPrimaryFacility;// MC_p_f
 	private double variableProductionCostsSecondaryFacility;// MC_s_f
-	private double[][][][] unitSellingPrice;// unitSellingPrice[i][f][g][t] P_ifgt
+	private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
 	private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
 	// private double[] initialCapacity;// initialCapacity[f] at time zero Q_f0
 	private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
@@ -495,6 +495,22 @@ public class LocationPlanningModel extends IloCplex {
 	private void addConstraintsMassBalanceEquation() throws IloException {
 
 		this.massbalanceEquation1.clear();
+		
+		for(int i = 0; i < this.f; i++) {
+			if(IF[i]) {
+				for (int j = 0; j < this.i; j++) {
+					if(OM[i]||IM[i]) {
+						for(int k = 0; k < this.t; t++) {
+							
+							double Factor1 = this.materialCoefficient[j][i] * this.consumedOrProducedMaterial[j][i][k];
+							addEq(this.massbalanceEquation1,this.consumedOrProducedAPI[i][k]);
+						}
+
+					}
+				}
+			}
+		}
+		
 		this.massbalanceEquation2.clear();
 		this.massbalanceEquation3.clear();
 
@@ -584,7 +600,7 @@ public class LocationPlanningModel extends IloCplex {
 			if (EF[i]) {
 				for (int j = 0; j < this.t; j++) {//t
 					for (int k=0;k<this.i;k++) {//material i
-						if(OM[i]||IM[i]) {
+						if (OM[i]||IM[i]) {
 							
 							for (int l=0;l<this.f;l++) {
 								if(IF[l]&&OM[l]) {//facility to customer
@@ -626,7 +642,7 @@ public class LocationPlanningModel extends IloCplex {
 							this.constructionStartPrimaryFacility[j][i]);
 
 					double variableCostPF = this.yearsToBuildPrimaryFacility
-							* this.variableProductionCostsPrimaryFacility;
+							* this.variableProductionCostsPrimaryFacility;//TODO: MC mit b verwechselt
 					this.capitalExpenditureConstraint.addTerm(variableCostPF,
 							this.constructionStartPrimaryFacility[j][i]);
 
@@ -687,6 +703,23 @@ public class LocationPlanningModel extends IloCplex {
 	private void addConstraintGrossIncome() throws IloException {
 
 		this.grossIncome.clear();
+		
+		for (int i = 0; i < this.t; i++) {
+			for (int j = 0; j < this.f; j++) {
+				if (IF(f)) {
+					
+					this.grossIncome.addTerm(-this.manufact, arg1);
+					
+					for (int k = 0; k < i; k++) {
+						if (OM[f]) {
+							this.grossIncome.addTerm(this.unitSellingPrice[k][j], this.shippedMaterialUnitsFacilityToCustomer[k][j][][i]);
+							
+						}
+					}
+				}
+				
+			}
+		}
 
 	}
 
