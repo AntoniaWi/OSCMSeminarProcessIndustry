@@ -47,7 +47,7 @@ public class LocationPlanningModel extends IloCplex {
 	private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
 	private int API; // TODO: one material from set i pi
 	private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
-	private double[][] capacityExpansionAmount;// capacityExpansionAmount[f][t] q_ft
+	private double[][] capacityExpansionAmount;// capacityExpansionAmount[f][t] q_ft//TODO:Variable?
 
 
 	// Transfer parameter
@@ -75,6 +75,7 @@ public class LocationPlanningModel extends IloCplex {
 	private IloNumVar[][] consumedOrProducedAPI;
 	private IloNumVar[] capitalExpenditure;
 	private IloNumVar[][] grossIncome;
+	private IloNumVar[][] deltaCapacityExpansion;
 
 	private IloIntVar[][] constructionStartPrimaryFacility;
 	private IloIntVar[][] constructionStartSecondaryFacility;
@@ -87,7 +88,8 @@ public class LocationPlanningModel extends IloCplex {
 	private IloLinearNumExpr noDoubleOccupationOfFacilities = linearNumExpr();
 	private IloLinearNumExpr capacityExpansionOnlyIfPlanned = linearNumExpr();
 	private IloLinearNumExpr minimumExpansion = linearNumExpr();
-	//private IloLinearNumExpr expansionSize = linearNumExpr();
+	private IloLinearNumExpr expansionSize1 = linearNumExpr();
+	private IloLinearNumExpr expansionSize2 = linearNumExpr();
 	private IloLinearNumExpr availableCapacity = linearNumExpr();
 	private IloLinearNumExpr massbalanceEquation1 = linearNumExpr();
 	private IloLinearNumExpr massbalanceEquation2 = linearNumExpr();
@@ -184,7 +186,7 @@ public class LocationPlanningModel extends IloCplex {
 		// 5th constraint
 		this.addConstraintMinimumExpansion();
 		// 6th constraint
-		// this.addConstraintExpansionSize();
+		this.addConstraintExpansionSize();
 		// 7th constraint
 		this.addConstraintAvailableCapacity();
 		// 8th constraint
@@ -376,7 +378,7 @@ public class LocationPlanningModel extends IloCplex {
 		for (int i = 0; i < this.f; i++) {
 			if (IF[i]) {
 				for (int j = 0; j < this.t; j++) {
-					double freecapacity = this.upperLimitCapacity[i];
+					double freecapacity = this.upperLimitCapacity[i];//TODO: braucht man das noch?
 
 					this.capacityExpansionOnlyIfPlanned.addTerm(freecapacity,
 							this.constructionStartPrimaryFacility[i][j]);
@@ -420,6 +422,41 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
+	private void addConstraintExpansionSize() throws IloException {
+		
+		this.expansionSize1.clear();
+		this.expansionSize2.clear();
+		
+		for (int i = 0; i < this.t; i++) {
+			for (int j = 0; j < this.f; j++) {
+				if(IF[j]) {
+					
+					this.expansionSize1.addTerm(this.lowerLimitExpansionSize[j], this.constructionStartPrimaryFacility[j][i]);
+					this.expansionSize1.addTerm(this.lowerLimitExpansionSize[j], this.constructionStartSecondaryFacility[j][i]);
+					this.expansionSize1.addTerm(1, this.deltaCapacityExpansion[j][i]);
+					
+					addEq(this.expansionSize1, this.capacityExpansionAmount[j][i]);
+				}
+			}
+		}
+		
+		for (int i = 0; i < this.t; i++) {
+			for (int j = 0; j < this.f; j++) {
+				if(IF[j]) {
+				
+					double expansionBeyondMin = this.upperLimitCapacity[j] - this.lowerLimitExpansionSize[j];
+					this.expansionSize2.addTerm(expansionBeyondMin, this.constructionStartPrimaryFacility[j][i]);
+					this.expansionSize2.addTerm(expansionBeyondMin, this.constructionStartSecondaryFacility[j][i]);
+				
+					addGe(this.expansionSize2, this.deltaCapacityExpansion[j][i]);
+				}
+					
+			}
+		}
+		
+	}
+	
+	
 	/*
 	 * private void addConstraintExpansionSize() throws IloException {
 	 * 
