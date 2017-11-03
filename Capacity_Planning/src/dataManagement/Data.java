@@ -59,18 +59,17 @@ public class Data {
     // Daten
     private double [] capitalBudget;//capitalBudget[t]								CB_t
     private double [] capitalExpenditure ; // capitalExpenditure[t]					CE_t
-	private double [][][][]costInsuranceFreight; //costInsuranceFreight[i][s][f][t]	CIF_isft
+	private double [][][]costInsuranceFreight; //costInsuranceFreight[i][s][f]	CIF_isf
     private double [][][]demand;//demand[i][c][t]										D_ict
-    private double [][][][]importDuty[][][][]; //importDuty[i][s][f][t]				ID_isft
+    private double [][]importDuty; //importDuty[s][f]									ID_sf
     private double []projectLife;//projectLife[t]										L_f
-    private double variableProductionCostsPrimaryFacility;//							MC_p_f
-    private double variableProductionCostsSecondaryFacility;//						MC_s_f
-    private double [][]unitSellingPrice;//unitSellingPrice[i][f]					P_if
+    private double []variableProductionCosts;//										MC_f
+    private double [][]unitSellingPrice;//unitSellingPrice[i][f]						P_if
     private double []lowerLimitExpansionSize;//lowerLimitExpansionSize[f]				g_L_f
     private double []initialCapacity;//initialCapacity[f] at time zero				Q_f0
     private double []upperLimitCapacity;//upperLimitCapacity[f]						Q_U_f
-    private double [][]supply;//supply[i][s]									S_ist
-    private double [][]corporateTax;//corporateTax[n][t]								TR_nt
+    private double [][]supply;//supply[i][s]											S_is
+    private double []corporateTax;//corporateTax[n]									TR_n
     private double []lowerLimitProductionAPI;//lowerLimitProductionAPI[f]				X_L_f
     private int API; //TODO: one material from set i									pi
     private double [][]materialCoefficient; //materialCoeeficient[i][f]				sigma_if
@@ -686,7 +685,7 @@ public class Data {
 	/**
 	 * @return the costInsuranceFreight
 	 */
-	public double[][][][] getCostInsuranceFreight() {
+	public double[][][] getCostInsuranceFreight() {
 		return costInsuranceFreight;
 	}
 
@@ -694,7 +693,7 @@ public class Data {
 	/**
 	 * @param costInsuranceFreight the costInsuranceFreight to set
 	 */
-	public void setCostInsuranceFreight(double[][][][] costInsuranceFreight) {
+	public void setCostInsuranceFreight(double[][][] costInsuranceFreight) {
 		this.costInsuranceFreight = costInsuranceFreight;
 	}
 
@@ -718,7 +717,7 @@ public class Data {
 	/**
 	 * @return the importDuty
 	 */
-	public double[][][][][][][][] getImportDuty() {
+	public double[][] getImportDuty() {
 		return importDuty;
 	}
 
@@ -726,7 +725,7 @@ public class Data {
 	/**
 	 * @param importDuty the importDuty to set
 	 */
-	public void setImportDuty(double[][][][][][][][] importDuty) {
+	public void setImportDuty(double[][]importDuty) {
 		this.importDuty = importDuty;
 	}
 
@@ -750,33 +749,18 @@ public class Data {
 	/**
 	 * @return the variableProductionCostsPrimaryFacility
 	 */
-	public double getVariableProductionCostsPrimaryFacility() {
-		return variableProductionCostsPrimaryFacility;
+	public double [] getVariableProductionCosts() {
+		return variableProductionCosts;
 	}
 
 
 	/**
 	 * @param variableProductionCostsPrimaryFacility the variableProductionCostsPrimaryFacility to set
 	 */
-	public void setVariableProductionCostsPrimaryFacility(double variableProductionCostsPrimaryFacility) {
-		this.variableProductionCostsPrimaryFacility = variableProductionCostsPrimaryFacility;
+	public void setVariableProductionCosts(double [] variableProductionCosts) {
+		this.variableProductionCosts = variableProductionCosts;
 	}
 
-
-	/**
-	 * @return the variableProductionCostsSecondaryFacility
-	 */
-	public double getVariableProductionCostsSecondaryFacility() {
-		return variableProductionCostsSecondaryFacility;
-	}
-
-
-	/**
-	 * @param variableProductionCostsSecondaryFacility the variableProductionCostsSecondaryFacility to set
-	 */
-	public void setVariableProductionCostsSecondaryFacility(double variableProductionCostsSecondaryFacility) {
-		this.variableProductionCostsSecondaryFacility = variableProductionCostsSecondaryFacility;
-	}
 
 
 	/**
@@ -862,7 +846,7 @@ public class Data {
 	/**
 	 * @return the corporateTax
 	 */
-	public double[][] getCorporateTax() {
+	public double[] getCorporateTax() {
 		return corporateTax;
 	}
 
@@ -870,7 +854,7 @@ public class Data {
 	/**
 	 * @param corporateTax the corporateTax to set
 	 */
-	public void setCorporateTax(double[][] corporateTax) {
+	public void setCorporateTax(double[] corporateTax) {
 		this.corporateTax = corporateTax;
 	}
 

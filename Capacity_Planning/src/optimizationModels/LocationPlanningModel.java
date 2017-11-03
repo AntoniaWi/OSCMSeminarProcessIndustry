@@ -31,23 +31,24 @@ public class LocationPlanningModel extends IloCplex {
 	private int[] F; // F[f]: all(internal and external) facilities
 	private boolean[] IF; // IF[f] internal facilities
 	private boolean[] EF; // EF[f] external facilities
-	private boolean[] OM;// OM[f] outgoing material
-	private boolean[] IM;// IM[f] incoming material
+	private int[] I; // I[i] all material types
+	private boolean[][] OM;// OM[f][i] outgoing material
+	private boolean[][] IM;// IM[f][i]incoming material
+	private boolean[][] Fn;// Fn[f][n] nations
 
 	// Daten
 	private double[] capitalBudget;// capitalBudget[t] CB_t
-	private double[][][][] costInsuranceFreight; // costInsuranceFreight[i][s][f][t] CIF_isft
+	private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f] CIF_isf
 	private double[][][] demand;// demand[i][c][t] D_ict
-	private double[][][][] importDuty[][][][]; // importDuty[i][s][f][t] ID_isft
+	private double[][] importDuty; // importDuty[s][f] ID_isft
 	private double[] projectLife;// projectLife[t] L_f
-	private double variableProductionCostsPrimaryFacility;// MC_p_f
-	private double variableProductionCostsSecondaryFacility;// MC_s_f
+	private double[] variableProductionCosts;// MC_f
 	private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
 	private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
 	// private double[] initialCapacity;// initialCapacity[f] at time zero Q_f0
 	private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
 	private double[][] supply;// supply[i][s] S_ist
-	private double[][] corporateTax;// corporateTax[n][t] TR_nt
+	private double[] corporateTax;// corporateTax[n]TR_n
 	private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
 	private int API; // TODO: one material from set i pi
 	private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
@@ -78,6 +79,7 @@ public class LocationPlanningModel extends IloCplex {
 	private IloNumVar[][][] consumedOrProducedMaterial;
 	private IloNumVar[][] consumedOrProducedAPI;
 	private IloNumVar[] capitalExpenditure;
+	private IloNumVar[][] grossIncome;
 
 	private IloIntVar[][] constructionStartPrimaryFacility;
 	private IloIntVar[][] constructionStartSecondaryFacility;
@@ -102,7 +104,7 @@ public class LocationPlanningModel extends IloCplex {
 	private IloLinearNumExpr demandAndSupply = linearNumExpr();
 	private IloLinearNumExpr capitalExpenditureConstraint = linearNumExpr();
 	private IloLinearNumExpr budget = linearNumExpr();
-	private IloLinearNumExpr grossIncome = linearNumExpr();
+	private IloLinearNumExpr grossIncomeConstraint = linearNumExpr();
 	private IloLinearNumExpr depreciationChargePrimaryFacilities = linearNumExpr();
 	private IloLinearNumExpr depreciationChargeSecondaryFacilities = linearNumExpr();
 	private IloLinearNumExpr taxableIncomeConstraint = linearNumExpr();
@@ -126,8 +128,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.demand = datainstanz.getDemand();
 		this.importDuty = datainstanz.getImportDuty();
 		this.projectLife = datainstanz.getProjectLife();
-		this.variableProductionCostsPrimaryFacility = datainstanz.getVariableProductionCostsPrimaryFacility();
-		this.variableProductionCostsSecondaryFacility = datainstanz.getVariableProductionCostsSecondaryFacility();
+		this.variableProductionCosts = datainstanz.getVariableProductionCosts();
 		this.unitSellingPrice = datainstanz.getUnitSellingPrice();
 		this.lowerLimitExpansionSize = datainstanz.getLowerLimitExpansionSize();
 		// this.initialCapacity = datainstanz.getInitialCapacity();
@@ -207,7 +208,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.addConstraintCapitalExpenditure();
 		// 13th constraint
 		this.addConstraintBudgetConstraint();
-		//14th constraint
+		// 14th constraint
 		this.addConstraintGrossIncome();
 		// 15th constraint
 		this.addConstraintDepreciationCharge();
@@ -229,35 +230,51 @@ public class LocationPlanningModel extends IloCplex {
 				if (IF[i]) {
 					constructionStartPrimaryFacility[i][j] = intVar(0, 1);
 					constructionStartSecondaryFacility[i][j] = intVar(0, 1);
-				} 
+				}
 			}
 		}
 
 	}
-	//add Objective 
+
+	// add Objective
 	private void addObjective() throws IloException {
 
 		IloLinearNumExpr expr = linearNumExpr();
-		IloLinearNumExpr obj = linearNumExpr();
 
-		for (int i = 0; i < this.f; i++) {
-
-			for (int j = 0; j < this.t; j++) {
-
-				// expr.addTerm(1/Math.pow(1+this.discountfactor,j) );
-
+		for (int i = 0; i < this.t; i++) {
+			double discountTerm = 1 / Math.pow(1 + this.discountfactor, t);
+			for (int j = 0; j < this.f; j++) {
+				if (IF[j]) {
+					expr.addTerm(discountTerm, this.grossIncome[j][i]);
+					
+				}
 			}
+		}
+		for (int i = 0; i < this.t; i++) {
+			double discountTerm = 1 / Math.pow(1 + this.discountfactor, t);
+			for (int j = 0; j < this.f; j++) {
+				if (IF[j]) {
+					
+					expr.addTerm(-discountTerm, this.capitalExpenditure[i]);
+				}
+			}
+		}
+		for (int i = 0; i < this.t; i++) {
+			double discountTerm = 1 / Math.pow(1 + this.discountfactor, t);
+			for (int k = 0; k < this.n; k++) {
 
+				double taxHelp = -discountTerm * this.corporateTax[k];
+				expr.addTerm(taxHelp, this.taxableIncome[k][i]);
+			}
 		}
 
 		objective = addMaximize();
-
 		objective.setExpr(expr);
 		System.out.println(objective);
 
 	}
 
-	// Nebenbedingungen
+	// constraints
 
 	/**
 	 * 1st constraint: choose exactly one facility as primary facility/ Choose at
@@ -328,7 +345,7 @@ public class LocationPlanningModel extends IloCplex {
 				}
 				addLe(this.limitationOfConstructionStartsSecondaryFacilities, 1);
 			}
-			
+
 		}
 
 	}
@@ -495,26 +512,48 @@ public class LocationPlanningModel extends IloCplex {
 	private void addConstraintsMassBalanceEquation() throws IloException {
 
 		this.massbalanceEquation1.clear();
-		
-		for(int i = 0; i < this.f; i++) {
-			if(IF[i]) {
-				for (int j = 0; j < this.i; j++) {
-					if(OM[i]||IM[i]) {
-						for(int k = 0; k < this.t; t++) {
-							
-							double Factor1 = this.materialCoefficient[j][i] * this.consumedOrProducedMaterial[j][i][k];
-							addEq(this.massbalanceEquation1,this.consumedOrProducedAPI[i][k]);
-						}
+		this.massbalanceEquation2.clear();
+		this.massbalanceEquation3.clear();
 
+		for (int i = 0; i < this.f; i++) {
+			if (IF[i]) {
+				for (int j = 0; j < this.i; j++) {
+					if (OM[i][j] || IM[i][j]) {
+						for (int k = 0; k < this.t; t++) {
+
+							massbalanceEquation1.addTerm(this.materialCoefficient[this.API - 1][i],
+									this.consumedOrProducedMaterial[j][i][k]);
+							massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
+									this.consumedOrProducedAPI[i][k]);
+
+							// First equation
+							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
+
+							for (int m = 0; m < this.f; m++) {
+								if (IF[m]) {
+									for (int l = 0; l < this.i; l++) {
+										if (OM[m][l] || IM[m][l]) {
+											if (OM[m][l]) {
+												massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+														this.shippedMaterialUnitsSupplierToFacility[l][m][i][k]);
+											}
+
+											if (IM[m][l]) {
+
+												massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+														this.shippedMaterialUnitsFacilityToCustomer[l][i][m][k]);
+											}
+										}
+									}
+								}
+							}
+							// Second equation
+							addEq(this.massbalanceEquation2, this.massbalanceEquation3);
+						}
 					}
 				}
 			}
 		}
-		
-		this.massbalanceEquation2.clear();
-		this.massbalanceEquation3.clear();
-
-		// TODO: Wie umsetzen mit Sets OM IM?
 
 	}
 
@@ -560,8 +599,7 @@ public class LocationPlanningModel extends IloCplex {
 					for (int k = 0; k < tau1; k++) {
 
 						this.lowerLimitForProductionPF.addTerm(this.lowerLimitProductionAPI[i],
-								this.constructionStartPrimaryFacility[i][tau]);// TODO:Darf man die Summe
-																				// ausmultiplizieren?
+								this.constructionStartPrimaryFacility[i][tau]);
 
 					}
 
@@ -574,8 +612,7 @@ public class LocationPlanningModel extends IloCplex {
 					for (int k = 0; k < tau2; k++) {
 
 						this.lowerLimitForProductionSF.addTerm(this.lowerLimitProductionAPI[i],
-								this.constructionStartSecondaryFacility[i][tau]);// TODO:Darf man die Summe
-																					// ausmultiplizieren?
+								this.constructionStartSecondaryFacility[i][tau]);
 
 					}
 					this.lowerLimitForProductionSUM.add(this.lowerLimitForProductionSF);
@@ -598,28 +635,28 @@ public class LocationPlanningModel extends IloCplex {
 
 		for (int i = 0; i < this.f; i++) {// f
 			if (EF[i]) {
-				for (int j = 0; j < this.t; j++) {//t
-					for (int k=0;k<this.i;k++) {//material i
-						if (OM[i]||IM[i]) {
-							
-							for (int l=0;l<this.f;l++) {
-								if(IF[l]&&OM[l]) {//facility to customer
+				for (int j = 0; j < this.t; j++) {// t
+					for (int k = 0; k < this.i; k++) {// material i
+						if (OM[i][k] || IM[i][k]) {
+
+							for (int l = 0; l < this.f; l++) {
+								if (IF[l] && OM[l][k]) {// facility to customer
 									demandAndSupply.addTerm(1, this.shippedMaterialUnitsFacilityToCustomer[k][l][i][j]);
-									
+
 								}
-								if(IF[l]&&IM[l]) {//supplier to facility
+								if (IF[l] && IM[l][k]) {// supplier to facility
 									demandAndSupply.addTerm(1, this.shippedMaterialUnitsSupplierToFacility[k][i][l][j]);
-									
+
 								}
 							}
-							double sumDS = this.supply[k][i]+this.demand[k][i][j];
-							
+							double sumDS = this.supply[k][i] + this.demand[k][i][j];
+
 							addLe(demandAndSupply, sumDS);
-							
+
 						}
-						
+
 					}
-					
+
 				}
 			}
 		}
@@ -641,16 +678,14 @@ public class LocationPlanningModel extends IloCplex {
 					this.capitalExpenditureConstraint.addTerm(this.setupCostPrimaryFacility,
 							this.constructionStartPrimaryFacility[j][i]);
 
-					double variableCostPF = this.yearsToBuildPrimaryFacility
-							* this.variableProductionCostsPrimaryFacility;//TODO: MC mit b verwechselt
+					double variableCostPF = this.yearsToBuildPrimaryFacility * this.constructionCostPrimaryFacility;
 					this.capitalExpenditureConstraint.addTerm(variableCostPF,
 							this.constructionStartPrimaryFacility[j][i]);
 
 					this.capitalExpenditureConstraint.addTerm(this.setupCostSecondaryFacility,
 							this.constructionStartSecondaryFacility[j][i]);
 
-					double variableCostSF = this.yearsToBuildSecondaryFacility
-							* this.variableProductionCostsSecondaryFacility;
+					double variableCostSF = this.yearsToBuildSecondaryFacility * this.constructionCostSecondaryFacility;
 					this.capitalExpenditureConstraint.addTerm(variableCostSF,
 							this.constructionStartSecondaryFacility[j][i]);
 				}
@@ -667,31 +702,30 @@ public class LocationPlanningModel extends IloCplex {
 	 * @throws IloException
 	 */
 	private void addConstraintBudgetConstraint() throws IloException {
-		double budgetUntilTau=0;
+		double budgetUntilTau = 0;
 		this.budget.clear();
 
 		for (int i = 0; i < this.t; i++) {
 			for (int j = 0; j < this.f; j++) {
 				if (IF[i]) {
-					for (int k = 0; k < i; k++) {//t<tau
+					for (int k = 0; k < i; k++) {// t<tau
 						this.budget.addTerm(this.setupCostPrimaryFacility, this.constructionStartPrimaryFacility[j][k]);
 
-						double variableCostPF = this.yearsToBuildPrimaryFacility
-								* this.variableProductionCostsPrimaryFacility;
+						double variableCostPF = this.yearsToBuildPrimaryFacility * this.constructionCostPrimaryFacility;
 						this.budget.addTerm(variableCostPF, this.constructionStartPrimaryFacility[j][k]);
 
 						this.budget.addTerm(this.setupCostSecondaryFacility,
 								this.constructionStartSecondaryFacility[j][k]);
 
 						double variableCostSF = this.yearsToBuildSecondaryFacility
-								* this.variableProductionCostsSecondaryFacility;
+								* this.constructionCostSecondaryFacility;
 						this.budget.addTerm(variableCostSF, this.constructionStartSecondaryFacility[j][k]);
-						
-						budgetUntilTau=+this.capitalBudget[k];
+
+						budgetUntilTau = +this.capitalBudget[k];
 					}
 				}
 			}
-			addLe(this.budget,budgetUntilTau);
+			addLe(this.budget, budgetUntilTau);
 		}
 	}
 
@@ -702,22 +736,50 @@ public class LocationPlanningModel extends IloCplex {
 	 */
 	private void addConstraintGrossIncome() throws IloException {
 
-		this.grossIncome.clear();
-		
+		this.grossIncomeConstraint.clear();
+
 		for (int i = 0; i < this.t; i++) {
 			for (int j = 0; j < this.f; j++) {
-				if (IF(f)) {
-					
-					this.grossIncome.addTerm(-this.manufact, arg1);
-					
-					for (int k = 0; k < i; k++) {
-						if (OM[f]) {
-							this.grossIncome.addTerm(this.unitSellingPrice[k][j], this.shippedMaterialUnitsFacilityToCustomer[k][j][][i]);
-							
+				if (IF[j]) {
+
+					this.grossIncomeConstraint.addTerm(-this.variableProductionCosts[j],
+							this.consumedOrProducedAPI[j][i]);
+
+					for (int k = 0; k < this.i; k++) {
+						if (OM[j][k]) {
+
+							for (int m = 0; m < this.f; m++) {
+								for (int l = 0; l < this.i; l++) {
+									if (IM[m][l]) {
+										// System.out.println("Check gleiches Material: "+k+" und "+l+" ?");
+										this.grossIncomeConstraint.addTerm(this.unitSellingPrice[k][j],
+												this.shippedMaterialUnitsFacilityToCustomer[k][j][m][i]);
+
+									}
+
+								}
+							}
+						} else if (IM[j][k]) {
+
+							for (int m = 0; m < this.f; m++) {
+								for (int l = 0; l < this.i; l++) {
+									if (OM[m][l]) {
+										// System.out.println("Check gleiches Material: "+k+" und "+l+" ?");
+
+										double costCoefficient = this.costInsuranceFreight[k][m][j]
+												+ (this.costInsuranceFreight[k][m][j] * this.importDuty[m][j]);
+										this.grossIncomeConstraint.addTerm(-costCoefficient,
+												this.shippedMaterialUnitsSupplierToFacility[k][m][j][i]);
+
+									}
+
+								}
+							}
 						}
 					}
+					addEq(this.grossIncomeConstraint, this.grossIncome[j][i]);
 				}
-				
+
 			}
 		}
 
@@ -733,6 +795,84 @@ public class LocationPlanningModel extends IloCplex {
 		this.depreciationChargePrimaryFacilities.clear();
 		this.depreciationChargeSecondaryFacilities.clear();
 
+		// Primary Facilities
+		for (int i = 0; i < this.t; i++) {
+			for (int j = 0; j < this.f; j++) {
+				if (IF[i]) {
+					for (int k = 0; k < this.t; k++) {// construction start (tau)
+						double lowerBound = k + this.yearsToBuildPrimaryFacility;
+						double upperBound1 = k + this.yearsToBuildPrimaryFacility + this.projectLife[j];
+						double upperBound = 0;
+						if (upperBound1 < this.t) {
+							upperBound = upperBound1;
+						} else {
+							upperBound = this.t;
+						}
+
+						if (i >= lowerBound && i <= upperBound) {
+
+							double setupCostPF = this.setupCostPrimaryFacility / this.projectLife[j];
+							this.depreciationChargePrimaryFacilities.addTerm(setupCostPF,
+									this.constructionStartPrimaryFacility[j][k]);
+
+							double variableCostPF = this.yearsToBuildPrimaryFacility
+									* this.constructionCostPrimaryFacility / this.projectLife[j];
+							this.depreciationChargePrimaryFacilities.addTerm(variableCostPF,
+									this.constructionStartPrimaryFacility[j][k]);
+
+							addEq(this.depreciationChargePrimaryFacilities,
+									this.depreciationChargePrimaryFacility[j][k][i]);
+						}
+
+						else {
+							addEq(this.depreciationChargePrimaryFacility[j][k][i], 0);
+						}
+
+					}
+				}
+			}
+
+		}
+
+		// Secondary Facilities
+		for (int i = 0; i < this.t; i++) {
+			for (int j = 0; j < this.f; j++) {
+				if (IF[i]) {
+					for (int k = 0; k < this.t; k++) {// construction start (tau)
+						double lowerBound = k + this.yearsToBuildSecondaryFacility;
+						double upperBound1 = k + this.yearsToBuildSecondaryFacility + this.projectLife[j];
+						double upperBound = 0;
+						if (upperBound1 < this.t) {
+							upperBound = upperBound1;
+						} else {
+							upperBound = this.t;
+						}
+
+						if (i >= lowerBound && i <= upperBound) {
+
+							double setupCostSF = this.setupCostSecondaryFacility / this.projectLife[j];
+							this.depreciationChargeSecondaryFacilities.addTerm(setupCostSF,
+									this.constructionStartSecondaryFacility[j][k]);
+
+							double variableCostSF = this.yearsToBuildSecondaryFacility
+									* this.constructionCostSecondaryFacility / this.projectLife[j];
+							this.depreciationChargeSecondaryFacilities.addTerm(variableCostSF,
+									this.constructionStartSecondaryFacility[j][k]);
+
+							addEq(this.depreciationChargeSecondaryFacilities,
+									this.depreciationChargeSecondaryFacility[j][k][i]);
+						}
+
+						else {
+							addEq(this.depreciationChargeSecondaryFacility[j][k][i], 0);
+						}
+
+					}
+				}
+			}
+
+		}
+
 	}
 
 	/**
@@ -744,10 +884,28 @@ public class LocationPlanningModel extends IloCplex {
 
 		this.taxableIncomeConstraint.clear();
 
+		for (int i = 0; i < this.t; i++) {
+			for (int j = 0; j < this.n; j++) {
+				for (int k = 0; k < this.f; k++) {
+					if (IF[k] && Fn[k][j]) {
+						this.taxableIncomeConstraint.addTerm(1, this.grossIncome[k][i]);
+
+						for (int l = 0; l < i - this.yearsToBuildPrimaryFacility; l++) {
+							this.taxableIncomeConstraint.addTerm(-1, this.depreciationChargePrimaryFacility[k][l][i]);
+
+						}
+						for (int l = 0; l < i - this.yearsToBuildSecondaryFacility; l++) {
+							this.taxableIncomeConstraint.addTerm(-1, this.depreciationChargeSecondaryFacility[k][l][i]);
+
+						}
+					}
+				}
+				addLe(this.taxableIncomeConstraint, this.taxableIncome[j][i]);
+			}
+		}
+
 	}
 
-	// TODO:nächste Nebenbedingungen
-	
 	public void writeMatrix(int[] numbers) throws IloException {
 		String path = "./logs/model.lp";
 
