@@ -33,6 +33,7 @@ public class Data {
 	private int [] countFailedTests;									// Zeta_t
 	private int [] remainingYearsToBuildPrimaryFacility;				// s_p_t
 	private double [] testProbability;								// p
+	private int remainingTimeofClinicalTrials;						//delta_t
 	
 	private int [] investmentDecisionPrimaryFacility;					// a_p_t
 	private int investmentDecisionSecondaryFacility;					// a_s_T+1 - secondary facility is built in period T+1 if clinical trails are successful
@@ -43,42 +44,35 @@ public class Data {
 								
 	//Location Planning Model
 
-    // Indices
-    private int i; // number of material types
-    private int f; // number of internal facilities
-    private int g; // number of external facilities
-    private int s; // number of suppliers //TODO: stimmt das?
-    private int c; // number of customers //TODO: stimmt das?
-    private int t; //number of fiscal years in planning horizon
-    private int tau; ////TODO:??
-    private int n; //number of nations 
-    
-    //Sets 
-    
-    
-    // Daten
-    private double [] capitalBudget;//capitalBudget[t]								CB_t
-    private double [] capitalExpenditure ; // capitalExpenditure[t]					CE_t
-	private double [][][]costInsuranceFreight; //costInsuranceFreight[i][s][f]	CIF_isf
-    private double [][][]demand;//demand[i][c][t]										D_ict
-    private double [][]importDuty; //importDuty[s][f]									ID_sf
-    private double []projectLife;//projectLife[t]										L_f
-    private double []variableProductionCosts;//										MC_f
-    private double [][]unitSellingPrice;//unitSellingPrice[i][f]						P_if
-    private double []lowerLimitExpansionSize;//lowerLimitExpansionSize[f]				g_L_f
-    private double []initialCapacity;//initialCapacity[f] at time zero				Q_f0
-    private double []upperLimitCapacity;//upperLimitCapacity[f]						Q_U_f
-    private double [][]supply;//supply[i][s]											S_is
-    private double []corporateTax;//corporateTax[n]									TR_n
-    private double []lowerLimitProductionAPI;//lowerLimitProductionAPI[f]				X_L_f
-    private int API; //TODO: one material from set i									pi
-    private double [][]materialCoefficient; //materialCoeeficient[i][f]				sigma_if
-    private double [][]capacityExpansionAmount;//capacityExpansionAmount[f][t]		q_ft
-    private int planninghorizonLPM;//T
-    
-    //Transfer parameter
-    private int remainingTimeOfClinicalTrials;//T*-t*									delta_t*
-    
+	// Sets
+		private boolean[] IF; // IF[f] internal facilities
+		private boolean[] EF; // EF[f] external facilities
+		private boolean[][] OM; // OM[f][i] outgoing material
+		private boolean[][] IM; // IM[f][i]incoming material
+		private boolean[][] Fn; // Fn[f][n] nations
+		private boolean[] PIF; // PIF[f]
+		private boolean[] SIF; // SIF[f]
+
+	// Parameter
+		private int I; // number of material types
+		private int F; // number of all facilities
+		private int T; // number of months in planning horizon
+		private int N; // number of nations
+		private double[] capitalBudget;// capitalBudget[t] CB_t
+		private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f] CIF_isf
+		private double[][][] demand;// demand[i][c][t] D_ict
+		private double[][] importDuty; // importDuty[s][f] ID_isf
+		private double[] projectLife;// projectLife[t] L_f
+		private double[] variableProductionCosts;// MC_f
+		private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
+		private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
+		private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
+		private double[][] supply;// supply[i][s] S_is
+		private double[] corporateTax;// corporateTax[n]TR_n
+		private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
+		private int API; //
+		private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
+		private int initialCapacity; // Q0
     
 
 	/**
@@ -522,132 +516,7 @@ public class Data {
 	}
 
 
-	/**
-	 * @return the i
-	 */
-	public int getI() {
-		return i;
-	}
-
-
-	/**
-	 * @param i the i to set
-	 */
-	public void setI(int i) {
-		this.i = i;
-	}
-
-
-	/**
-	 * @return the f
-	 */
-	public int getF() {
-		return f;
-	}
-
-
-	/**
-	 * @param f the f to set
-	 */
-	public void setF(int f) {
-		this.f = f;
-	}
-
-
-	/**
-	 * @return the g
-	 */
-	public int getG() {
-		return g;
-	}
-
-
-	/**
-	 * @param g the g to set
-	 */
-	public void setG(int g) {
-		this.g = g;
-	}
-
-
-	/**
-	 * @return the s
-	 */
-	public int getS() {
-		return s;
-	}
-
-
-	/**
-	 * @param s the s to set
-	 */
-	public void setS(int s) {
-		this.s = s;
-	}
-
-
-	/**
-	 * @return the c
-	 */
-	public int getC() {
-		return c;
-	}
-
-
-	/**
-	 * @param c the c to set
-	 */
-	public void setC(int c) {
-		this.c = c;
-	}
-
-
-	/**
-	 * @return the t
-	 */
-	public int getT() {
-		return t;
-	}
-
-
-	/**
-	 * @param t the t to set
-	 */
-	public void setT(int t) {
-		this.t = t;
-	}
-
-
-	/**
-	 * @return the tau
-	 */
-	public int getTau() {
-		return tau;
-	}
-
-
-	/**
-	 * @param tau the tau to set
-	 */
-	public void setTau(int tau) {
-		this.tau = tau;
-	}
-
-
-	/**
-	 * @return the n
-	 */
-	public int getN() {
-		return n;
-	}
-
-
-	/**
-	 * @param n the n to set
-	 */
-	public void setN(int n) {
-		this.n = n;
-	}
+	
 
 
 	/**
@@ -666,22 +535,7 @@ public class Data {
 	}
 
 
-	/**
-	 * @return the capitalExpenditure
-	 */
-	public double[] getCapitalExpenditure() {
-		return capitalExpenditure;
-	}
-
-
-	/**
-	 * @param capitalExpenditure the capitalExpenditure to set
-	 */
-	public void setCapitalExpenditure(double[] capitalExpenditure) {
-		this.capitalExpenditure = capitalExpenditure;
-	}
-
-
+	
 	/**
 	 * @return the costInsuranceFreight
 	 */
@@ -795,20 +649,7 @@ public class Data {
 	}
 
 
-	/**
-	 * @return the initialCapacity
-	 */
-	public double[] getInitialCapacity() {
-		return initialCapacity;
-	}
-
-
-	/**
-	 * @param initialCapacity the initialCapacity to set
-	 */
-	public void setInitialCapacity(double[] initialCapacity) {
-		this.initialCapacity = initialCapacity;
-	}
+	
 
 
 	/**
@@ -907,54 +748,7 @@ public class Data {
 	}
 
 
-	/**
-	 * @return the capacityExpansionAmount
-	 */
-	public double[][] getCapacityExpansionAmount() {
-		return capacityExpansionAmount;
-	}
-
-
-	/**
-	 * @param capacityExpansionAmount the capacityExpansionAmount to set
-	 */
-	public void setCapacityExpansionAmount(double[][] capacityExpansionAmount) {
-		this.capacityExpansionAmount = capacityExpansionAmount;
-	}
-
-
-	/**
-	 * @return the remainingTimeOfClinicalTrials
-	 */
-	public int getRemainingTimeOfClinicalTrials() {
-		return remainingTimeOfClinicalTrials;
-	}
-
-
-	/**
-	 * @param remainingTimeOfClinicalTrials the remainingTimeOfClinicalTrials to set
-	 */
-	public void setRemainingTimeOfClinicalTrials(int remainingTimeOfClinicalTrials) {
-		this.remainingTimeOfClinicalTrials = remainingTimeOfClinicalTrials;
-	}
-
-
-
-	/**
-	 * @return the planninghorizonLPM
-	 */
-	public int getPlanninghorizonLPM() {
-		return planninghorizonLPM;
-	}
-
-
-	/**
-	 * @param planninghorizonLPM the planninghorizonLPM to set
-	 */
-	public void setPlanninghorizonLPM(int planninghorizonLPM) {
-		this.planninghorizonLPM = planninghorizonLPM;
-	}
-
+	
 
 	/**
 	 * @param parameter_constructionCostPrimaryFacility the parameter_constructionCostPrimaryFacility to set
@@ -977,6 +771,214 @@ public class Data {
 	 */
 	public void setParameter_setupCostSecondaryFacility(double parameter_setupCostSecondaryFacility) {
 		this.parameter_setupCostSecondaryFacility = parameter_setupCostSecondaryFacility;
+	}
+
+
+	/**
+	 * @return the iF
+	 */
+	public boolean[] getIF() {
+		return IF;
+	}
+
+
+	/**
+	 * @param iF the iF to set
+	 */
+	public void setIF(boolean[] iF) {
+		IF = iF;
+	}
+
+
+	/**
+	 * @return the eF
+	 */
+	public boolean[] getEF() {
+		return EF;
+	}
+
+
+	/**
+	 * @param eF the eF to set
+	 */
+	public void setEF(boolean[] eF) {
+		EF = eF;
+	}
+
+
+	/**
+	 * @return the oM
+	 */
+	public boolean[][] getOM() {
+		return OM;
+	}
+
+
+	/**
+	 * @param oM the oM to set
+	 */
+	public void setOM(boolean[][] oM) {
+		OM = oM;
+	}
+
+
+	/**
+	 * @return the iM
+	 */
+	public boolean[][] getIM() {
+		return IM;
+	}
+
+
+	/**
+	 * @param iM the iM to set
+	 */
+	public void setIM(boolean[][] iM) {
+		IM = iM;
+	}
+
+
+	/**
+	 * @return the fn
+	 */
+	public boolean[][] getFn() {
+		return Fn;
+	}
+
+
+	/**
+	 * @param fn the fn to set
+	 */
+	public void setFn(boolean[][] fn) {
+		Fn = fn;
+	}
+
+
+	/**
+	 * @return the pIF
+	 */
+	public boolean[] getPIF() {
+		return PIF;
+	}
+
+
+	/**
+	 * @param pIF the pIF to set
+	 */
+	public void setPIF(boolean[] pIF) {
+		PIF = pIF;
+	}
+
+
+	/**
+	 * @return the sIF
+	 */
+	public boolean[] getSIF() {
+		return SIF;
+	}
+
+
+	/**
+	 * @param sIF the sIF to set
+	 */
+	public void setSIF(boolean[] sIF) {
+		SIF = sIF;
+	}
+
+
+	/**
+	 * @return the i
+	 */
+	public int getI() {
+		return I;
+	}
+
+
+	/**
+	 * @param i the i to set
+	 */
+	public void setI(int i) {
+		I = i;
+	}
+
+
+	/**
+	 * @return the f
+	 */
+	public int getF() {
+		return F;
+	}
+
+
+	/**
+	 * @param f the f to set
+	 */
+	public void setF(int f) {
+		F = f;
+	}
+
+
+	/**
+	 * @return the t
+	 */
+	public int getT() {
+		return T;
+	}
+
+
+	/**
+	 * @param t the t to set
+	 */
+	public void setT(int t) {
+		T = t;
+	}
+
+
+	/**
+	 * @return the n
+	 */
+	public int getN() {
+		return N;
+	}
+
+
+	/**
+	 * @param n the n to set
+	 */
+	public void setN(int n) {
+		N = n;
+	}
+
+
+	/**
+	 * @return the initialCapacity
+	 */
+	public int getInitialCapacity() {
+		return initialCapacity;
+	}
+
+
+	/**
+	 * @param initialCapacity the initialCapacity to set
+	 */
+	public void setInitialCapacity(int initialCapacity) {
+		this.initialCapacity = initialCapacity;
+	}
+
+
+	/**
+	 * @return the remainingTimeofClinicalTrials
+	 */
+	public int getRemainingTimeofClinicalTrials() {
+		return remainingTimeofClinicalTrials;
+	}
+
+
+	/**
+	 * @param remainingTimeofClinicalTrials the remainingTimeofClinicalTrials to set
+	 */
+	public void setRemainingTimeofClinicalTrials(int remainingTimeofClinicalTrials) {
+		this.remainingTimeofClinicalTrials = remainingTimeofClinicalTrials;
 	}
 
 
