@@ -43,42 +43,35 @@ public class Data {
 								
 	//Location Planning Model
 
-    // Indices
-    private int i; // number of material types
-    private int f; // number of internal facilities
-    private int g; // number of external facilities
-    private int s; // number of suppliers //TODO: stimmt das?
-    private int c; // number of customers //TODO: stimmt das?
-    private int t; //number of fiscal years in planning horizon
-    private int tau; ////TODO:??
-    private int n; //number of nations 
-    
-    //Sets 
-    
-    
-    // Daten
-    private double [] capitalBudget;//capitalBudget[t]								CB_t
-    private double [] capitalExpenditure ; // capitalExpenditure[t]					CE_t
-	private double [][][]costInsuranceFreight; //costInsuranceFreight[i][s][f]	CIF_isf
-    private double [][][]demand;//demand[i][c][t]										D_ict
-    private double [][]importDuty; //importDuty[s][f]									ID_sf
-    private double []projectLife;//projectLife[t]										L_f
-    private double []variableProductionCosts;//										MC_f
-    private double [][]unitSellingPrice;//unitSellingPrice[i][f]						P_if
-    private double []lowerLimitExpansionSize;//lowerLimitExpansionSize[f]				g_L_f
-    private double []initialCapacity;//initialCapacity[f] at time zero				Q_f0
-    private double []upperLimitCapacity;//upperLimitCapacity[f]						Q_U_f
-    private double [][]supply;//supply[i][s]											S_is
-    private double []corporateTax;//corporateTax[n]									TR_n
-    private double []lowerLimitProductionAPI;//lowerLimitProductionAPI[f]				X_L_f
-    private int API; //TODO: one material from set i									pi
-    private double [][]materialCoefficient; //materialCoeeficient[i][f]				sigma_if
-    private double [][]capacityExpansionAmount;//capacityExpansionAmount[f][t]		q_ft
-    private int planninghorizonLPM;//T
-    
-    //Transfer parameter
-    private int remainingTimeOfClinicalTrials;//T*-t*									delta_t*
-    
+	// Sets
+		private boolean[] IF; // IF[f] internal facilities
+		private boolean[] EF; // EF[f] external facilities
+		private boolean[][] OM; // OM[f][i] outgoing material
+		private boolean[][] IM; // IM[f][i]incoming material
+		private boolean[][] Fn; // Fn[f][n] nations
+		private boolean[] PIF; // PIF[f]
+		private boolean[] SIF; // SIF[f]
+
+	// Parameter
+		private int I; // number of material types
+		private int F; // number of all facilities
+		private int T; // number of months in planning horizon
+		private int N; // number of nations
+		private double[] capitalBudget;// capitalBudget[t] CB_t
+		private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f] CIF_isf
+		private double[][][] demand;// demand[i][c][t] D_ict
+		private double[][] importDuty; // importDuty[s][f] ID_isf
+		private double[] projectLife;// projectLife[t] L_f
+		private double[] variableProductionCosts;// MC_f
+		private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
+		private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
+		private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
+		private double[][] supply;// supply[i][s] S_is
+		private double[] corporateTax;// corporateTax[n]TR_n
+		private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
+		private int API; //
+		private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
+		private int initialCapacity; // Q0
     
 
 	/**
