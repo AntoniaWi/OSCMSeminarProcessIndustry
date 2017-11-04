@@ -34,7 +34,7 @@ public class LocationPlanningModel extends IloCplex {
 	private double[] capitalBudget;// capitalBudget[t] CB_t
 	private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f] CIF_isf
 	private double[][][] demand;// demand[i][c][t] D_ict
-	private double[][] importDuty; // importDuty[s][f] ID_isf
+	private double[][] importDuty; // importDuty[s][f] ID_sf
 	private int projectLife;// projectLife L_f
 	private double[] variableProductionCosts;// MC_f
 	private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
