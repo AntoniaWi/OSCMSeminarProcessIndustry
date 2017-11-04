@@ -172,6 +172,10 @@ public class Data {
 		ReadAndWrite.readDataTiming(this);
 		ReadAndWrite.readF(this);
 		ReadAndWrite.readFinN(this);
+		ReadAndWrite.readIMf(this);
+		ReadAndWrite.readOMf(this);
+		ReadAndWrite.readTRn(this);
+		ReadAndWrite.readMassbalance(this);
 		
 	
 		}
