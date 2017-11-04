@@ -64,7 +64,7 @@ public class Data {
 		private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f] CIF_isf
 		private double[][][] demand;// demand[i][c][t] D_ict
 		private double[][] importDuty; // importDuty[s][f] ID_isf
-		private double[] projectLife;// projectLife[t] L_f
+		private int projectLife;// projectLife[t] L_f
 		private double[] variableProductionCosts;// MC_f
 		private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
 		private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
@@ -163,7 +163,11 @@ public class Data {
 	}
 	
 	public Data (int x) throws BiffException, IOException {
+		ReadAndWrite.readConst(this);
 		ReadAndWrite.readDataTiming(this);
+		ReadAndWrite.readF(this);
+		ReadAndWrite.readFinN(this);
+		
 	
 		}
 
@@ -264,38 +268,7 @@ public class Data {
 	}
 
 
-	/**
-	 * @return the parameter_setupCostPrimaryFacility
-	 */
-	public double getParameter_setupCostPrimaryFacility() {
-		return parameter_setupCostPrimaryFacility;
-	}
-
-
-	/**
-	 * @param parameter_setupCostPrimaryFacility the parameter_setupCostPrimaryFacility to set
-	 */
-	public void setParameter_setupCostPrimaryFacility(int parameter_setupCostPrimaryFacility) {
-		this.parameter_setupCostPrimaryFacility = parameter_setupCostPrimaryFacility;
-	}
-
-
-	/**
-	 * @return the parameter_setupCostSecondaryFacility
-	 */
-	public double getParameter_setupCostSecondaryFacility() {
-		return parameter_setupCostSecondaryFacility;
-	}
-
-
-	/**
-	 * @param parameter_setupCostSecondaryFacility the parameter_setupCostSecondaryFacility to set
-	 */
-	public void setParameter_setupCostSecondaryFacility(int parameter_setupCostSecondaryFacility) {
-		this.parameter_setupCostSecondaryFacility = parameter_setupCostSecondaryFacility;
-	}
-
-
+	
 	/**
 	 * @return the parameter_penaltyCost
 	 */
@@ -576,7 +549,7 @@ public class Data {
 	/**
 	 * @return the projectLife
 	 */
-	public double[] getProjectLife() {
+	public int getProjectLife() {
 		return projectLife;
 	}
 
@@ -584,7 +557,7 @@ public class Data {
 	/**
 	 * @param projectLife the projectLife to set
 	 */
-	public void setProjectLife(double[] projectLife) {
+	public void setProjectLife(int projectLife) {
 		this.projectLife = projectLife;
 	}
 
@@ -970,6 +943,20 @@ public class Data {
 		this.remainingTimeofClinicalTrials = remainingTimeofClinicalTrials;
 	}
 
+
+	/**
+	 * @return the parameter_setupCostPrimaryFacility
+	 */
+	public double getParameter_setupCostPrimaryFacility() {
+		return parameter_setupCostPrimaryFacility;
+	}
+
+	/**
+	 * @return the parameter_setupCostSecondaryFacility
+	 */
+	public double getParameter_setupCostSecondaryFacility() {
+		return parameter_setupCostSecondaryFacility;
+	}
 
 	/**
 	 * Increments period count by one
