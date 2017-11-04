@@ -91,22 +91,40 @@ public class TimingModel {
 		
 		// TODO:
 		
-		// Check threshold values with regards to a_t-1 (former investment decision)
+		// Build scenario tree
 		
-		// If threshold value is met, set a_t = 1 and s_t = -1 and go to network model
+		ArrayList<ArrayList<Event>> scenarioTree = generateScenarioTree(dataInstance.getCountPeriods());
 		
-		TimingModel.generateScenarioTree(dataInstance.getCountPeriods());
+		// Generate all strategies
 		
-		for (int i = 0; i < dataInstance.getScenarioTree().size(); i++) {
+		ArrayList<int[]> strategies = generateAllPossibleStrategiesInPeriod_t();
+		
+		// Calculate cost
+		
+		ArrayList<Double> cost = calculateV(dataInstance.getCountPeriods(), scenarioTree, strategies);
+		
+		// Search for the minimal cost
+		
+		double min = Double.MAX_VALUE;
+		int index = -1;
+		
+		for (int i = 0; i < cost.size(); i++) {
 			
-			for (int j = 0; j < dataInstance.getScenarioTree().get(i).size(); j++) {
+			if (cost.get(i) <= min) {
 				
-				System.out.println(dataInstance.getScenarioTree().get(i).get(j).toString());
+				min = cost.get(i);
+				index = i;
 			}
 		}
 		
+		int [] optimal_strategy_in_t = strategies.get(index);
 		
-				
+		
+		//TODO:  Set a_t and s_t
+		
+		
+		//TODO: delete all cost in events for next calculation
+	
 		// Create new test result
 		
 		double p = dataInstance.calculateTestProbability();
@@ -153,7 +171,7 @@ public class TimingModel {
 	 * 
 	 * @return
 	 */
-	public static void generateScenarioTree (int period) {
+	public static ArrayList<ArrayList<Event>> generateScenarioTree (int period) {
 		
 		ArrayList<ArrayList<Event>> scenarioTree = new ArrayList<ArrayList<Event>>();
 		
@@ -314,7 +332,7 @@ public class TimingModel {
 			}
 		}		
 		
-		dataInstance.setScenarioTree(scenarioTree);
+		return scenarioTree;
 		
 	}
 	
@@ -350,13 +368,13 @@ public class TimingModel {
 	/**
 	 * 
 	 */
-	public static void printScenarioTree () {
+	public static void printScenarioTree (ArrayList<ArrayList<Event>> scenarioTree) {
 		
-		for (int t = 0; t < dataInstance.getScenarioTree().size(); t++) {
+		for (int t = 0; t < scenarioTree.size(); t++) {
 			
-			for (int index = 0; index < dataInstance.getScenarioTree().get(t).size(); index++) {
+			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
 				
-				System.out.println(dataInstance.getScenarioTree().get(t).get(index).toString());
+				System.out.println(scenarioTree.get(t).get(index).toString());
 			}
 		}
 	}
@@ -407,8 +425,100 @@ public class TimingModel {
 		return strategies;
 	}
 	
-	
 
+	/**
+	 * 
+	 */
+	public static int calculateRemainingPeriodsToBuildPrimaryFacility(int period, int [] investmentDecision, int periodsToBuild) {
+		
+		int count = 0;
+		
+		for (int i = 1; i < (period-1); i++) {
+			
+			if(investmentDecision[i] == 1) {
+				count++;
+			}
+		}
+		
+		int result = periodsToBuild - count;
+		
+		return result;
+	}
+
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static ArrayList<Double> calculateV (int period, ArrayList<ArrayList<Event>> scenarioTree, ArrayList<int[]> strategies) {
+		
+		ArrayList<Double> cost = new ArrayList<Double>();
+		
+		double c = dataInstance.getParameter_constructionCostPrimaryFacility();
+		double K = dataInstance.getParameter_setupCostPrimaryFacility();
+		double phi = dataInstance.getParameter_penaltyCost();
+		int gamma_c = dataInstance.getParameter_thresholdSuccessfulTests();
+		
+		// Do the cost calculation for every possible strategy
+		
+		for (int i = 0; i < strategies.size(); i++) {
+			
+			int a_T = strategies.get(i)[dataInstance.getParameter_planningHorizon()];
+			int s_T = calculateRemainingPeriodsToBuildPrimaryFacility(period, strategies.get(i), dataInstance.getParameter_monthsToBuildPrimaryFacilities());
+			
+			// Calculate the final cost for all final events in the scenario tree
+			
+			for (int j = 0; j < scenarioTree.get(scenarioTree.size()-1).size(); j ++) {
+					
+				scenarioTree.get(j).get(scenarioTree.size()-1).calculateF(s_T, a_T, c, K, phi, gamma_c);
+			}
+			
+			for (int j = scenarioTree.size()-2; j >= 0; j--) {
+				
+				for (int k = 0; k < scenarioTree.get(j).size(); k++) {
+					
+					scenarioTree.get(j).get(k).calculateExpectedCost();
+				}
+			}
+			
+			Event left = scenarioTree.get(0).get(0);
+			Event right = scenarioTree.get(0).get(1);
+			
+			double final_cost = left.getProbability() * left.getExpectedCost() + right.getProbability() * right.getExpectedCost();
+			
+			cost.add(final_cost);
+		}
+		
+		return cost;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
 
 

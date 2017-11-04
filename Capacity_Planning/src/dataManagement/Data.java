@@ -43,7 +43,6 @@ public class Data {
 	
 	private int countPeriods;										// t
 	
-	private ArrayList<ArrayList<Event>> scenarioTree;				// needed to calculate E[V]
 								
 	//Location Planning Model
 
@@ -160,10 +159,6 @@ public class Data {
 		// Start in period t = 0
 		
 		this.countPeriods = 0;
-		
-		// Initialize ArrayList
-		
-		this.scenarioTree = new ArrayList<ArrayList<Event>>();
 				
 	}
 	
@@ -491,22 +486,6 @@ public class Data {
 	 */
 	public void setCountPeriods(int countPeriods) {
 		this.countPeriods = countPeriods;
-	}
-
-
-	/**
-	 * @return the scenarioTree
-	 */
-	public ArrayList<ArrayList<Event>> getScenarioTree() {
-		return scenarioTree;
-	}
-
-
-	/**
-	 * @param scenarioTree the scenarioTree to set
-	 */
-	public void setScenarioTree(ArrayList<ArrayList<Event>> scenarioTree) {
-		this.scenarioTree = scenarioTree;
 	}
 
 
@@ -1062,6 +1041,41 @@ public class Data {
 	// TODO RAMONA: create several toString Method for console output
 	
 
+	/**
+	 * 
+	 */
+	public void calculateRemainingPeriodsToBuildPrimaryFacility() {
+		
+		int count = 0;
+		
+		for (int i = 1; i < (this.countPeriods-1); i++) {
+			
+			if(this.investmentDecisionPrimaryFacility[i] == 1) {
+				count++;
+			}
+		}
+		
+		this.remainingYearsToBuildPrimaryFacility[this.countPeriods] = this.parameter_monthsToBuildPrimaryFacilities - count;
+	}
 	
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
