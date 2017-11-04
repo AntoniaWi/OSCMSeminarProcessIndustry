@@ -171,6 +171,7 @@ public class Data {
 		ReadAndWrite.readOMf(this);
 		ReadAndWrite.readTRn(this);
 		ReadAndWrite.readMassbalance(this);
+		ReadAndWrite.readDataF(this);
 		
 	
 		}
