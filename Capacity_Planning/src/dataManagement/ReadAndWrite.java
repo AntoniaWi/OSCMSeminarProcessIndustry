@@ -619,6 +619,37 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 	// ____________________________________________________________________________________________
+	
+	public static void readPif(Data instanz) throws BiffException, IOException {
+
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("Pif");
+
+		// read P[i][f]
+
+		double[][] P = new double[instanz.getI()][instanz.getF()];
+
+		
+			for (int i = 0; i < instanz.getI(); i++) {
+				for (int j = 0; j < instanz.getF(); j++) {
+
+				Cell cell1 = sheet.getCell(i + 1, j + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+
+				
+				P[i][j] = cell3;
+
+			}
+			
+		}
+		instanz.setUnitSellingPrice(P);
+	}
 
 	// Sheet 12:
 
@@ -656,6 +687,37 @@ public class ReadAndWrite {
 	// Sheet 18:
 
 	// ____________________________________________________________________________________________
+	
+	public static void readIDsf(Data instanz) throws BiffException, IOException {
+
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("IDisf");
+
+		// read IDsf[s][f]
+
+		double[][] ID = new double[instanz.getF()][instanz.getF()];
+
+		
+			for (int i = 0; i < instanz.getF(); i++) {
+				for (int j = 0; j < instanz.getF(); j++) {
+
+				Cell cell1 = sheet.getCell(i + 1, j + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+
+				
+				ID[i][j] = cell3;
+
+			}
+			
+		}
+		instanz.setImportDuty(ID);
+	}
 
 	/**
 	 * @param array
