@@ -1,6 +1,9 @@
 package dataManagement;
 
 import helper.Event;
+import jxl.read.biff.BiffException;
+
+import java.io.IOException;
 import java.util.*;
 
 public class Data {
@@ -107,6 +110,8 @@ public class Data {
 			this.testResults[i] = -1;
 		}
 		
+		
+		
 		// Currently no knowledge available except from preliminary knowledge
 		
 		this.countSuccessfulTests = new int [this.parameter_planningHorizon + 1];
@@ -161,6 +166,11 @@ public class Data {
 		this.scenarioTree = new ArrayList<ArrayList<Event>>();
 				
 	}
+	
+	public Data (int x) throws BiffException, IOException {
+		ReadAndWrite.readDataTiming(this);
+	
+		}
 
 
 	/**

@@ -147,16 +147,15 @@ public class LocationPlanningModel extends IloCplex {
 	public static void main(String[] args)
 			throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 
-		// boolean robust1=true;
 		Data instanz = new Data();
-
-		// instanz.DatenEinlesen(instanz,robust1);
+		System.out.println(instanz.getParameter_planningHorizon());
+		/*
 
 		LocationPlanningModel lpm = new LocationPlanningModel(instanz);
 
 		lpm.build();
 		lpm.solve();
-		lpm.writeSolution(new int[] { 1, 2, 3 }, false);
+		lpm.writeSolution(new int[] { 1, 2, 3 }, false);*/
 		// lpm.ergebnisschreibenRobust(lpm);
 	}
 
