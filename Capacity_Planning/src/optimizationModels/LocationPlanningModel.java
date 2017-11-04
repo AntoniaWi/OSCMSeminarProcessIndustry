@@ -148,10 +148,19 @@ public class LocationPlanningModel extends IloCplex {
 			throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 		int x=0;
 		Data instanz = new Data(x);
-		System.out.println(instanz.getParameter_planningHorizon());
-		System.out.println(instanz.getParameter_discountFactor());
-		System.out.println(instanz.getParameter_monthsToBuildPrimaryFacilities());
-		System.out.println(instanz.getParameter_setupCostSecondaryFacility());
+		
+		for (int i=0; i<instanz.getF();i++) {
+			System.out.println("IF["+i+"] "+instanz.getIF()[i]);
+		}
+		for (int i=0; i<instanz.getF();i++) {
+			System.out.println("EF["+i+"] "+instanz.getEF()[i]);
+		}
+		for (int i=0; i<instanz.getF();i++) {
+			System.out.println("PIF["+i+"] "+instanz.getPIF()[i]);
+		}
+		for (int i=0; i<instanz.getF();i++) {
+			System.out.println("SIF["+i+"] "+instanz.getSIF()[i]);
+		}
 		
 		/*
 
