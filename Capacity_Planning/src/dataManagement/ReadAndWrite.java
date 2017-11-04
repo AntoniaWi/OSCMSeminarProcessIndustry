@@ -282,12 +282,12 @@ public class ReadAndWrite {
 				} else {
 					help1 = false;
 				}
-				//System.out.println(help1);
-				//System.out.println("Fn["+i+"]["+j+"]");
+				// System.out.println(help1);
+				// System.out.println("Fn["+i+"]["+j+"]");
 				Fn[i][j] = help1;
 
 			}
-			
+
 		}
 		instanz.setFn(Fn);
 	}
@@ -324,15 +324,15 @@ public class ReadAndWrite {
 				} else {
 					help1 = false;
 				}
-			
+
 				IMf[i][j] = help1;
 
 			}
-			
+
 		}
 		instanz.setIM(IMf);
 	}
-	
+
 	// ____________________________________________________________________________________________
 
 	// Sheet 4: OMf
@@ -366,15 +366,15 @@ public class ReadAndWrite {
 				} else {
 					help1 = false;
 				}
-			
+
 				OMf[i][j] = help1;
 
 			}
-			
+
 		}
 		instanz.setOM(OMf);
 	}
-	
+
 	// ____________________________________________________________________________________________
 
 	// Sheet 5: Const.
@@ -472,21 +472,18 @@ public class ReadAndWrite {
 		double[] TRn = new double[instanz.getN()];
 
 		for (int i = 0; i < instanz.getN(); i++) {
-			
 
-				Cell cell1 = sheet.getCell(1, i + 1);
-				NumberCell cell2 = (NumberCell) cell1;
-				double cell3 = cell2.getValue();
+			Cell cell1 = sheet.getCell(1, i + 1);
+			NumberCell cell2 = (NumberCell) cell1;
+			double cell3 = cell2.getValue();
 
-			
-				TRn[i] = cell3;
+			TRn[i] = cell3;
 
-			}
-			
-		
+		}
+
 		instanz.setCorporateTax(TRn);
 	}
-	
+
 	// ____________________________________________________________________________________________
 
 	// Sheet 7: Mass-balance
@@ -506,25 +503,21 @@ public class ReadAndWrite {
 
 		double[][] sigma = new double[instanz.getI()][instanz.getF()];
 
-		
-			for (int i = 0; i < instanz.getI(); i++) {
-				for (int j = 0; j < instanz.getF(); j++) {
+		for (int i = 0; i < instanz.getI(); i++) {
+			for (int j = 0; j < instanz.getF(); j++) {
 
 				Cell cell1 = sheet.getCell(i + 1, j + 1);
 				NumberCell cell2 = (NumberCell) cell1;
 				double cell3 = cell2.getValue();
 
-				
-			
 				sigma[i][j] = cell3;
 
 			}
-			
+
 		}
 		instanz.setMaterialCoefficient(sigma);
 	}
-		
-	
+
 	// ____________________________________________________________________________________________
 
 	// Sheet 8: DataF
@@ -542,74 +535,66 @@ public class ReadAndWrite {
 
 		// read DataF[f]: Q_U_f, q_L_f, X_L_f, MC_f
 
-		double [] QU = new double[instanz.getF()];
+		double[] QU = new double[instanz.getF()];
 
 		for (int i = 0; i < instanz.getF(); i++) {
-				Cell cell1 = sheet.getCell(1, i + 1);
-				NumberCell cell2 = (NumberCell) cell1;
-				double cell3 = cell2.getValue();
-				
-				QU[i] = cell3;
+			Cell cell1 = sheet.getCell(1, i + 1);
+			NumberCell cell2 = (NumberCell) cell1;
+			double cell3 = cell2.getValue();
+
+			QU[i] = cell3;
 
 		}
-			
-		
+
 		instanz.setUpperLimitCapacity(QU);
-		
 
-		double [] qL = new double[instanz.getF()];
+		double[] qL = new double[instanz.getF()];
 
 		for (int i = 0; i < instanz.getF(); i++) {
-				Cell cell1 = sheet.getCell(2, i + 1);
-				NumberCell cell2 = (NumberCell) cell1;
-				double cell3 = cell2.getValue();
-				
-				qL[i] = cell3;
+			Cell cell1 = sheet.getCell(2, i + 1);
+			NumberCell cell2 = (NumberCell) cell1;
+			double cell3 = cell2.getValue();
+
+			qL[i] = cell3;
 
 		}
-			
-		
+
 		instanz.setLowerLimitExpansionSize(qL);
-		
 
-		double [] XLf = new double[instanz.getF()];
+		double[] XLf = new double[instanz.getF()];
 
 		for (int i = 0; i < instanz.getF(); i++) {
-				Cell cell1 = sheet.getCell(3, i + 1);
-				NumberCell cell2 = (NumberCell) cell1;
-				double cell3 = cell2.getValue();
-				
-				XLf[i] = cell3;
+			Cell cell1 = sheet.getCell(3, i + 1);
+			NumberCell cell2 = (NumberCell) cell1;
+			double cell3 = cell2.getValue();
+
+			XLf[i] = cell3;
 
 		}
-			
-		
+
 		instanz.setLowerLimitProductionAPI(XLf);
-		
-		double [] Mcf = new double[instanz.getF()];
+
+		double[] Mcf = new double[instanz.getF()];
 
 		for (int i = 0; i < instanz.getF(); i++) {
-				Cell cell1 = sheet.getCell(4, i + 1);
-				NumberCell cell2 = (NumberCell) cell1;
-				double cell3 = cell2.getValue();
-				
-				Mcf[i] = cell3;
+			Cell cell1 = sheet.getCell(4, i + 1);
+			NumberCell cell2 = (NumberCell) cell1;
+			double cell3 = cell2.getValue();
+
+			Mcf[i] = cell3;
 
 		}
-			
-		
+
 		instanz.setVariableProductionCosts(Mcf);
-		
-		
+
 	}
-	
+
 	// ____________________________________________________________________________________________
 
 	// Sheet 9: D_ict
 
 	// ____________________________________________________________________________________________
-	
-	
+
 	// ____________________________________________________________________________________________
 
 	// Sheet 10:Sis
@@ -636,11 +621,10 @@ public class ReadAndWrite {
 				NumberCell cell2 = (NumberCell) cell1;
 				double cell3 = cell2.getValue();
 
-				
-			supply[j][i] = cell3;
+				supply[j][i] = cell3;
 
 			}
-			
+
 		}
 		instanz.setSupply(supply);
 	}
@@ -650,7 +634,7 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 	// ____________________________________________________________________________________________
-	
+
 	public static void readPif(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -665,26 +649,80 @@ public class ReadAndWrite {
 
 		double[][] P = new double[instanz.getI()][instanz.getF()];
 
-		
-			for (int i = 0; i < instanz.getI(); i++) {
-				for (int j = 0; j < instanz.getF(); j++) {
+		for (int i = 0; i < instanz.getI(); i++) {
+			for (int j = 0; j < instanz.getF(); j++) {
 
 				Cell cell1 = sheet.getCell(i + 1, j + 1);
 				NumberCell cell2 = (NumberCell) cell1;
 				double cell3 = cell2.getValue();
 
-				
 				P[i][j] = cell3;
 
 			}
-			
+
 		}
 		instanz.setUnitSellingPrice(P);
 	}
 
-	// Sheet 12:
+	// Sheet 12: CIF1sf
 
 	// ____________________________________________________________________________________________
+	public static void readCIFsf(Data instanz) throws BiffException, IOException {
+
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet1 = workbook.getSheet("CIF1sf");
+		Sheet sheet2 = workbook.getSheet("CIF2sf");
+		Sheet sheet3 = workbook.getSheet("CIF3sf");
+		Sheet sheet4 = workbook.getSheet("CIF4sf");
+		Sheet sheet5 = workbook.getSheet("CIF5sf");
+
+		// read CIF[i][s][f]
+
+		double[][][] CIF = new double[instanz.getI()][instanz.getF()][instanz.getF()];
+
+		for (int i = 0; i < instanz.getI(); i++) {// i
+			for (int j = 0; j < instanz.getF(); j++) {// s
+				for (int k = 0; k < instanz.getF(); k++) {// f
+
+					if (i == 0) {
+						Cell cell1 = sheet1.getCell(k + 1, j + 1);
+						NumberCell cell2 = (NumberCell) cell1;
+						double cell3 = cell2.getValue();
+						CIF[i][j][k] = cell3;
+					} else if (i == 1) {
+						Cell cell1 = sheet2.getCell(k + 1, j + 1);
+						NumberCell cell2 = (NumberCell) cell1;
+						double cell3 = cell2.getValue();
+						CIF[i][j][k] = cell3;
+					} else if (i == 2) {
+						Cell cell1 = sheet3.getCell(k + 1, j + 1);
+						NumberCell cell2 = (NumberCell) cell1;
+						double cell3 = cell2.getValue();
+						CIF[i][j][k] = cell3;
+					} else if (i == 3) {
+						Cell cell1 = sheet4.getCell(k + 1, j + 1);
+						NumberCell cell2 = (NumberCell) cell1;
+						double cell3 = cell2.getValue();
+						CIF[i][j][k] = cell3;
+					} else if (i == 4) {
+						Cell cell1 = sheet5.getCell(k + 1, j + 1);
+						NumberCell cell2 = (NumberCell) cell1;
+						double cell3 = cell2.getValue();
+						CIF[i][j][k] = cell3;
+					}
+
+				}
+
+			}
+		}
+		instanz.setCostInsuranceFreight(CIF);
+	}
+
 	// ____________________________________________________________________________________________
 
 	// Sheet 13:
@@ -718,7 +756,7 @@ public class ReadAndWrite {
 	// Sheet 18:
 
 	// ____________________________________________________________________________________________
-	
+
 	public static void readIDsf(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -733,19 +771,17 @@ public class ReadAndWrite {
 
 		double[][] ID = new double[instanz.getF()][instanz.getF()];
 
-		
-			for (int i = 0; i < instanz.getF(); i++) {//s
-				for (int j = 0; j < instanz.getF(); j++) {//f
+		for (int i = 0; i < instanz.getF(); i++) {// s
+			for (int j = 0; j < instanz.getF(); j++) {// f
 
 				Cell cell1 = sheet.getCell(j + 1, i + 1);
 				NumberCell cell2 = (NumberCell) cell1;
 				double cell3 = cell2.getValue();
 
-				
 				ID[i][j] = cell3;
 
 			}
-			
+
 		}
 		instanz.setImportDuty(ID);
 	}

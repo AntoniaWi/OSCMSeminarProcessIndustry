@@ -175,6 +175,7 @@ public class Data {
 		ReadAndWrite.readSis(this);
 		ReadAndWrite.readPif(this);
 		ReadAndWrite.readIDsf(this);
+		ReadAndWrite.readCIFsf(this);
 		
 	
 		}
