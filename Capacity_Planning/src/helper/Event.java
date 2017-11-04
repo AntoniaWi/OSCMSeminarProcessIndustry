@@ -322,7 +322,7 @@ public class Event {
 	 * @param phi	Penalty cost when construction of primary facility is not finished 
 	 * @return		Final cost in T+1 -> F(s_T, a_T)
 	 */
-	public double calculateF (int s_T, int a_T, int c, int K, int phi, int gamma_c) {
+	public double calculateF (int s_T, int a_T, double c, double K, double phi, int gamma_c) {
 	
 		double F = -1;
 		
@@ -342,11 +342,47 @@ public class Event {
 		
 		else {
 			
-			System.out.println ("ERROR - this event is not a final event and cost cannot be calculated!");
+			System.out.println ("ERROR - this event is not a final event and final cost cannot be calculated!");
 			
 		}
 		
 		return F;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double calculateExpectedCost () {
+		
+		double exp_cost = -1.0;
+		
+		if (!this.finalEvent) {
+			
+			// If the next events are final events, then the final cost have to be taken into account.
+			
+			if (this.left_nextSuccessfulTestResult.finalEvent) {
+				
+				exp_cost = this.nextProbabilitySuccessful_left * this.left_nextSuccessfulTestResult.finalCost 
+							+ this.nextProbabilityFailed_right * this.right_nextFailedTestResult.finalCost; 
+			}
+			
+			// If the next events are not final events, then the expected cost have to be taken into account.
+			
+			else {
+				
+				exp_cost = this.nextProbabilitySuccessful_left * this.left_nextSuccessfulTestResult.expectedCost
+						+ this.nextProbabilityFailed_right * this.right_nextFailedTestResult.expectedCost;	
+			}
+		}
+		
+		else {
+			
+			System.out.println ("ERROR - this event is a final event and expected cost cannot be calculated.");	
+		}
+		
+		return exp_cost;
 	}
 	
 	
