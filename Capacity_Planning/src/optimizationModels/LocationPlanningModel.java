@@ -149,11 +149,12 @@ public class LocationPlanningModel extends IloCplex {
 		int x=0;
 		Data instanz = new Data(x);
 		
-		
+		for (int j=0; j<instanz.getI();j++) {
 		for (int i=0; i<instanz.getF();i++) {
-			for (int j=0; j<instanz.getN();j++) {
 			
-			System.out.println("F["+i+"][ "+j+"] = "+instanz.getFn()[i][j]);
+			
+			System.out.println("Sigma["+(j+1)+"][ "+(i+1)+"] = "+instanz.getMaterialCoefficient()[j][i]);
+				//System.out.println("Sigma["+(j+1)+"] = "+instanz.getCorporateTax()[i]);
 		}
 		}
 		

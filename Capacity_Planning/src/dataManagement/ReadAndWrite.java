@@ -291,22 +291,90 @@ public class ReadAndWrite {
 		}
 		instanz.setFn(Fn);
 	}
-
-	// Sheet 3:
-
 	// ____________________________________________________________________________________________
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 3:
+	// Sheet 3: IMf
 
 	// ____________________________________________________________________________________________
+	public static void readIMf(Data instanz) throws BiffException, IOException {
+
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("IMf");
+
+		// read IM[f][i]
+
+		boolean[][] IMf = new boolean[instanz.getF()][instanz.getI()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getI(); j++) {
+
+				Cell cell1 = sheet.getCell(j + 1, i + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+
+				int help = (int) cell3;
+				boolean help1;
+				if (help == 1) {
+					help1 = true;
+				} else {
+					help1 = false;
+				}
+			
+				IMf[i][j] = help1;
+
+			}
+			
+		}
+		instanz.setIM(IMf);
+	}
+	
 	// ____________________________________________________________________________________________
 
-	// Sheet 4:
+	// Sheet 4: OMf
 
 	// ____________________________________________________________________________________________
+	public static void readOMf(Data instanz) throws BiffException, IOException {
 
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("OMf");
+
+		// read OM[f][i]
+
+		boolean[][] OMf = new boolean[instanz.getF()][instanz.getI()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getI(); j++) {
+
+				Cell cell1 = sheet.getCell(j + 1, i + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+
+				int help = (int) cell3;
+				boolean help1;
+				if (help == 1) {
+					help1 = true;
+				} else {
+					help1 = false;
+				}
+			
+				OMf[i][j] = help1;
+
+			}
+			
+		}
+		instanz.setOM(OMf);
+	}
+	
 	// ____________________________________________________________________________________________
 
 	// Sheet 5: Const.
@@ -386,19 +454,155 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 
-	// Sheet 6:
+	// Sheet 6: TRn
 
 	// ____________________________________________________________________________________________
+	public static void readTRn(Data instanz) throws BiffException, IOException {
+
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("TRn");
+
+		// read TRn[n]
+
+		double[] TRn = new double[instanz.getN()];
+
+		for (int i = 0; i < instanz.getN(); i++) {
+			
+
+				Cell cell1 = sheet.getCell(1, i + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+
+			
+				TRn[i] = cell3;
+
+			}
+			
+		
+		instanz.setCorporateTax(TRn);
+	}
+	
 	// ____________________________________________________________________________________________
 
-	// Sheet 7:
+	// Sheet 7: Mass-balance
 
 	// ____________________________________________________________________________________________
+	public static void readMassbalance(Data instanz) throws BiffException, IOException {
+
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("MassBalance");
+
+		// read sigma[i][f]
+
+		double[][] sigma = new double[instanz.getI()][instanz.getF()];
+
+		
+			for (int i = 0; i < instanz.getI(); i++) {
+				for (int j = 0; j < instanz.getF(); j++) {
+
+				Cell cell1 = sheet.getCell(i + 1, j + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+
+				
+			
+				sigma[i][j] = cell3;
+
+			}
+			
+		}
+		instanz.setMaterialCoefficient(sigma);
+	}
+		
+	
 	// ____________________________________________________________________________________________
 
-	// Sheet 8:
+	// Sheet 8: DataF
 
 	// ____________________________________________________________________________________________
+	public static void readDataF(Data instanz) throws BiffException, IOException {
+
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("DataF");
+
+		// read DataF[f]: Q_U_f, q_L_f, X_L_f, MC_f
+
+		double [] QU = new double[instanz.getF()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+				Cell cell1 = sheet.getCell(1, i + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+				
+				QU[i] = cell3;
+
+		}
+			
+		
+		instanz.setUpperLimitCapacity(QU);
+		
+
+		double [] qL = new double[instanz.getF()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+				Cell cell1 = sheet.getCell(2, i + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+				
+				qL[i] = cell3;
+
+		}
+			
+		
+		instanz.setLowerLimitExpansionSize(qL);
+		
+
+		double [] XLf = new double[instanz.getF()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+				Cell cell1 = sheet.getCell(3, i + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+				
+				XLf[i] = cell3;
+
+		}
+			
+		
+		instanz.setLowerLimitProductionAPI(XLf);
+		
+		double [] Mcf = new double[instanz.getF()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+				Cell cell1 = sheet.getCell(4, i + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+				
+				Mcf[i] = cell3;
+
+		}
+			
+		
+		instanz.setVariableProductionCosts(Mcf);
+		
+		
+	}
+	
 	// ____________________________________________________________________________________________
 
 	// Sheet 9:
