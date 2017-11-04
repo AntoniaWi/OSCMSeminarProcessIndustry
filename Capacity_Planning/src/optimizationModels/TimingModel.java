@@ -48,12 +48,10 @@ public class TimingModel {
 		System.out.println("");
 		
 		System.out.println("Model 'Planning under Uncertainty' starts.");
-		
+				
 		int index = 1;
 		
-		dataInstance.setCountPeriods(1);
-		
-		/*while (index <= dataInstance.getParameter_planningHorizon()) {
+		while (index <= dataInstance.getParameter_planningHorizon()) {
 			
 			newPeriod();
 			index++;
@@ -69,15 +67,7 @@ public class TimingModel {
 		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountSuccessfulTests(), "Successful Tests (gamma)");
 		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountFailedTests(), "Failed Tests (zeta)");
 		ReadAndWrite.printArrayWithPeriodsDouble(dataInstance.getTestProbability(), "Test Probability (p)");
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getTestResults(), "Test Results (delta)");
-		
-		TimingModel.generateScenarioTree();
-		TimingModel.printScenarioTree();*/
-		
-		TimingModel.generateAllPossibleStrategiesInPeriod_t();
-		
-		
-		
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getTestResults(), "Test Results (delta)");				
 	}
 	
 	
@@ -105,9 +95,18 @@ public class TimingModel {
 		
 		// If threshold value is met, set a_t = 1 and s_t = -1 and go to network model
 		
+		TimingModel.generateScenarioTree(dataInstance.getCountPeriods());
+		
+		for (int i = 0; i < dataInstance.getScenarioTree().size(); i++) {
+			
+			for (int j = 0; j < dataInstance.getScenarioTree().get(i).size(); j++) {
+				
+				System.out.println(dataInstance.getScenarioTree().get(i).get(j).toString());
+			}
+		}
 		
 		
-		
+				
 		// Create new test result
 		
 		double p = dataInstance.calculateTestProbability();
@@ -128,7 +127,7 @@ public class TimingModel {
 		
 		System.out.println("");
 		
-		System.out.println("************************************************************");
+		System.out.println("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 		System.out.println("Period # " + dataInstance.getCountPeriods() );
 		
 		System.out.println("");
@@ -154,18 +153,21 @@ public class TimingModel {
 	 * 
 	 * @return
 	 */
-	public static ArrayList<ArrayList<Event>> generateScenarioTree () {
+	public static void generateScenarioTree (int period) {
 		
 		ArrayList<ArrayList<Event>> scenarioTree = new ArrayList<ArrayList<Event>>();
 		
-		// Create an ArrayList for period t element of {1,...,T} which is added to the scenario tree
+		// Create an ArrayList for each period t element of {t,...,T} which is added to the scenario tree
+		// Attention: index goes from t-1 to T-1
 		
-		for (int t = 1; t <= dataInstance.getParameter_planningHorizon(); t++) {
+		int count = 1;
+		
+		for (int t = period; t <= dataInstance.getParameter_planningHorizon(); t++) {
 			
 			ArrayList<Event> period_t = new ArrayList<Event>();
 			scenarioTree.add(period_t);
 			
-			int numberOfEvents = (int) Math.pow(2.0, t);
+			int numberOfEvents = (int) Math.pow(2.0, count);
 			
 			// For each period the events are created and put into the ArrayList period_t
 			
@@ -178,7 +180,7 @@ public class TimingModel {
 				
 				// Is it a final event for which cost can be calculated?
 				
-				if (t == dataInstance.getParameter_planningHorizon()) {
+				if (t == dataInstance.getParameter_planningHorizon()-1) {
 					tmp_event.setFinalEvent(true);
 				}
 				else {
@@ -196,6 +198,8 @@ public class TimingModel {
 				
 				period_t.add(tmp_event);	
 			}
+			
+			count++;
 		}
 		
 		// Setting all children - final events in T do not have children, "-1" in the for-loop
@@ -245,8 +249,8 @@ public class TimingModel {
 				
 				if (t == 0) {
 					
-					event_tmp.setCountSuccessfulTestResults(dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests() + event_tmp.getTestResult());
-					event_tmp.setCountFailedTestResults(dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests() + (1 - event_tmp.getTestResult()));
+					event_tmp.setCountSuccessfulTestResults(dataInstance.getCountSuccessfulTests()[period-1] + event_tmp.getTestResult());
+					event_tmp.setCountFailedTestResults(dataInstance.getCountFailedTests()[period-1] + (1 - event_tmp.getTestResult()));
 				}
 				
 				else {
@@ -277,8 +281,8 @@ public class TimingModel {
 				
 				if (t == 0) {
 					
-					int gamma = dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests();
-					int zeta = dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests();
+					int gamma = dataInstance.getCountSuccessfulTests()[period-1];
+					int zeta = dataInstance.getCountFailedTests()[period-1];
 					
 					double p = TimingModel.calculateTestProbability(gamma, zeta);
 					
@@ -311,8 +315,6 @@ public class TimingModel {
 		}		
 		
 		dataInstance.setScenarioTree(scenarioTree);
-		
-		return scenarioTree;
 		
 	}
 	
