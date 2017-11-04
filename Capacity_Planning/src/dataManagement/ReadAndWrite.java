@@ -64,5 +64,21 @@ public class ReadAndWrite {
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @param array
+	 * @param title
+	 */
+	public static void printArraySimple (int [] array) {
+		
+		System.out.print("\n\n| ");
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			System.out.print(array[i] + "\t" + "|");
+		}
+	}
+	
 
 }

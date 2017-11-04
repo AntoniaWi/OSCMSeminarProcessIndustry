@@ -6,6 +6,7 @@ import dataManagement.Data;
 import dataManagement.ReadAndWrite;
 import dataManagement.StdRandom;
 import helper.Event;
+import helper.Permuter;
 
 public class TimingModel {
 	
@@ -30,8 +31,8 @@ public class TimingModel {
 		System.out.println("Planning horizon (T): " + dataInstance.getParameter_planningHorizon());
 		System.out.println("Discount factor (alpha): " + dataInstance.getParameter_discountFactor());
 		
-		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstance.getParameter_yearsToBuildPrimaryFacilities());
-		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstance.getParameter_yearsToBuildSecondaryFacilities());
+		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstance.getParameter_monthsToBuildPrimaryFacilities());
+		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstance.getParameter_monthsToBuildSecondaryFacilities());
 		
 		System.out.println("Construction cost of a primary facility (c_p): " + dataInstance.getParameter_constructionCostPrimaryFacility());
 		System.out.println("Construction cost of a secondary facility (c_s): " + dataInstance.getParameter_constructionCostSecondaryFacility());
@@ -50,7 +51,9 @@ public class TimingModel {
 		
 		int index = 1;
 		
-		while (index <= dataInstance.getParameter_planningHorizon()) {
+		dataInstance.setCountPeriods(1);
+		
+		/*while (index <= dataInstance.getParameter_planningHorizon()) {
 			
 			newPeriod();
 			index++;
@@ -69,7 +72,9 @@ public class TimingModel {
 		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getTestResults(), "Test Results (delta)");
 		
 		TimingModel.generateScenarioTree();
-		TimingModel.printScenarioTree();
+		TimingModel.printScenarioTree();*/
+		
+		TimingModel.generateAllPossibleStrategiesInPeriod_t();
 		
 		
 		
@@ -359,16 +364,73 @@ public class TimingModel {
 	 * 
 	 * @return
 	 */
-	//public static int[][] generateAllPossibleStrategiesInPeriod_t() {
+	public static ArrayList<int[]> generateAllPossibleStrategiesInPeriod_t() {
 		
+		ArrayList<int[]> strategies = new ArrayList<int[]> ();
+			
+		int doneInvestments = 0;
 		
+		for (int i = 0; i < dataInstance.getInvestmentDecisionPrimaryFacility().length; i++) { 	
+			if (dataInstance.getInvestmentDecisionPrimaryFacility()[i] == 1) {	
+				doneInvestments++;
+			}
+		}
 		
+		int remainingPossibleInvestment = dataInstance.getParameter_monthsToBuildPrimaryFacilities() - doneInvestments;
 		
+		int remainingPeriods = (dataInstance.getParameter_planningHorizon() - dataInstance.getCountPeriods()) + 1;
 		
-	//}
+		for (int i = 0; i <= remainingPossibleInvestment; i++) {
+			
+			int [] array_tmp = new int[remainingPeriods]; 
+			
+			int index_1 = 0;
+			
+			while (index_1 <= i) {
+				
+				array_tmp[index_1] = 1;
+			
+				index_1++;
+			}
+			
+			Permuter.permute(array_tmp, strategies);
+			Permuter.deleteRedundancy(strategies);
+		}
+		
+		for (int i = 0; i < strategies.size(); i++) {
+			
+			ReadAndWrite.printArraySimple(strategies.get(i));
+		}
+		
+		return strategies;
+	}
 	
 	
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
