@@ -173,6 +173,8 @@ public class Data {
 		ReadAndWrite.readMassbalance(this);
 		ReadAndWrite.readDataF(this);
 		ReadAndWrite.readSis(this);
+		ReadAndWrite.readPif(this);
+		ReadAndWrite.readIDsf(this);
 		
 	
 		}

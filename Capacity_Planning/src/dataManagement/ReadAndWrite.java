@@ -734,10 +734,10 @@ public class ReadAndWrite {
 		double[][] ID = new double[instanz.getF()][instanz.getF()];
 
 		
-			for (int i = 0; i < instanz.getF(); i++) {
-				for (int j = 0; j < instanz.getF(); j++) {
+			for (int i = 0; i < instanz.getF(); i++) {//s
+				for (int j = 0; j < instanz.getF(); j++) {//f
 
-				Cell cell1 = sheet.getCell(i + 1, j + 1);
+				Cell cell1 = sheet.getCell(j + 1, i + 1);
 				NumberCell cell2 = (NumberCell) cell1;
 				double cell3 = cell2.getValue();
 
