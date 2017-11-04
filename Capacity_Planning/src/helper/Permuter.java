@@ -42,6 +42,7 @@ public class Permuter {
 	public static void permute(int[] arr, ArrayList<int[]> list) {
 		
 		permuteHelper(arr, 0, list);
+		deleteRedundancy(list);
 		
 	}
 
@@ -95,41 +96,39 @@ public class Permuter {
 		
 		int length = list.get(0).length;
 		
-		int i = 0;
+		ArrayList<int[]> remove = new ArrayList<int[]>();
 		
-		while (i < list.size()) {
+		for (int i = 0; i < list.size(); i++) {
 			
 			int [] array_tmp = list.get(i);
 			
-			int search_index = 0;
+			int search_index = i+1;
 			
 			while (search_index < list.size()) {
 				
 				int count = 0;
 				
 				int [] array_search = list.get(search_index);
-				
-				if (search_index != i) {
 					
-					for (int j = 0; j < length; j++) {
+				for (int j = 0; j < length; j++) {
 						
-						if (array_tmp[j] == array_search[j]) {
+					if (array_tmp[j] == array_search[j]) {
 							
-							count++;
-						}
-					}	
-				}
-				
+						count++;
+					}
+				}	
+			
 				if (count == length) {
-					
-					list.remove(array_search);
-				}
 				
+					remove.add(array_search);
+				}
+			
 				search_index++;
 			}
 			
-			i++;
 		}
+		
+		list.removeAll(remove);
 	}
 }
 
