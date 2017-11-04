@@ -35,7 +35,7 @@ public class LocationPlanningModel extends IloCplex {
 	private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f] CIF_isf
 	private double[][][] demand;// demand[i][c][t] D_ict
 	private double[][] importDuty; // importDuty[s][f] ID_isf
-	private double[] projectLife;// projectLife[t] L_f
+	private int projectLife;// projectLife L_f
 	private double[] variableProductionCosts;// MC_f
 	private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
 	private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
@@ -146,9 +146,13 @@ public class LocationPlanningModel extends IloCplex {
 
 	public static void main(String[] args)
 			throws IloException, BiffException, IOException, RowsExceededException, WriteException {
-
-		Data instanz = new Data();
+		int x=0;
+		Data instanz = new Data(x);
 		System.out.println(instanz.getParameter_planningHorizon());
+		System.out.println(instanz.getParameter_discountFactor());
+		System.out.println(instanz.getParameter_monthsToBuildPrimaryFacilities());
+		System.out.println(instanz.getParameter_setupCostSecondaryFacility());
+		
 		/*
 
 		LocationPlanningModel lpm = new LocationPlanningModel(instanz);
@@ -817,7 +821,7 @@ public class LocationPlanningModel extends IloCplex {
 				if (IF[i]) {
 					for (int k = 0; k < this.T; k++) {// construction start (tau)
 						double lowerBound = k + this.monthsToBuildPrimaryFacility;
-						double upperBound1 = k + this.monthsToBuildPrimaryFacility + this.projectLife[j];
+						double upperBound1 = k + this.monthsToBuildPrimaryFacility + this.projectLife;
 						double upperBound = 0;
 						if (upperBound1 < this.T) {
 							upperBound = upperBound1;
@@ -827,12 +831,12 @@ public class LocationPlanningModel extends IloCplex {
 
 						if (i >= lowerBound && i <= upperBound) {
 
-							double setupCostPF = this.setupCostPrimaryFacility / this.projectLife[j];
+							double setupCostPF = this.setupCostPrimaryFacility / this.projectLife;
 							this.depreciationChargePrimaryFacilities.addTerm(setupCostPF,
 									this.constructionStartPrimaryFacility[j][k]);
 
 							double variableCostPF = this.monthsToBuildPrimaryFacility
-									* this.constructionCostPrimaryFacility / this.projectLife[j];
+									* this.constructionCostPrimaryFacility / this.projectLife;
 							this.depreciationChargePrimaryFacilities.addTerm(variableCostPF,
 									this.constructionStartPrimaryFacility[j][k]);
 
@@ -856,7 +860,7 @@ public class LocationPlanningModel extends IloCplex {
 				if (IF[i]) {
 					for (int k = 0; k < this.T; k++) {// construction start (tau)
 						double lowerBound = k + this.monthsToBuildSecondaryFacility;
-						double upperBound1 = k + this.monthsToBuildSecondaryFacility + this.projectLife[j];
+						double upperBound1 = k + this.monthsToBuildSecondaryFacility + this.projectLife;
 						double upperBound = 0;
 						if (upperBound1 < this.T) {
 							upperBound = upperBound1;
@@ -866,12 +870,12 @@ public class LocationPlanningModel extends IloCplex {
 
 						if (i >= lowerBound && i <= upperBound) {
 
-							double setupCostSF = this.setupCostSecondaryFacility / this.projectLife[j];
+							double setupCostSF = this.setupCostSecondaryFacility / this.projectLife;
 							this.depreciationChargeSecondaryFacilities.addTerm(setupCostSF,
 									this.constructionStartSecondaryFacility[j][k]);
 
 							double variableCostSF = this.monthsToBuildSecondaryFacility
-									* this.constructionCostSecondaryFacility / this.projectLife[j];
+									* this.constructionCostSecondaryFacility / this.projectLife;
 							this.depreciationChargeSecondaryFacilities.addTerm(variableCostSF,
 									this.constructionStartSecondaryFacility[j][k]);
 
