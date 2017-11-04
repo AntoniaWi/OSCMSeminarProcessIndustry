@@ -105,32 +105,32 @@ public class LocationPlanningModel extends IloCplex {
 		// Sets
 		this.IF=datainstanz.getIF(); // IF[f] internal facilities
 		this.EF=datainstanz.getEF(); // EF[f] external facilities
-		private boolean[][] OM; // OM[f][i] outgoing material
-		private boolean[][] IM; // IM[f][i]incoming material
-		private boolean[][] Fn; // Fn[f][n] nations
-		private boolean[] PIF; // PIF[f]
-		private boolean[] SIF; // SIF[f]
+		this.OM=datainstanz.getOM(); // OM[f][i] outgoing material
+		this.IM=datainstanz.getIM(); // IM[f][i]incoming material
+		this.Fn=datainstanz.getFn(); // Fn[f][n] nations
+		this.PIF=datainstanz.getPIF(); // PIF[f]
+		this.SIF=datainstanz.getSIF(); // SIF[f]
 
 		// Parameter
-		private int I; // number of material types
-		private int F; // number of all facilities
-		private int T; // number of months in planning horizon
-		private int N; // number of nations
-		private double[] capitalBudget;// capitalBudget[t] CB_t
-		private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f] CIF_isf
-		private double[][][] demand;// demand[i][c][t] D_ict
-		private double[][] importDuty; // importDuty[s][f] ID_isf
-		private double[] projectLife;// projectLife[t] L_f
-		private double[] variableProductionCosts;// MC_f
-		private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
-		private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
-		private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
-		private double[][] supply;// supply[i][s] S_is
-		private double[] corporateTax;// corporateTax[n]TR_n
-		private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
-		private int API; //
-		private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
-		private int initialCapacity; // Q0
+		this.I=datainstanz.getI(); // number of material types
+		this.F=datainstanz.getF(); // number of all facilities
+		this.T=datainstanz.getT(); // number of months in planning horizon
+		this.N=datainstanz.getN(); // number of nations
+		this.capitalBudget=datainstanz.getCapitalBudget();// capitalBudget[t] CB_t
+		this.costInsuranceFreight=datainstanz.getCostInsuranceFreight(); // costInsuranceFreight[i][s][f] CIF_isf
+		this.demand=datainstanz.getDemand();// demand[i][c][t] D_ict
+		this.importDuty=datainstanz.getImportDuty(); // importDuty[s][f] ID_isf
+		this.projectLife=datainstanz.getProjectLife();// projectLife[t] L_f
+		this.variableProductionCosts=datainstanz.getVariableProductionCosts();// MC_f
+		this.unitSellingPrice=datainstanz.getUnitSellingPrice();// unitSellingPrice[i][f] P_if
+		this.lowerLimitExpansionSize=datainstanz.getLowerLimitExpansionSize();// lowerLimitExpansionSize[f] g_L_f
+		this.upperLimitCapacity=datainstanz.getUpperLimitCapacity();// upperLimitCapacity[f] Q_U_f
+		this.supply=datainstanz.getSupply();// supply[i][s] S_is
+		this.corporateTax=datainstanz.getCorporateTax();// corporateTax[n]TR_n
+		this.lowerLimitProductionAPI=datainstanz.getLowerLimitProductionAPI();// lowerLimitProductionAPI[f] X_L_f
+		this.API=datainstanz.getAPI(); //
+		this.materialCoefficient=datainstanz.getMaterialCoefficient(); // materialCoeeficient[i][f] sigma_if
+		this.initialCapacity=datainstanz.getInitialCapacity(); // Q0
 
 		// Transfer parameter
 		this.remainingTimeOfClinicalTrials = datainstanz.getRemainingTimeofClinicalTrials();
