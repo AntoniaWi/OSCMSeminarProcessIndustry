@@ -605,14 +605,45 @@ public class ReadAndWrite {
 	
 	// ____________________________________________________________________________________________
 
-	// Sheet 9:
+	// Sheet 9: D_ict
 
 	// ____________________________________________________________________________________________
+	
+	
 	// ____________________________________________________________________________________________
 
-	// Sheet 10:
+	// Sheet 10:Sis
 
 	// ____________________________________________________________________________________________
+	public static void readSis(Data instanz) throws BiffException, IOException {
+
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("Sis");
+
+		// read S[i][s]
+
+		double[][] supply = new double[instanz.getI()][instanz.getF()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getI(); j++) {
+
+				Cell cell1 = sheet.getCell(i + 1, j + 1);
+				NumberCell cell2 = (NumberCell) cell1;
+				double cell3 = cell2.getValue();
+
+				
+			supply[j][i] = cell3;
+
+			}
+			
+		}
+		instanz.setSupply(supply);
+	}
 	// ____________________________________________________________________________________________
 
 	// Sheet 11:
