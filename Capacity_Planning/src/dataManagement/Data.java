@@ -11,8 +11,8 @@ public class Data {
 	
 	private double parameter_discountFactor;							// alpha
 	
-	private int parameter_yearsToBuildPrimaryFacilities;				// s_p_0 - in whole years
-	private double parameter_yearsToBuildSecondaryFacilities;			// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
+	private int parameter_monthsToBuildPrimaryFacilities;				// s_p_0 - in whole years
+	private int parameter_monthsToBuildSecondaryFacilities;			// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
 	
 	private double parameter_constructionCostPrimaryFacility;			// c_p
 	private double parameter_constructionCostSecondaryFacility;			// c_s
@@ -90,8 +90,8 @@ public class Data {
 		
 		this.parameter_discountFactor = 1.0;
 		
-		this.parameter_yearsToBuildPrimaryFacilities = 4;
-		this.parameter_yearsToBuildSecondaryFacilities = 0.25;
+		this.parameter_monthsToBuildPrimaryFacilities = 4;
+		this.parameter_monthsToBuildSecondaryFacilities = 3;
 		
 		this.parameter_constructionCostPrimaryFacility = 100;
 		this.parameter_constructionCostSecondaryFacility = 25;
@@ -134,7 +134,7 @@ public class Data {
 		// Currently only available for period 0
 		
 		this.remainingYearsToBuildPrimaryFacility = new int [this.parameter_planningHorizon + 1];
-		this.remainingYearsToBuildPrimaryFacility[0] = this.parameter_yearsToBuildPrimaryFacilities;
+		this.remainingYearsToBuildPrimaryFacility[0] = this.parameter_monthsToBuildPrimaryFacilities;
 		
 		for (int i = 1; i < this.remainingYearsToBuildPrimaryFacility.length; i++) {	
 			this.remainingYearsToBuildPrimaryFacility[i] = -1;
@@ -202,34 +202,34 @@ public class Data {
 
 
 	/**
-	 * @return the parameter_yearsToBuildPrimaryFacilities
+	 * @return the parameter_monthsToBuildPrimaryFacilities
 	 */
-	public int getParameter_yearsToBuildPrimaryFacilities() {
-		return parameter_yearsToBuildPrimaryFacilities;
+	public int getParameter_monthsToBuildPrimaryFacilities() {
+		return parameter_monthsToBuildPrimaryFacilities;
 	}
 
 
 	/**
-	 * @param parameter_yearsToBuildPrimaryFacilities the parameter_yearsToBuildPrimaryFacilities to set
+	 * @param parameter_monthsToBuildPrimaryFacilities the parameter_yearsToBuildPrimaryFacilities to set
 	 */
-	public void setParameter_yearsToBuildPrimaryFacilities(int parameter_yearsToBuildPrimaryFacilities) {
-		this.parameter_yearsToBuildPrimaryFacilities = parameter_yearsToBuildPrimaryFacilities;
+	public void setParameter_monthsToBuildPrimaryFacilities(int parameter_monthsToBuildPrimaryFacilities) {
+		this.parameter_monthsToBuildPrimaryFacilities = parameter_monthsToBuildPrimaryFacilities;
 	}
 
 
 	/**
-	 * @return the parameter_yearsToBuildSecondaryFacilities
+	 * @return the parameter_monthsToBuildSecondaryFacilities
 	 */
-	public double getParameter_yearsToBuildSecondaryFacilities() {
-		return parameter_yearsToBuildSecondaryFacilities;
+	public int getParameter_monthsToBuildSecondaryFacilities() {
+		return parameter_monthsToBuildSecondaryFacilities;
 	}
 
 
 	/**
-	 * @param parameter_yearsToBuildSecondaryFacilities the parameter_yearsToBuildSecondaryFacilities to set
+	 * @param parameter_monthsToBuildSecondaryFacilities the parameter_yearsToBuildSecondaryFacilities to set
 	 */
-	public void setParameter_yearsToBuildSecondaryFacilities(double parameter_yearsToBuildSecondaryFacilities) {
-		this.parameter_yearsToBuildSecondaryFacilities = parameter_yearsToBuildSecondaryFacilities;
+	public void setParameter_monthsToBuildSecondaryFacilities(int parameter_monthsToBuildSecondaryFacilities) {
+		this.parameter_monthsToBuildSecondaryFacilities = parameter_monthsToBuildSecondaryFacilities;
 	}
 
 
