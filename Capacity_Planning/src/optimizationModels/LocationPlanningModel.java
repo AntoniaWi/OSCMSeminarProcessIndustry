@@ -364,7 +364,7 @@ public class LocationPlanningModel extends IloCplex {
 					addGe(this.capacityExpansionOnlyIfPlanned, this.capacityExpansionAmount[i][j]);
 				}
 
-				if (IF[i] && SIF[i]) {
+				else if (IF[i] && SIF[i]) {
 
 					double freecapacity = this.upperLimitCapacity[i] - this.initialCapacity;
 
@@ -398,7 +398,7 @@ public class LocationPlanningModel extends IloCplex {
 					addLe(this.minimumExpansion, this.capacityExpansionAmount[i][j]);
 				}
 
-				if (IF[i] && SIF[i]) {
+				else if (IF[i] && SIF[i]) {
 					this.minimumExpansion.addTerm(this.lowerLimitExpansionSize[i],
 							this.constructionStartSecondaryFacility[i][j]);
 
@@ -431,7 +431,7 @@ public class LocationPlanningModel extends IloCplex {
 					addEq(this.expansionSize1, this.capacityExpansionAmount[j][i]);
 				}
 
-				if (IF[j] && SIF[j]) {
+				else if (IF[j] && SIF[j]) {
 
 					this.expansionSize1.addTerm(this.lowerLimitExpansionSize[j],
 							this.constructionStartSecondaryFacility[j][i]);
@@ -457,7 +457,7 @@ public class LocationPlanningModel extends IloCplex {
 					addGe(this.expansionSize2, this.deltaCapacityExpansion[j][i]);
 				}
 
-				if (IF[j] && SIF[j]) {
+				else if (IF[j] && SIF[j]) {
 
 					double expansionBeyondMin = this.upperLimitCapacity[j] - this.initialCapacity
 							- this.lowerLimitExpansionSize[j];
@@ -496,7 +496,7 @@ public class LocationPlanningModel extends IloCplex {
 
 					addEq(this.availableCapacity, this.availableProductionCapacity[i][j]);
 				}
-				if (IF[i] && SIF[i]) {
+				else if (IF[i] && SIF[i]) {
 
 					addEq(this.availableProductionCapacity[i][0], this.initialCapacity);
 
@@ -617,7 +617,7 @@ public class LocationPlanningModel extends IloCplex {
 
 				}
 
-				if (IF[i] && SIF[i]) {
+				else if (IF[i] && SIF[i]) {
 					int tau2 = this.T - this.monthsToBuildSecondaryFacility;
 					if (tau2 < 0) {
 						tau2 = 0;
