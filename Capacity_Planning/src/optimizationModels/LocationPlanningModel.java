@@ -102,32 +102,38 @@ public class LocationPlanningModel extends IloCplex {
 	private IloLinearNumExpr taxableIncomeConstraint = linearNumExpr();
 
 	public LocationPlanningModel(Data datainstanz) throws IloException {
-		// Indices
-		I = datainstanz.getI();
-		F = datainstanz.getF();
-		T = datainstanz.getT();
-		N = datainstanz.getN();
-
 		// Sets
+		this.IF=datainstanz.getIF(); // IF[f] internal facilities
+		this.EF=datainstanz.getEF(); // EF[f] external facilities
+		private boolean[][] OM; // OM[f][i] outgoing material
+		private boolean[][] IM; // IM[f][i]incoming material
+		private boolean[][] Fn; // Fn[f][n] nations
+		private boolean[] PIF; // PIF[f]
+		private boolean[] SIF; // SIF[f]
 
-		// Daten
-		this.capitalBudget = datainstanz.getCapitalBudget();
-		this.costInsuranceFreight = datainstanz.getCostInsuranceFreight();
-		this.demand = datainstanz.getDemand();
-		this.importDuty = datainstanz.getImportDuty();
-		this.projectLife = datainstanz.getProjectLife();
-		this.variableProductionCosts = datainstanz.getVariableProductionCosts();
-		this.unitSellingPrice = datainstanz.getUnitSellingPrice();
-		this.lowerLimitExpansionSize = datainstanz.getLowerLimitExpansionSize();
-		this.upperLimitCapacity = datainstanz.getUpperLimitCapacity();
-		this.supply = datainstanz.getSupply();
-		this.corporateTax = datainstanz.getCorporateTax();
-		this.lowerLimitProductionAPI = datainstanz.getLowerLimitProductionAPI();
-		this.API = datainstanz.getAPI();
-		this.materialCoefficient = datainstanz.getMaterialCoefficient();
+		// Parameter
+		private int I; // number of material types
+		private int F; // number of all facilities
+		private int T; // number of months in planning horizon
+		private int N; // number of nations
+		private double[] capitalBudget;// capitalBudget[t] CB_t
+		private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f] CIF_isf
+		private double[][][] demand;// demand[i][c][t] D_ict
+		private double[][] importDuty; // importDuty[s][f] ID_isf
+		private double[] projectLife;// projectLife[t] L_f
+		private double[] variableProductionCosts;// MC_f
+		private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
+		private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
+		private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
+		private double[][] supply;// supply[i][s] S_is
+		private double[] corporateTax;// corporateTax[n]TR_n
+		private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
+		private int API; //
+		private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
+		private int initialCapacity; // Q0
 
 		// Transfer parameter
-		this.remainingTimeOfClinicalTrials = datainstanz.getRemainingTimeOfClinicalTrials();
+		this.remainingTimeOfClinicalTrials = datainstanz.getRemainingTimeofClinicalTrials();
 		this.discountfactor = datainstanz.getParameter_discountFactor();
 		this.monthsToBuildPrimaryFacility = datainstanz.getParameter_monthsToBuildPrimaryFacilities();
 		this.monthsToBuildSecondaryFacility = datainstanz.getParameter_monthsToBuildSecondaryFacilities();
