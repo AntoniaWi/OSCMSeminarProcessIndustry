@@ -15,17 +15,18 @@ public class Permuter {
 		
 		ArrayList<int[]> list = new ArrayList<int[]>();
 		
-		permute(new int[] { 1,2,3 }, list);
+		permute(new int[] { 1,0,0,0,0 }, list);
 		
 		for (int i = 0; i < list.size(); i++) {
 			
 			ReadAndWrite.printArraySimple(list.get(i));
 		}
 		
-		System.out.println("\nRedundancy\n");
 		
-		Permuter.deleteRedundancy(list);
-
+		System.out.println("\n\nR\n\n");
+		
+		deleteRedundancy(list);
+		
 		for (int i = 0; i < list.size(); i++) {
 			
 			ReadAndWrite.printArraySimple(list.get(i));
@@ -41,6 +42,7 @@ public class Permuter {
 	public static void permute(int[] arr, ArrayList<int[]> list) {
 		
 		permuteHelper(arr, 0, list);
+		
 	}
 
 	

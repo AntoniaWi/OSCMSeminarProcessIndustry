@@ -80,11 +80,11 @@ public class Data {
 	 */
 	public Data () {
 
-		this.parameter_planningHorizon = 3;
+		this.parameter_planningHorizon = 5;
 		
 		this.parameter_discountFactor = 1.0;
 		
-		this.parameter_monthsToBuildPrimaryFacilities = 2;
+		this.parameter_monthsToBuildPrimaryFacilities = 3;
 		this.parameter_monthsToBuildSecondaryFacilities = 3;
 		
 		this.parameter_constructionCostPrimaryFacility = 100;

@@ -386,7 +386,7 @@ public class TimingModel {
 			
 			int index_1 = 0;
 			
-			while (index_1 <= i) {
+			while (index_1 < i) {
 				
 				array_tmp[index_1] = 1;
 			
@@ -394,7 +394,7 @@ public class TimingModel {
 			}
 			
 			Permuter.permute(array_tmp, strategies);
-			Permuter.deleteRedundancy(strategies);
+		
 		}
 		
 		for (int i = 0; i < strategies.size(); i++) {
