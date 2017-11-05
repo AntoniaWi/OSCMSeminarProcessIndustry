@@ -591,10 +591,111 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 
-	// Sheet 9: D_ict//TODO: fehlt
+	// Sheet 9: D_ictBasics
 
 	// ____________________________________________________________________________________________
+	public static void readDictBasics(Data instanz) throws BiffException, IOException {
 
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("Dict_Basics");
+
+		// read DictBasics[c]:
+
+		double[] DemandM = new double[instanz.getF()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+
+			Cell cell1 = sheet.getCell(2, i + 2);
+			NumberCell cell2 = (NumberCell) cell1;
+			double cell3 = cell2.getValue();
+
+			DemandM[i] = cell3;
+
+		}
+
+		instanz.setDemandM(DemandM);
+
+		double[] DemandR = new double[instanz.getF()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+
+			Cell cell1 = sheet.getCell(3, i + 2);
+			NumberCell cell2 = (NumberCell) cell1;
+			double cell3 = cell2.getValue();
+
+			DemandR[i] = cell3;
+
+		}
+
+		instanz.setDemandR(DemandR);
+
+	}
+	// ____________________________________________________________________________________________
+
+	// Sheet 9.1: D_ict
+
+	// ____________________________________________________________________________________________
+	public static void createAndWriteDict(Data instanz) throws BiffException, IOException, WriteException {
+
+		File file1;
+		WritableWorkbook writableWorkbook;
+		Workbook workbook1;
+
+		file1 = new File(path);
+
+		workbook1 = Workbook.getWorkbook(file1);
+		writableWorkbook = Workbook.createWorkbook(file1, workbook1);
+
+		WritableSheet sheet0 = writableWorkbook.getSheet("Dict");
+
+		// headings
+
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 1, i + 1);
+			sheet0.addCell(label3);
+
+		}
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label3 = new Number(0, i + 2, i + 1);
+			sheet0.addCell(label3);
+
+		}
+
+		// Dict
+
+		double[][][] Dict = new double[instanz.getI()][instanz.getF()][instanz.getT()];
+		for (int i = 0; i < instanz.getI(); i++) {
+			for (int j = 0; j < instanz.getF(); j++) {
+				for (int k = 0; k < instanz.getT(); k++) {
+					if (i == instanz.getI() - 1 && k <= instanz.getRemainingTimeofClinicalTrials()) {
+						Dict[i][j][k] = 0;
+
+					} else if (i == instanz.getI() - 1
+							&& k <= (instanz.getRemainingTimeofClinicalTrials() + instanz.getTimeM())) {
+						Dict[i][j][k] = instanz.getDemandM()[j];
+
+					} else if (i == instanz.getI() - 1 && k <= instanz.getT()) {
+						Dict[i][j][k] = instanz.getDemandR()[j];
+
+					}
+
+					else {
+						Dict[i][j][k] = 0;
+					}
+				}
+			}
+		}
+		instanz.setDemand(Dict);
+		writableWorkbook.write();
+		writableWorkbook.close();
+		workbook1.close();
+
+	}
 	// ____________________________________________________________________________________________
 
 	// Sheet 10:Sis
@@ -722,7 +823,6 @@ public class ReadAndWrite {
 		}
 		instanz.setCostInsuranceFreight(CIF);
 	}
-
 
 	// ____________________________________________________________________________________________
 
