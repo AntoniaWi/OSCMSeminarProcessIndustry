@@ -119,7 +119,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.capitalBudget=datainstanz.getCapitalBudget();// capitalBudget[t] CB_t
 		this.costInsuranceFreight=datainstanz.getCostInsuranceFreight(); // costInsuranceFreight[i][s][f] CIF_isf
 		this.demand=datainstanz.getDemand();// demand[i][c][t] D_ict
-		this.importDuty=datainstanz.getImportDuty(); // importDuty[s][f] ID_isf
+		this.importDuty=datainstanz.getImportDuty(); // importDuty[s][f] ID_sf
 		this.projectLife=datainstanz.getProjectLife();// projectLife[t] L_f
 		this.variableProductionCosts=datainstanz.getVariableProductionCosts();// MC_f
 		this.unitSellingPrice=datainstanz.getUnitSellingPrice();// unitSellingPrice[i][f] P_if
