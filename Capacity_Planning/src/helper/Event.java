@@ -1,5 +1,6 @@
 package helper;
 
+import optimizationModels.TimingModel;
 
 public class Event {
 	
@@ -7,8 +8,11 @@ public class Event {
 	private int index;
 	
 	private boolean finalEvent;
+	
 	private double finalCost;
 	private double expectedCost;
+	private double periodCost;
+	private double totalCost;
 	
 	private double probability;
 	private int testResult;
@@ -23,43 +27,10 @@ public class Event {
 	private Event right_nextFailedTestResult;
 	private Event previousEvent;
 	
-	
-	/**
-	 * @param period
-	 * @param index
-	 * @param finalEvent
-	 * @param finalCost
-	 * @param probability
-	 * @param testResult
-	 * @param countSuccessfulTestResults
-	 * @param countFailedTestResults
-	 * @param nextProbability_Successful
-	 * @param nextProbability_Failed
-	 * @param left_nextSuccessfulTestResult
-	 * @param right_nextFailedTestResult
-	 * @param previousEvent
-	 */
-	public Event(int period, int index, boolean finalEvent, double finalCost, double expectedCost, double probability, int testResult,
-			int countSuccessfulTestResults, int countFailedTestResults, double nextProbability_Successful,
-			double nextProbability_Failed, Event left_nextSuccessfulTestResult, Event right_nextFailedTestResult,
-			Event previousEvent) {
-		
-		this.period = period;
-		this.index = index;
-		this.finalEvent = finalEvent;
-		this.finalCost = finalCost;
-		this.expectedCost = expectedCost;
-		this.probability = probability;
-		this.testResult = testResult;
-		this.countSuccessfulTestResults = countSuccessfulTestResults;
-		this.countFailedTestResults = countFailedTestResults;
-		this.nextProbabilitySuccessful_left = nextProbability_Successful;
-		this.nextProbabilityFailed_right = nextProbability_Failed;
-		this.left_nextSuccessfulTestResult = left_nextSuccessfulTestResult;
-		this.right_nextFailedTestResult = right_nextFailedTestResult;
-		this.previousEvent = previousEvent;
-	}
-	
+	private int [] strategy;
+	private int a_T;
+	private int s_T;
+
 	
 	/**
 	 * 
@@ -70,8 +41,11 @@ public class Event {
 		this.index = -1;
 		
 		this.finalEvent = false;
+		
 		this.finalCost = -1;
 		this.expectedCost = -1;
+		this.periodCost = -1;
+		this.totalCost = -1; 
 		
 		this.probability = -1;
 		this.testResult = -1;
@@ -166,6 +140,38 @@ public class Event {
 	 */
 	public void setExpectedCost(double expectedCost) {
 		this.expectedCost = expectedCost;
+	}
+
+
+	/**
+	 * @return the periodCost
+	 */
+	public double getPeriodCost() {
+		return periodCost;
+	}
+
+
+	/**
+	 * @param periodCost the periodCost to set
+	 */
+	public void setPeriodCost(double periodCost) {
+		this.periodCost = periodCost;
+	}
+
+
+	/**
+	 * @return the totalCost
+	 */
+	public double getTotalCost() {
+		return totalCost;
+	}
+
+
+	/**
+	 * @param totalCost the totalCost to set
+	 */
+	public void setTotalCost(double totalCost) {
+		this.totalCost = totalCost;
 	}
 
 
@@ -314,39 +320,64 @@ public class Event {
 
 	
 	/**
-	 * 
-	 * @param s_T 	Remaining periods (years) to build primary facility in period T
-	 * @param a_T 	Investment decision about primary facility in period T
-	 * @param c		Construction cost of primary facility		
-	 * @param K		Setup cost of primary facility
-	 * @param phi	Penalty cost when construction of primary facility is not finished 
-	 * @return		Final cost in T+1 -> F(s_T, a_T)
+	 * @return the strategy
 	 */
-	public double calculateF (int s_T, int a_T, double c, double K, double phi, int gamma_c) {
+	public int[] getStrategy() {
+		return strategy;
+	}
+
+
+	/**
+	 * @param strategy the strategy to set
+	 */
+	public void setStrategy(int[] strategy) {
+		this.strategy = strategy;
+	}
+
+
+	/**
+	 * @return the a_T
+	 */
+	public int getA_T() {
+		return a_T;
+	}
+
+
+	/**
+	 * @param a_T the a_T to set
+	 */
+	public void setA_T(int a_T) {
+		this.a_T = a_T;
+	}
+
+
+	/**
+	 * @return the s_T
+	 */
+	public int getS_T() {
+		return s_T;
+	}
+
+
+	/**
+	 * @param s_T the s_T to set
+	 */
+	public void setS_T(int s_T) {
+		this.s_T = s_T;
+	}
+
 	
-		double F = -1;
+	/**
+	 * 
+	 * @param strategy
+	 */
+	public void addStrategy (int [] strategy, int periodsToBuild) {
 		
-		if (this.finalEvent == true) {
-			
-			if (this.countSuccessfulTestResults >= gamma_c) {
-				
-				F = s_T * c + s_T * phi + K * Math.max((1 - a_T), 0);
-				
-			}
-			
-			else if (this.countSuccessfulTestResults < gamma_c) {
-				
-				F = 0;
-			}			
-		}
+		this.strategy = strategy;
+		this.a_T = strategy[strategy.length-1];
 		
-		else {
-			
-			System.out.println ("ERROR - this event is not a final event and final cost cannot be calculated!");
-			
-		}
+		this.s_T = periodsToBuild - TimingModel.countTrueValuesInArray(strategy);
 		
-		return F;
 	}
 	
 	
@@ -354,35 +385,58 @@ public class Event {
 	 * 
 	 * @return
 	 */
-	public double calculateExpectedCost () {
+	public void calculatePeriodCost (int period, double c, double K) {
 		
-		double exp_cost = -1.0;
+		this.periodCost = this.strategy[period] * c + K * Math.max(strategy[period]-strategy[period-1], 0);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void calculateExpectedCost () {
 		
-		if (!this.finalEvent) {
+		this.expectedCost = this.nextProbabilitySuccessful_left * this.left_nextSuccessfulTestResult.totalCost
+							+ this.nextProbabilityFailed_right * this.right_nextFailedTestResult.totalCost;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param c
+	 * @param K
+	 * @param phi
+	 * @param gamma_c
+	 */
+	public void calculateFinalCost (double c, double K, double phi, int gamma_c) {
 			
-			// If the next events are final events, then the final cost have to be taken into account.
-			
-			if (this.left_nextSuccessfulTestResult.finalEvent) {
+		if (this.countSuccessfulTestResults >= gamma_c) {
 				
-				exp_cost = this.nextProbabilitySuccessful_left * this.left_nextSuccessfulTestResult.finalCost 
-							+ this.nextProbabilityFailed_right * this.right_nextFailedTestResult.finalCost; 
-			}
-			
-			// If the next events are not final events, then the expected cost have to be taken into account.
-			
-			else {
-				
-				exp_cost = this.nextProbabilitySuccessful_left * this.left_nextSuccessfulTestResult.expectedCost
-						+ this.nextProbabilityFailed_right * this.right_nextFailedTestResult.expectedCost;	
-			}
+			this.finalCost = this.s_T * c + this.s_T * phi + K * Math.max((1 - a_T), 0);
 		}
 		
 		else {
 			
-			System.out.println ("ERROR - this event is a final event and expected cost cannot be calculated.");	
+			this.finalCost = 0;	
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param period
+	 */
+	public void calculateTotalCost (int period) {
+		
+		if (this.finalEvent) {
+			
+			this.totalCost = this.periodCost + this.finalCost;
 		}
 		
-		return exp_cost;
+		else {
+			
+			this.totalCost = this.periodCost + this.expectedCost;
+		}	
 	}
 	
 	
@@ -397,7 +451,7 @@ public class Event {
 		
 		if (this.previousEvent != null) {
 			
-			string += "Previous Event - Period: " + this.previousEvent.period + ", index: " + this.previousEvent.index + "\n";
+			string += "Previous Event - period: " + this.previousEvent.period + ", index: " + this.previousEvent.index + "\n";
 		}
 		
 		string += "Period: " + this.period + "\n";
@@ -409,8 +463,17 @@ public class Event {
 		string += "Next probability (success): " + this.nextProbabilitySuccessful_left + "\n";
 		string += "Next probability (fail): " + this.nextProbabilityFailed_right + "\n";
 		
-		return string;
+		if (this.finalEvent) {
+			
+			string += "Final cost (F): " + this.finalCost + "\n";
+		}
 		
+		else {
+			
+			string += "Expected cost (V): " + this.expectedCost + "\n";
+		}
+		
+		return string;
 	}
 	
 

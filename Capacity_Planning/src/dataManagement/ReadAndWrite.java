@@ -825,12 +825,14 @@ public class ReadAndWrite {
 	 */
 	public static void printArraySimple(int[] array) {
 
-		System.out.print("\n\n| ");
+		System.out.print("\n| ");
 
 		for (int i = 0; i < array.length; i++) {
 
 			System.out.print(array[i] + "\t" + "|");
 		}
+		
+		System.out.println("");
 	}
 
 }
