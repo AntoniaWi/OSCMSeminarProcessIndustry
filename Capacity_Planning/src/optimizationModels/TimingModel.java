@@ -375,18 +375,15 @@ public class TimingModel {
 			
 			int last_period = scenarioTree.size()-1;
 			
-			for (int j = 0; j < scenarioTree.get(last_period).size(); j++) {
-					
-				scenarioTree.get(last_period).get(j).calculateFinalCost(s_T, a_T, c, K, phi, gamma_c);
-			}
-			
-			for (int j = scenarioTree.size()-2; j >= 0; j--) {
+			for (int j = scenarioTree.size()-1; j >= 0; j--) {
 				
 				for (int k = 0; k < scenarioTree.get(j).size(); k++) {
 					
-					scenarioTree.get(j).get(k).calculateExpectedCost();
-				}
+					scenarioTree.get(j).get(k).calculateTotalCost(period);
+				}	
 			}
+			
+			// TODO: remaingPeriodsToBuild, cost calculation etc.period
 			
 			Event left = scenarioTree.get(0).get(0);
 			Event right = scenarioTree.get(0).get(1);

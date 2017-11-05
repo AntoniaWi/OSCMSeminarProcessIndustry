@@ -60,6 +60,10 @@ public class Event {
 		this.right_nextFailedTestResult = null;
 		this.previousEvent = null;
 		
+		this.strategy = null;
+		this.a_T = -1;
+		this.s_T = -1;
+		
 	}
 
 	
