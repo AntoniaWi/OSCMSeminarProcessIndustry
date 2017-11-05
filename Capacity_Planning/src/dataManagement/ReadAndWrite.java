@@ -24,15 +24,12 @@ import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 1;
+	public static int user = 2;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
 	// Paths Sarah #2
-	public static String pathExcelSarah = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseData-Basic.xlsx";// TODO:
-																																						// Sarah
-																																						// Pfad
-																																						// eingeben
+	public static String pathExcelSarah = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\CaseDataBasic.xls";
 	// Paths Ramona #3
 	public static String pathExcelRamona = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseData-Basic.xlsx";// TODO:
 																																							// Sarah
