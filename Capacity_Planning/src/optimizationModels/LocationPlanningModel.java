@@ -200,13 +200,22 @@ public class LocationPlanningModel extends IloCplex {
 		this.addConstraintsMassBalanceEquation();
 		// 8th constraint
 		/*
-		 * this.addConstraintCapacityRestrictionForProduction(); // 9th constraint
-		 * this.addConstraintLowerLimitOfProduction(); // 10th constraint
-		 * this.addConstraintSupplyAndDemand(); // 11th constraint
-		 * this.addConstraintCapitalExpenditure(); // 12th constraint
-		 * this.addConstraintBudgetConstraint(); // 13th constraint
-		 * this.addConstraintGrossIncome(); // 14th constraint
-		 * this.addConstraintDepreciationCharge(); // 15th constraint
+		 * this.addConstraintCapacityRestrictionForProduction(); 
+		// 9th constraint
+		 * 
+		 * this.addConstraintLowerLimitOfProduction(); 
+		 * 
+		 // 10th constraint
+		 * this.addConstraintSupplyAndDemand(); 
+		 //11th constraint
+		 * this.addConstraintCapitalExpenditure(); 
+		 // 12th constraint
+		 * this.addConstraintBudgetConstraint(); 
+		 // 13th constraint
+		 * this.addConstraintGrossIncome(); 
+		 // 14th constraint
+		 * this.addConstraintDepreciationCharge(); 
+		 // 15th constraint
 		 * this.addConstraintTaxableIncome();
 		 * 
 		 * String path = "./logs/model.lp"; exportModel(path);
