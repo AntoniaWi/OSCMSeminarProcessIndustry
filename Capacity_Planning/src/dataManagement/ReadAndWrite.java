@@ -24,15 +24,12 @@ import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 1;
+	public static int user = 2;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
 	// Paths Sarah #2
-	public static String pathExcelSarah = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseData-Basic.xlsx";// TODO:
-																																						// Sarah
-																																						// Pfad
-																																						// eingeben
+	public static String pathExcelSarah = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\CaseDataBasic.xls";
 	// Paths Ramona #3
 	public static String pathExcelRamona = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseData-Basic.xlsx";// TODO:
 																																							// Sarah
@@ -131,6 +128,7 @@ public class ReadAndWrite {
 		NumberCell cell17 = (NumberCell) cell16;
 		double cell18 = cell17.getValue();
 		instanz.setParameter_constructionCostSecondaryFacility((int) cell18);
+
 		// Setup costs Kp and Ks
 
 		Cell cell19 = sheet.getCell(1, 6);
@@ -145,7 +143,37 @@ public class ReadAndWrite {
 		double cell24 = cell23.getValue();
 		instanz.setParameter_setupCostSecondaryFacility((int) cell24);
 
-		// TODO: penalty, gamma, zeta
+		// gamma0
+
+		Cell cell25 = sheet.getCell(1, 9);
+
+		NumberCell cell26 = (NumberCell) cell25;
+		double cell27 = cell26.getValue();
+		instanz.setParameter_preliminaryKnowledgeAboutSuccessfulTests((int) cell27);
+
+		// zeta0
+
+		Cell cell28 = sheet.getCell(1, 10);
+
+		NumberCell cell29 = (NumberCell) cell28;
+		double cell30 = cell29.getValue();
+		instanz.setParameter_preliminaryKnowledgeAboutFailedTests((int) cell30);
+
+		// gamma_c
+
+		Cell cell31 = sheet.getCell(1, 11);
+
+		NumberCell cell32 = (NumberCell) cell31;
+		double cell33 = cell32.getValue();
+		instanz.setParameter_thresholdSuccessfulTests((int) cell33);
+
+		// penaltyCost
+
+		Cell cell34 = sheet.getCell(1, 8);
+
+		NumberCell cell35 = (NumberCell) cell34;
+		double cell36 = cell35.getValue();
+		instanz.setParameter_penaltyCost((int) cell36);
 
 	}
 
@@ -450,6 +478,24 @@ public class ReadAndWrite {
 		double cell24 = cell23.getValue();
 		instanz.setAPI((int) cell24);
 
+		// read timeMonopoly
+		Cell cell25 = sheet.getCell(1, 11);
+		NumberCell cell26 = (NumberCell) cell25;
+		double cell27 = cell26.getValue();
+		instanz.setTimeM((int) cell27);
+
+		// read timeRegularMarket
+		Cell cell28 = sheet.getCell(1, 12);
+		NumberCell cell29 = (NumberCell) cell28;
+		double cell30 = cell29.getValue();
+		instanz.setTimeR((int) cell30);
+		
+		// read remainingTimeOfClinicalTrials
+		Cell cell31 = sheet.getCell(1, 13);
+		NumberCell cell32 = (NumberCell) cell31;
+		double cell33 = cell32.getValue();
+		instanz.setRemainingTimeofClinicalTrials((int)cell33);
+
 	}
 
 	// ____________________________________________________________________________________________
@@ -591,10 +637,118 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 
-	// Sheet 9: D_ict//TODO: fehlt
+	// Sheet 9: D_ictBasics
 
 	// ____________________________________________________________________________________________
+	public static void readDictBasics(Data instanz) throws BiffException, IOException {
 
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet = workbook.getSheet("Dict_Basics");
+
+		// read DictBasics[c]:
+
+		double[] DemandM = new double[instanz.getF()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+
+			Cell cell1 = sheet.getCell(2, i + 2);
+			NumberCell cell2 = (NumberCell) cell1;
+			double cell3 = cell2.getValue();
+
+			DemandM[i] = cell3;
+
+		}
+
+		instanz.setDemandM(DemandM);
+
+		double[] DemandR = new double[instanz.getF()];
+
+		for (int i = 0; i < instanz.getF(); i++) {
+
+			Cell cell1 = sheet.getCell(3, i + 2);
+			NumberCell cell2 = (NumberCell) cell1;
+			double cell3 = cell2.getValue();
+
+			DemandR[i] = cell3;
+
+		}
+
+		instanz.setDemandR(DemandR);
+
+	}
+	// ____________________________________________________________________________________________
+
+	// Sheet 9.1: D_ict
+
+	// ____________________________________________________________________________________________
+	public static void createAndWriteDict(Data instanz) throws BiffException, IOException, WriteException {
+
+		File file1;
+		WritableWorkbook writableWorkbook;
+		Workbook workbook1;
+
+		file1 = new File(path);
+
+		workbook1 = Workbook.getWorkbook(file1);
+		writableWorkbook = Workbook.createWorkbook(file1, workbook1);
+
+		WritableSheet sheet0 = writableWorkbook.getSheet("Dict");
+
+		// headings
+
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 1, i + 1);
+			sheet0.addCell(label3);
+
+		}
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label3 = new Number(0, i + 2, i + 1);
+			sheet0.addCell(label3);
+
+		}
+
+		// Dict
+
+		double[][][] Dict = new double[instanz.getI()][instanz.getF()][instanz.getT()];
+		for (int i = 0; i < instanz.getI(); i++) {
+			for (int j = 0; j < instanz.getF(); j++) {
+				for (int k = 0; k < instanz.getT(); k++) {
+					if (i == instanz.getI() - 1 && k < instanz.getRemainingTimeofClinicalTrials()) {
+						Dict[i][j][k] = 0;
+						Number label3 = new Number(k+1, j + 2, Dict[i][j][k]);
+						sheet0.addCell(label3);
+
+					} else if (i == instanz.getI() - 1
+							&& k < (instanz.getRemainingTimeofClinicalTrials() + instanz.getTimeM())) {
+						Dict[i][j][k] = instanz.getDemandM()[j];
+						Number label3 = new Number(k+1, j + 2, Dict[i][j][k]);
+						sheet0.addCell(label3);
+
+					} else if (i == instanz.getI() - 1 && k <= instanz.getT()) {
+						Dict[i][j][k] = instanz.getDemandR()[j];
+						Number label3 = new Number(k+1, j + 2, Dict[i][j][k]);
+						sheet0.addCell(label3);
+
+					}
+
+					else {
+						Dict[i][j][k] = 0;
+						
+					}
+				}
+			}
+		}
+		instanz.setDemand(Dict);
+		writableWorkbook.write();
+		writableWorkbook.close();
+		workbook1.close();
+
+	}
 	// ____________________________________________________________________________________________
 
 	// Sheet 10:Sis
@@ -722,7 +876,6 @@ public class ReadAndWrite {
 		}
 		instanz.setCostInsuranceFreight(CIF);
 	}
-
 
 	// ____________________________________________________________________________________________
 

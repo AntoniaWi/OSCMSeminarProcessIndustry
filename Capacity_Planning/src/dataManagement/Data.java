@@ -2,6 +2,7 @@ package dataManagement;
 
 import helper.Event;
 import jxl.read.biff.BiffException;
+import jxl.write.WriteException;
 
 import java.io.IOException;
 import java.util.*;
@@ -28,8 +29,6 @@ public class Data {
 	private int parameter_preliminaryKnowledgeAboutSuccessfulTests;	// Gamma_0
 	private int parameter_preliminaryKnowledgeAboutFailedTests;		// Zeta_0
 	private int parameter_thresholdSuccessfulTests;					// Gamma_c
-	
-	private double parameter_capacityDemand;							//q_d (LocationPlanningModel)
 	
 	private int [] testResults;										// Delta_t
 	private int [] countSuccessfulTests;								// Gamma_t
@@ -76,6 +75,11 @@ public class Data {
 		private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
 		private int initialCapacity; // Q0
     
+		//Help parameter for demand
+		private double [] demandM; //demandM[f]
+		private double [] demandR; //demand[f]
+		private int timeM;
+		private int timeR;
 
 	/**
 	 * 
@@ -162,7 +166,7 @@ public class Data {
 				
 	}
 	
-	public Data (int x) throws BiffException, IOException {
+	public Data (int x) throws BiffException, IOException, WriteException {
 		ReadAndWrite.readConst(this);
 		ReadAndWrite.readDataTiming(this);
 		ReadAndWrite.readF(this);
@@ -176,6 +180,8 @@ public class Data {
 		ReadAndWrite.readPif(this);
 		ReadAndWrite.readIDsf(this);
 		ReadAndWrite.readCIFsf(this);
+		ReadAndWrite.readDictBasics(this);
+		ReadAndWrite.createAndWriteDict(this);
 		
 	
 		}
@@ -470,24 +476,6 @@ public class Data {
 		this.countPeriods = countPeriods;
 	}
 
-
-	/**
-	 * @return the parameter_capacityDemand
-	 */
-	public double getParameter_capacityDemand() {
-		return parameter_capacityDemand;
-	}
-
-
-	/**
-	 * @param parameter_capacityDemand the parameter_capacityDemand to set
-	 */
-	public void setParameter_capacityDemand(double parameter_capacityDemand) {
-		this.parameter_capacityDemand = parameter_capacityDemand;
-	}
-
-
-	
 
 
 	/**
@@ -965,6 +953,62 @@ public class Data {
 	 */
 	public double getParameter_setupCostSecondaryFacility() {
 		return parameter_setupCostSecondaryFacility;
+	}
+
+	/**
+	 * @return the demandM
+	 */
+	public double[] getDemandM() {
+		return demandM;
+	}
+
+	/**
+	 * @param demandM the demandM to set
+	 */
+	public void setDemandM(double[] demandM) {
+		this.demandM = demandM;
+	}
+
+	/**
+	 * @return the demandR
+	 */
+	public double[] getDemandR() {
+		return demandR;
+	}
+
+	/**
+	 * @param demandR the demandR to set
+	 */
+	public void setDemandR(double[] demandR) {
+		this.demandR = demandR;
+	}
+
+	/**
+	 * @return the timeM
+	 */
+	public int getTimeM() {
+		return timeM;
+	}
+
+	/**
+	 * @param timeM the timeM to set
+	 */
+	public void setTimeM(int timeM) {
+		this.timeM = timeM;
+	}
+
+	/**
+	 * @return the timeR
+	 */
+	public int getTimeR() {
+		return timeR;
+	}
+
+	/**
+	 * @param timeR the timeR to set
+	 */
+	public void setTimeR(int timeR) {
+		this.timeR = timeR;
 	}
 
 	/**
