@@ -131,6 +131,7 @@ public class ReadAndWrite {
 		NumberCell cell17 = (NumberCell) cell16;
 		double cell18 = cell17.getValue();
 		instanz.setParameter_constructionCostSecondaryFacility((int) cell18);
+		
 		// Setup costs Kp and Ks
 
 		Cell cell19 = sheet.getCell(1, 6);
@@ -144,8 +145,42 @@ public class ReadAndWrite {
 		NumberCell cell23 = (NumberCell) cell22;
 		double cell24 = cell23.getValue();
 		instanz.setParameter_setupCostSecondaryFacility((int) cell24);
+		
+		
+		// gamma0
+		
+		Cell cell25 = sheet.getCell(1, 9);
 
-		// TODO: penalty, gamma, zeta
+		NumberCell cell26 = (NumberCell) cell25;
+		double cell27 = cell26.getValue();
+		instanz.setParameter_preliminaryKnowledgeAboutSuccessfulTests((int) cell27);
+
+		// zeta0
+		
+		Cell cell28 = sheet.getCell(1, 10);
+
+		NumberCell cell29 = (NumberCell) cell28;
+		double cell30 = cell29.getValue();
+		instanz.setParameter_preliminaryKnowledgeAboutFailedTests((int) cell30);
+		
+		//gamma_c
+		
+		Cell cell31 = sheet.getCell(1, 11);
+
+		NumberCell cell32 = (NumberCell) cell31;
+		double cell33 = cell32.getValue();
+		instanz.setParameter_thresholdSuccessfulTests((int) cell33);
+		
+		//penaltyCost
+		
+		Cell cell34 = sheet.getCell(1, 8);
+
+		NumberCell cell35 = (NumberCell) cell34;
+		double cell36 = cell35.getValue();
+		instanz.setParameter_penaltyCost((int) cell36);
+		
+		
+		
 
 	}
 

@@ -29,8 +29,6 @@ public class Data {
 	private int parameter_preliminaryKnowledgeAboutFailedTests;		// Zeta_0
 	private int parameter_thresholdSuccessfulTests;					// Gamma_c
 	
-	private double parameter_capacityDemand;							//q_d (LocationPlanningModel)
-	
 	private int [] testResults;										// Delta_t
 	private int [] countSuccessfulTests;								// Gamma_t
 	private int [] countFailedTests;									// Zeta_t
