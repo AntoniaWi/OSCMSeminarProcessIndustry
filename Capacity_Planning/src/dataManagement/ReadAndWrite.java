@@ -131,7 +131,7 @@ public class ReadAndWrite {
 		NumberCell cell17 = (NumberCell) cell16;
 		double cell18 = cell17.getValue();
 		instanz.setParameter_constructionCostSecondaryFacility((int) cell18);
-		
+
 		// Setup costs Kp and Ks
 
 		Cell cell19 = sheet.getCell(1, 6);
@@ -145,10 +145,9 @@ public class ReadAndWrite {
 		NumberCell cell23 = (NumberCell) cell22;
 		double cell24 = cell23.getValue();
 		instanz.setParameter_setupCostSecondaryFacility((int) cell24);
-		
-		
+
 		// gamma0
-		
+
 		Cell cell25 = sheet.getCell(1, 9);
 
 		NumberCell cell26 = (NumberCell) cell25;
@@ -156,31 +155,28 @@ public class ReadAndWrite {
 		instanz.setParameter_preliminaryKnowledgeAboutSuccessfulTests((int) cell27);
 
 		// zeta0
-		
+
 		Cell cell28 = sheet.getCell(1, 10);
 
 		NumberCell cell29 = (NumberCell) cell28;
 		double cell30 = cell29.getValue();
 		instanz.setParameter_preliminaryKnowledgeAboutFailedTests((int) cell30);
-		
-		//gamma_c
-		
+
+		// gamma_c
+
 		Cell cell31 = sheet.getCell(1, 11);
 
 		NumberCell cell32 = (NumberCell) cell31;
 		double cell33 = cell32.getValue();
 		instanz.setParameter_thresholdSuccessfulTests((int) cell33);
-		
-		//penaltyCost
-		
+
+		// penaltyCost
+
 		Cell cell34 = sheet.getCell(1, 8);
 
 		NumberCell cell35 = (NumberCell) cell34;
 		double cell36 = cell35.getValue();
 		instanz.setParameter_penaltyCost((int) cell36);
-		
-		
-		
 
 	}
 
@@ -485,6 +481,24 @@ public class ReadAndWrite {
 		double cell24 = cell23.getValue();
 		instanz.setAPI((int) cell24);
 
+		// read timeMonopoly
+		Cell cell25 = sheet.getCell(1, 11);
+		NumberCell cell26 = (NumberCell) cell25;
+		double cell27 = cell26.getValue();
+		instanz.setTimeM((int) cell27);
+
+		// read timeRegularMarket
+		Cell cell28 = sheet.getCell(1, 12);
+		NumberCell cell29 = (NumberCell) cell28;
+		double cell30 = cell29.getValue();
+		instanz.setTimeR((int) cell30);
+		
+		// read remainingTimeOfClinicalTrials
+		Cell cell31 = sheet.getCell(1, 13);
+		NumberCell cell32 = (NumberCell) cell31;
+		double cell33 = cell32.getValue();
+		instanz.setRemainingTimeofClinicalTrials((int)cell33);
+
 	}
 
 	// ____________________________________________________________________________________________
@@ -707,20 +721,27 @@ public class ReadAndWrite {
 		for (int i = 0; i < instanz.getI(); i++) {
 			for (int j = 0; j < instanz.getF(); j++) {
 				for (int k = 0; k < instanz.getT(); k++) {
-					if (i == instanz.getI() - 1 && k <= instanz.getRemainingTimeofClinicalTrials()) {
+					if (i == instanz.getI() - 1 && k < instanz.getRemainingTimeofClinicalTrials()) {
 						Dict[i][j][k] = 0;
+						Number label3 = new Number(k+1, j + 2, Dict[i][j][k]);
+						sheet0.addCell(label3);
 
 					} else if (i == instanz.getI() - 1
-							&& k <= (instanz.getRemainingTimeofClinicalTrials() + instanz.getTimeM())) {
+							&& k < (instanz.getRemainingTimeofClinicalTrials() + instanz.getTimeM())) {
 						Dict[i][j][k] = instanz.getDemandM()[j];
+						Number label3 = new Number(k+1, j + 2, Dict[i][j][k]);
+						sheet0.addCell(label3);
 
 					} else if (i == instanz.getI() - 1 && k <= instanz.getT()) {
 						Dict[i][j][k] = instanz.getDemandR()[j];
+						Number label3 = new Number(k+1, j + 2, Dict[i][j][k]);
+						sheet0.addCell(label3);
 
 					}
 
 					else {
 						Dict[i][j][k] = 0;
+						
 					}
 				}
 			}
