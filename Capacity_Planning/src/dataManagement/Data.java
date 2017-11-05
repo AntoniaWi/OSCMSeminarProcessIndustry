@@ -30,8 +30,6 @@ public class Data {
 	private int parameter_preliminaryKnowledgeAboutFailedTests;		// Zeta_0
 	private int parameter_thresholdSuccessfulTests;					// Gamma_c
 	
-	private double parameter_capacityDemand;							//q_d (LocationPlanningModel)
-	
 	private int [] testResults;										// Delta_t
 	private int [] countSuccessfulTests;								// Gamma_t
 	private int [] countFailedTests;									// Zeta_t
@@ -478,24 +476,6 @@ public class Data {
 		this.countPeriods = countPeriods;
 	}
 
-
-	/**
-	 * @return the parameter_capacityDemand
-	 */
-	public double getParameter_capacityDemand() {
-		return parameter_capacityDemand;
-	}
-
-
-	/**
-	 * @param parameter_capacityDemand the parameter_capacityDemand to set
-	 */
-	public void setParameter_capacityDemand(double parameter_capacityDemand) {
-		this.parameter_capacityDemand = parameter_capacityDemand;
-	}
-
-
-	
 
 
 	/**
