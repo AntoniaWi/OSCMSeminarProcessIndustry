@@ -469,24 +469,6 @@ public class Data {
 	}
 
 
-	/**
-	 * @return the parameter_capacityDemand
-	 */
-	public double getParameter_capacityDemand() {
-		return parameter_capacityDemand;
-	}
-
-
-	/**
-	 * @param parameter_capacityDemand the parameter_capacityDemand to set
-	 */
-	public void setParameter_capacityDemand(double parameter_capacityDemand) {
-		this.parameter_capacityDemand = parameter_capacityDemand;
-	}
-
-
-	
-
 
 	/**
 	 * @return the capitalBudget
