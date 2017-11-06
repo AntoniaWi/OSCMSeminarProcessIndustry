@@ -1009,14 +1009,15 @@ public class LocationPlanningModel extends IloCplex {
 
 	public boolean solve() throws IloException {
 
-		try {
-			return solve(new int[0]);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		
+			try {
+				return solve(new int[0]);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return true;
+
 	}
 
 	public boolean solve(int[] numbers) throws IloException, IOException {
@@ -1049,13 +1050,19 @@ public class LocationPlanningModel extends IloCplex {
 		out.write("\n Entscheidung\n");
 		for (int j = 0; j < this.F; j++) {
 			for (int k = 0; k < this.T; k++) {
-
+				if(IF[j]&&PIF[j]){
 				if (getValue(this.constructionStartPrimaryFacility[j][k]) == 1) {
 					out.write(" Primary Facility " + (j + 1) + " wird in Periode " + (k+1) + " gebaut. y = " + getValue(this.constructionStartPrimaryFacility[j][k]) + "\n");
-					out.write(" Secondary Facility " + (j + 1) + " wird in Periode " + (k+1) + " gebaut. z = " + getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
+					
 				}
-			}
-		}
+				else if(IF[j]&&SIF[j]){
+					if (getValue(this.constructionStartSecondaryFacility[j][k]) == 1) {
+						
+						out.write(" Secondary Facility " + (j + 1) + " wird in Periode " + (k+1) + " gebaut. z = " + getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
+					}
+					
+			}}
+		}}
 		out.close();
 		System.out.println("(WGP) wrote sol to file " + path + "\n");
 
