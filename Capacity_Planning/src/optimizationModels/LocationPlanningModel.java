@@ -200,27 +200,27 @@ public class LocationPlanningModel extends IloCplex {
 		// 7th constraint
 		this.addConstraintsMassBalanceEquation();
 		// 8th constraint
-		this.addConstraintCapacityRestrictionForProduction(); 
+		this.addConstraintCapacityRestrictionForProduction();
 		// 9th constraint
-		//this.addConstraintLowerLimitOfProduction(); 
-		 // 10th constraint
-		this.addConstraintSupplyAndDemand(); 
-		 //11th constraint
-		 this.addConstraintCapitalExpenditure(); 
-		 // 12th constraint
-		 this.addConstraintBudgetConstraint(); 
-		 // 13th constraint
-		this.addConstraintGrossIncome(); 
-		 // 14th constraint
-		//this.addConstraintDepreciationCharge(); 
-		 // 15th constraint
+		// this.addConstraintLowerLimitOfProduction();
+		// 10th constraint
+		this.addConstraintSupplyAndDemand();
+		// 11th constraint
+		this.addConstraintCapitalExpenditure();
+		// 12th constraint
+		this.addConstraintBudgetConstraint();
+		// 13th constraint
+		this.addConstraintGrossIncome();
+		// 14th constraint
+		// this.addConstraintDepreciationCharge();
+		// 15th constraint
 		this.addConstraintTaxableIncome();
-		 
-		 //String path = "./logs/model.lp"; exportModel(path);
-		 
-		 System.out.println( "(WGP) complete rebuild finished, dur=" +
-		(System.currentTimeMillis() - start) + " milli sec\n");
-		 }
+
+		// String path = "./logs/model.lp"; exportModel(path);
+
+		System.out.println(
+				"(WGP) complete rebuild finished, dur=" + (System.currentTimeMillis() - start) + " milli sec\n");
+	}
 
 	// add Decision variables
 	private void addVarsX() throws IloException {
@@ -306,25 +306,17 @@ public class LocationPlanningModel extends IloCplex {
 	private void addConstraintNumberOfPrimaryFacilities() throws IloException {
 
 		this.numberOfPrimaryFacilities.clear();
-		
-			
-		
-			
-				for (int i = 0; i < this.F; i++) {
-					if (IF[i] && PIF[i]) {
-				
-						this.numberOfPrimaryFacilities.addTerm(1, this.constructionStartPrimaryFacility[i][0]);
-				
-					}
-				}
-				System.out.println(this.numberOfPrimaryFacilities);
-				addEq(this.numberOfPrimaryFacilities, 1);
-				
-				
-		
-		
-		
-		
+
+		for (int i = 0; i < this.F; i++) {
+			if (IF[i] && PIF[i]) {
+
+				this.numberOfPrimaryFacilities.addTerm(1, this.constructionStartPrimaryFacility[i][0]);
+
+			}
+		}
+		System.out.println(this.numberOfPrimaryFacilities);
+		addEq(this.numberOfPrimaryFacilities, 1);
+
 	}
 
 	private void addConstraintNumberOfSecondaryFacilities() throws IloException {
@@ -657,7 +649,7 @@ public class LocationPlanningModel extends IloCplex {
 				this.lowerLimitForProductionPF.clear();
 				this.lowerLimitForProductionSF.clear();
 				if (IF[i] && PIF[i]) {
-					
+
 					int tau1 = this.T - this.monthsToBuildPrimaryFacility;
 					if (tau1 < 0) {
 						tau1 = 0;
@@ -705,7 +697,7 @@ public class LocationPlanningModel extends IloCplex {
 			if (EF[i]) {
 				for (int j = 0; j < this.T; j++) {// t
 					for (int k = 0; k < this.I; k++) {// material i
-					demandAndSupply.clear();
+						demandAndSupply.clear();
 						if (OM[i][k] || IM[i][k]) {
 
 							for (int l = 0; l < this.F; l++) {
@@ -788,7 +780,7 @@ public class LocationPlanningModel extends IloCplex {
 						double variableCostPF = this.monthsToBuildPrimaryFacility
 								* this.constructionCostPrimaryFacility;
 						this.budget.addTerm(variableCostPF, this.constructionStartPrimaryFacility[j][k]);
-						budgetUntilTau = budgetUntilTau+this.capitalBudget[k];
+						budgetUntilTau = budgetUntilTau + this.capitalBudget[k];
 					}
 				}
 
@@ -801,7 +793,7 @@ public class LocationPlanningModel extends IloCplex {
 								* this.constructionCostSecondaryFacility;
 						this.budget.addTerm(variableCostSF, this.constructionStartSecondaryFacility[j][k]);
 
-						budgetUntilTau = budgetUntilTau+this.capitalBudget[k];
+						budgetUntilTau = budgetUntilTau + this.capitalBudget[k];
 					}
 				}
 			}
@@ -879,7 +871,7 @@ public class LocationPlanningModel extends IloCplex {
 		// Primary Facilities
 		for (int i = 0; i < this.T; i++) {
 			for (int j = 0; j < this.F; j++) {
-				if (IF[j]&&PIF[j]) {
+				if (IF[j] && PIF[j]) {
 					for (int k = 0; k < this.T; k++) {// construction start (tau)
 						this.depreciationChargePrimaryFacilities.clear();
 						double lowerBound = k + this.monthsToBuildPrimaryFacility;
@@ -901,22 +893,25 @@ public class LocationPlanningModel extends IloCplex {
 									* this.constructionCostPrimaryFacility / this.projectLife;
 							this.depreciationChargePrimaryFacilities.addTerm(variableCostPF,
 									this.constructionStartPrimaryFacility[j][k]);
-							/*if (j==0 && k<10) {
-							System.out.println("facility " +(j+1)+ " tau "+ (k+1) + " t " + (i+1));
-							System.out.println(this.depreciationChargePrimaryFacilities);}*/
+							/*
+							 * if (j==0 && k<10) { System.out.println("facility " +(j+1)+ " tau "+ (k+1) +
+							 * " t " + (i+1));
+							 * System.out.println(this.depreciationChargePrimaryFacilities);}
+							 */
 
 							addEq(this.depreciationChargePrimaryFacilities,
 									this.depreciationChargePrimaryFacility[j][k][i]);
-							
-							
+
 						}
 
 						else {
-							addEq(this.depreciationChargePrimaryFacilities,this.depreciationChargePrimaryFacility[j][k][i]);
-							/*if (j==0&& k<10) {
-							System.out.println("facility " +(j+1)+ " tau "+ (k+1) + " t " + (i+1));
-							System.out.println(this.depreciationChargePrimaryFacilities);
-							}*/
+							addEq(this.depreciationChargePrimaryFacilities,
+									this.depreciationChargePrimaryFacility[j][k][i]);
+							/*
+							 * if (j==0&& k<10) { System.out.println("facility " +(j+1)+ " tau "+ (k+1) +
+							 * " t " + (i+1)); System.out.println(this.depreciationChargePrimaryFacilities);
+							 * }
+							 */
 						}
 
 					}
@@ -928,7 +923,7 @@ public class LocationPlanningModel extends IloCplex {
 		// Secondary Facilities
 		for (int i = 0; i < this.T; i++) {
 			for (int j = 0; j < this.F; j++) {
-				if (IF[j]&&SIF[j]) {
+				if (IF[j] && SIF[j]) {
 					for (int k = 0; k < this.T; k++) {// construction start (tau)
 						this.depreciationChargeSecondaryFacilities.clear();
 						double lowerBound = k + this.monthsToBuildSecondaryFacility;
@@ -953,7 +948,7 @@ public class LocationPlanningModel extends IloCplex {
 
 							addEq(this.depreciationChargeSecondaryFacilities,
 									this.depreciationChargeSecondaryFacility[j][k][i]);
-							
+
 						}
 
 						else {
@@ -977,30 +972,27 @@ public class LocationPlanningModel extends IloCplex {
 
 		this.taxableIncomeConstraint.clear();
 		for (int j = 0; j < this.N; j++) {
-		for (int i = 0; i < this.T; i++) {
-			
+			for (int i = 0; i < this.T; i++) {
+
 				this.taxableIncomeConstraint.clear();
 				for (int k = 0; k < this.F; k++) {
 					if (IF[k] && Fn[k][j]) {
 						this.taxableIncomeConstraint.addTerm(1, this.grossIncome[k][i]);
 
-						/*for (int l = 0; l < i ; l++) {
-							if(PIF[k]) {
-							this.taxableIncomeConstraint.addTerm(-1, this.depreciationChargePrimaryFacility[k][l][i]);
-							}
-							else {
-							this.taxableIncomeConstraint.addTerm(-1, this.depreciationChargeSecondaryFacility[k][l][i]);
-						}
-						}*/
-						
+						/*
+						 * for (int l = 0; l < i ; l++) { if(PIF[k]) {
+						 * this.taxableIncomeConstraint.addTerm(-1,
+						 * this.depreciationChargePrimaryFacility[k][l][i]); } else {
+						 * this.taxableIncomeConstraint.addTerm(-1,
+						 * this.depreciationChargeSecondaryFacility[k][l][i]); } }
+						 */
+
 					}
-					
+
 				}
-			
-				
-				
+
 				addLe(this.taxableIncomeConstraint, this.taxableIncome[j][i]);
-				
+
 			}
 		}
 
@@ -1016,14 +1008,14 @@ public class LocationPlanningModel extends IloCplex {
 	@Override
 
 	public boolean solve() throws IloException {
-		
+
 		try {
 			return solve(new int[0]);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return true;
 	}
 
@@ -1035,34 +1027,38 @@ public class LocationPlanningModel extends IloCplex {
 		}
 		writeSolution(numbers, false);
 		return true;
-		
+
 	}
 
 	public void writeSolution(int[] numbers, boolean includingZeros) throws IloException, IOException {
 
 		String path = "./logs/_WGP_";
 
-		// for (int k : numbers)
-		// path += k + "_";
+		for (int k : numbers)
+			path += k + "_";
 		path += "sol.txt";
 		File logFile = new File(path);
 		logFile.delete();
 		logFile.createNewFile();
 		FileWriter fstream = new FileWriter(logFile, true);
 		BufferedWriter out = new BufferedWriter(fstream);
-		
-		 out.write("objective value=" + getObjValue() + "\n");
-		 out.close();
-		 /* out.write("variable values\n");
-		 * 
-		 * out.write("\n Entscheidung\n"); for( int j=0; j<v;j++){ for(int k =0;
-		 * k<l;k++){
-		 * 
-		 * 
-		 * if (getValue(x[j][k])==1){ out.write(" Komponente "+(j+1)+ " : Lieferant " +
-		 * (k+1) + " x = " +getValue(x[j][k])+"\n"); } } } out.close();
-		 * System.out.println("(WGP) wrote sol to file " + path + "\n");
-		 */
+
+		out.write("objective value=" + getObjValue() + "\n");
+		out.write("variable values\n");
+
+		out.write("\n Entscheidung\n");
+		for (int j = 0; j < this.F; j++) {
+			for (int k = 0; k < this.T; k++) {
+
+				if (getValue(this.constructionStartPrimaryFacility[j][k]) == 1) {
+					out.write(" Primary Facility " + (j + 1) + " wird in Periode " + (k+1) + " gebaut. y = " + getValue(this.constructionStartPrimaryFacility[j][k]) + "\n");
+					out.write(" Secondary Facility " + (j + 1) + " wird in Periode " + (k+1) + " gebaut. z = " + getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
+				}
+			}
+		}
+		out.close();
+		System.out.println("(WGP) wrote sol to file " + path + "\n");
+
 	}
 
 }
