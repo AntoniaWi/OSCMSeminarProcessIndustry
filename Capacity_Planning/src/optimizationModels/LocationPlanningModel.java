@@ -167,7 +167,7 @@ public class LocationPlanningModel extends IloCplex {
 		LocationPlanningModel lpm = new LocationPlanningModel(instanz);
 
 		lpm.build();
-		// lpm.solve();
+		lpm.solve();
 		// lpm.writeSolution(new int[] { 1, 2, 3 }, false);
 		// lpm.ergebnisschreibenRobust(lpm);
 	}
@@ -179,7 +179,7 @@ public class LocationPlanningModel extends IloCplex {
 		addVarsX();
 
 		/* Objective */
-		// addObjective();
+		addObjective();
 
 		/* Constraints */
 		// 1st constraint
@@ -199,30 +199,27 @@ public class LocationPlanningModel extends IloCplex {
 		// 7th constraint
 		this.addConstraintsMassBalanceEquation();
 		// 8th constraint
-		/*
-		 * this.addConstraintCapacityRestrictionForProduction(); 
+		this.addConstraintCapacityRestrictionForProduction(); 
 		// 9th constraint
-		 * 
-		 * this.addConstraintLowerLimitOfProduction(); 
-		 * 
+		this.addConstraintLowerLimitOfProduction(); 
 		 // 10th constraint
-		 * this.addConstraintSupplyAndDemand(); 
+		 this.addConstraintSupplyAndDemand(); 
 		 //11th constraint
-		 * this.addConstraintCapitalExpenditure(); 
+		 this.addConstraintCapitalExpenditure(); 
 		 // 12th constraint
-		 * this.addConstraintBudgetConstraint(); 
+		 this.addConstraintBudgetConstraint(); 
 		 // 13th constraint
-		 * this.addConstraintGrossIncome(); 
+		 this.addConstraintGrossIncome(); 
 		 // 14th constraint
-		 * this.addConstraintDepreciationCharge(); 
+		 //this.addConstraintDepreciationCharge(); 
 		 // 15th constraint
-		 * this.addConstraintTaxableIncome();
-		 * 
-		 * String path = "./logs/model.lp"; exportModel(path);
-		 * 
-		 * System.out.println( "(WGP) complete rebuild finished, dur=" +
-		 * (System.currentTimeMillis() - start) + " milli sec\n");
-		 */}
+		 this.addConstraintTaxableIncome();
+		 
+		 //String path = "./logs/model.lp"; exportModel(path);
+		 
+		 System.out.println( "(WGP) complete rebuild finished, dur=" +
+		(System.currentTimeMillis() - start) + " milli sec\n");
+		 }
 
 	// add Decision variables
 	private void addVarsX() throws IloException {
@@ -868,7 +865,7 @@ public class LocationPlanningModel extends IloCplex {
 		// Primary Facilities
 		for (int i = 0; i < this.T; i++) {
 			for (int j = 0; j < this.F; j++) {
-				if (IF[i]) {
+				if (IF[j]) {
 					for (int k = 0; k < this.T; k++) {// construction start (tau)
 						this.depreciationChargePrimaryFacilities.clear();
 						double lowerBound = k + this.monthsToBuildPrimaryFacility;
@@ -908,7 +905,7 @@ public class LocationPlanningModel extends IloCplex {
 		// Secondary Facilities
 		for (int i = 0; i < this.T; i++) {
 			for (int j = 0; j < this.F; j++) {
-				if (IF[i]) {
+				if (IF[j]) {
 					for (int k = 0; k < this.T; k++) {// construction start (tau)
 						this.depreciationChargeSecondaryFacilities.clear();
 						double lowerBound = k + this.monthsToBuildSecondaryFacility;
@@ -963,14 +960,14 @@ public class LocationPlanningModel extends IloCplex {
 					if (IF[k] && Fn[k][j]) {
 						this.taxableIncomeConstraint.addTerm(1, this.grossIncome[k][i]);
 
-						for (int l = 0; l < i - this.monthsToBuildPrimaryFacility; l++) {
-							this.taxableIncomeConstraint.addTerm(-1, this.depreciationChargePrimaryFacility[k][l][i]);
+						//for (int l = 0; l < i - this.monthsToBuildPrimaryFacility; l++) {
+							//this.taxableIncomeConstraint.addTerm(-1, this.depreciationChargePrimaryFacility[k][l][i]);
 
-						}
-						for (int l = 0; l < i - this.monthsToBuildSecondaryFacility; l++) {
-							this.taxableIncomeConstraint.addTerm(-1, this.depreciationChargeSecondaryFacility[k][l][i]);
+						//}
+						//for (int l = 0; l < i - this.monthsToBuildSecondaryFacility; l++) {
+							//this.taxableIncomeConstraint.addTerm(-1, this.depreciationChargeSecondaryFacility[k][l][i]);
 
-						}
+						//}
 					}
 				}
 				addLe(this.taxableIncomeConstraint, this.taxableIncome[j][i]);
