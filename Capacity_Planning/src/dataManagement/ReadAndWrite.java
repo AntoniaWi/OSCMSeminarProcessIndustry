@@ -28,22 +28,28 @@ public class ReadAndWrite {
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
+	public static String pathExcelAntoniaR = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Result.xls";
+
 	// Paths Sarah #2
 	public static String pathExcelSarah = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\CaseDataBasic.xls";
 	// Paths Ramona #3
 	public static String pathExcelRamona = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseData-Basic.xlsx";// TODO:
 	// Paths Antonia Windows #4
-		public static String pathExcelAntonia1= "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";//
-																																							// Pfad
-																																							// eingeben
+	public static String pathExcelAntonia1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";//
+	public static String pathExcelAntoniaR1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Result.xls";
+
+	// Pfad
+	// eingeben
 
 	public static String path = "";
+	public static String pathR = "";
 
 	public static void choosePaths() {
 
 		if (user == 1) {
 
 			path = pathExcelAntonia;
+			pathR = pathExcelAntoniaR;
 		}
 
 		else if (user == 2) {
@@ -54,10 +60,10 @@ public class ReadAndWrite {
 		else if (user == 3) {
 
 			path = pathExcelRamona;
-		}
-		else if (user == 4) {
+		} else if (user == 4) {
 
 			path = pathExcelAntonia1;
+			pathR = pathExcelAntoniaR1;
 		}
 
 	}
@@ -65,11 +71,11 @@ public class ReadAndWrite {
 	/*
 	 * Excel-File:
 	 * 
-	 * - Sheet 0: DataTiming - Sheet 1: F - Sheet 2: F in N - Sheet 3: IMf - Sheet
-	 * 4: OMf - Sheet 5: Const. - Sheet 6: TRn - Sheet 7: MassBalance - Sheet 8:
-	 * DataF - Sheet 9: Dict - Sheet 10: Sis - Sheet 11: Pif - Sheet 12: CIF1sf -
-	 * Sheet 13: CIF2sf - Sheet 13: CIF3sf - Sheet 14: CIF4sf - Sheet 15: CIF5sf -
-	 * Sheet 18: IDisf
+	 * - Sheet 0: DataTiming - Sheet 1: F - Sheet 2: F in N - Sheet 3: IMf -
+	 * Sheet 4: OMf - Sheet 5: Const. - Sheet 6: TRn - Sheet 7: MassBalance -
+	 * Sheet 8: DataF - Sheet 9: Dict - Sheet 10: Sis - Sheet 11: Pif - Sheet
+	 * 12: CIF1sf - Sheet 13: CIF2sf - Sheet 13: CIF3sf - Sheet 14: CIF4sf -
+	 * Sheet 15: CIF5sf - Sheet 18: IDisf
 	 */
 
 	// ____________________________________________________________________________________________
@@ -494,12 +500,12 @@ public class ReadAndWrite {
 		NumberCell cell29 = (NumberCell) cell28;
 		double cell30 = cell29.getValue();
 		instanz.setTimeR((int) cell30);
-		
+
 		// read remainingTimeOfClinicalTrials
 		Cell cell31 = sheet.getCell(1, 13);
 		NumberCell cell32 = (NumberCell) cell31;
 		double cell33 = cell32.getValue();
-		instanz.setRemainingTimeofClinicalTrials((int)cell33);
+		instanz.setRemainingTimeofClinicalTrials((int) cell33);
 
 	}
 
@@ -725,25 +731,25 @@ public class ReadAndWrite {
 				for (int k = 0; k < instanz.getT(); k++) {
 					if (i == instanz.getI() - 1 && k < instanz.getRemainingTimeofClinicalTrials()) {
 						Dict[i][j][k] = 0;
-						Number label3 = new Number(k+1, j + 2, Dict[i][j][k]);
+						Number label3 = new Number(k + 1, j + 2, Dict[i][j][k]);
 						sheet0.addCell(label3);
 
 					} else if (i == instanz.getI() - 1
 							&& k < (instanz.getRemainingTimeofClinicalTrials() + instanz.getTimeM())) {
 						Dict[i][j][k] = instanz.getDemandM()[j];
-						Number label3 = new Number(k+1, j + 2, Dict[i][j][k]);
+						Number label3 = new Number(k + 1, j + 2, Dict[i][j][k]);
 						sheet0.addCell(label3);
 
 					} else if (i == instanz.getI() - 1 && k <= instanz.getT()) {
 						Dict[i][j][k] = instanz.getDemandR()[j];
-						Number label3 = new Number(k+1, j + 2, Dict[i][j][k]);
+						Number label3 = new Number(k + 1, j + 2, Dict[i][j][k]);
 						sheet0.addCell(label3);
 
 					}
 
 					else {
 						Dict[i][j][k] = 0;
-						
+
 					}
 				}
 			}
@@ -917,6 +923,189 @@ public class ReadAndWrite {
 		instanz.setImportDuty(ID);
 	}
 
+	// ____________________________________________________________________________________________
+
+	// Create Result
+
+	// ____________________________________________________________________________________________
+	public static void writeSolution(Data instanz) throws BiffException, IOException, WriteException {
+
+		File file;
+		WritableWorkbook writableWorkbook;
+		Workbook workbook;
+		choosePaths();
+
+		file = new File(pathR);
+
+		workbook = Workbook.getWorkbook(file);
+		writableWorkbook = Workbook.createWorkbook(file, workbook);
+
+		WritableSheet sheet = writableWorkbook.getSheet("yft");
+		WritableSheet sheet1 = writableWorkbook.getSheet("zft");
+		WritableSheet sheet2 = writableWorkbook.getSheet("TInt");
+		WritableSheet sheet3 = writableWorkbook.getSheet("GIft");
+
+		// clear sheet
+		int rows = sheet.getRows();
+		int r = 0;
+
+		while (r <= rows) {
+
+			sheet.removeRow(0);
+			r++;
+		}
+		int rows1 = sheet1.getRows();
+		int r1 = 0;
+
+		while (r1 <= rows1) {
+
+			sheet1.removeRow(0);
+			r1++;
+		}
+		int rows2 = sheet2.getRows();
+		int r2 = 0;
+
+		while (r2 <= rows2) {
+
+			sheet2.removeRow(0);
+			r2++;
+		}
+		int rows3 = sheet3.getRows();
+		int r3 = 0;
+
+		while (r3 <= rows3) {
+
+			sheet3.removeRow(0);
+			r3++;
+		}
+
+		// yft
+		Label label4 = new Label(0, 0, "f/t");
+		sheet.addCell(label4);
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label3 = new Number(0, i + 1, i + 1);
+			sheet.addCell(label3);
+
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 0, i + 1);
+			sheet.addCell(label3);
+
+		}
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+				if (instanz.getIF()[i] && instanz.getPIF()[i]) {
+
+					Number label3 = new Number(j + 1, i + 1, instanz.getConstructionStartPrimaryFacility()[i][j]);
+					sheet.addCell(label3);
+				} else {
+					Number label3 = new Number(j + 1, i + 1, 0);
+					sheet.addCell(label3);
+
+				}
+
+			}
+		}
+
+		// zft
+		Label label5 = new Label(0, 0, "f/t");
+		sheet1.addCell(label5);
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label3 = new Number(0, i + 1, i + 1);
+			sheet1.addCell(label3);
+
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 0, i + 1);
+			sheet1.addCell(label3);
+
+		}
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+				if (instanz.getIF()[i] && instanz.getSIF()[i]) {
+
+					Number label3 = new Number(j + 1, i + 1, instanz.getConstructionStartSecondaryFacility()[i][j]);
+					sheet1.addCell(label3);
+				} else {
+					Number label3 = new Number(j + 1, i + 1, 0);
+					sheet1.addCell(label3);
+
+				}
+
+			}
+		}
+		
+		//TInt
+		
+				Label label6 = new Label(0, 0, "n/t");
+				sheet2.addCell(label6);
+
+				for (int i = 0; i < instanz.getN(); i++) {
+					Number label3 = new Number(0, i + 1, i + 1);
+					sheet2.addCell(label3);
+
+				}
+				for (int i = 0; i < instanz.getT(); i++) {
+					Number label3 = new Number(i + 1, 0, i + 1);
+					sheet2.addCell(label3);
+
+				}
+
+				for (int i = 0; i < instanz.getN(); i++) {
+					for (int j = 0; j < instanz.getT(); j++) {
+						
+							Number label3 = new Number(j + 1, i + 1, instanz.getTaxableIncome()[i][j]);
+							sheet2.addCell(label3);
+						
+							
+						
+
+					}
+				}
+				
+				//GIft
+				
+				Label label7 = new Label(0, 0, "f/t");
+				sheet3.addCell(label7);
+
+				for (int i = 0; i < instanz.getF(); i++) {
+					Number label3 = new Number(0, i + 1, i + 1);
+					sheet3.addCell(label3);
+
+				}
+				for (int i = 0; i < instanz.getT(); i++) {
+					Number label3 = new Number(i + 1, 0, i + 1);
+					sheet3.addCell(label3);
+
+				}
+
+				for (int i = 0; i < instanz.getF(); i++) {
+					for (int j = 0; j < instanz.getT(); j++) {
+						if(instanz.getIF()[i]){
+							Number label3 = new Number(j + 1, i + 1, instanz.getGrossIncome()[i][j]);
+							sheet3.addCell(label3);
+						
+						}
+						else{
+							Number label3 = new Number(j + 1, i + 1, 0);
+							sheet3.addCell(label3);
+						}
+						
+
+					}
+				}
+
+
+		writableWorkbook.write();
+		writableWorkbook.close();
+		workbook.close();
+
+	}
+
 	/**
 	 * @param array
 	 * @param title
@@ -989,7 +1178,7 @@ public class ReadAndWrite {
 
 			System.out.print(array[i] + "\t" + "|");
 		}
-		
+
 		System.out.println("");
 	}
 

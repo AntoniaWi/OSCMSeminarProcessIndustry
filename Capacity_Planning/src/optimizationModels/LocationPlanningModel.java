@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import dataManagement.Data;
+import dataManagement.ReadAndWrite;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
@@ -178,7 +179,8 @@ public class LocationPlanningModel extends IloCplex {
 
 		lpm.build();
 		lpm.solve();
-		// lpm.writeSolution(new int[] { 1, 2, 3 }, false);
+		lpm.writeSolution(new int[] { 1, 2, 3 }, instanz);
+		ReadAndWrite.writeSolution(instanz);
 		// lpm.ergebnisschreibenRobust(lpm);
 	}
 
@@ -1021,8 +1023,6 @@ public class LocationPlanningModel extends IloCplex {
 
 	}
 
-	@Override
-
 	public boolean solve() throws IloException {
 
 		try {
@@ -1041,12 +1041,13 @@ public class LocationPlanningModel extends IloCplex {
 		if (!super.solve()) {
 			return false;
 		}
-		writeSolution(numbers, false);
+		// writeSolution(numbers);
 		return true;
 
 	}
 
-	public void writeSolution(int[] numbers, boolean includingZeros) throws IloException, IOException {
+	public void writeSolution(int[] numbers, Data instanz)
+			throws IloException, IOException, BiffException, WriteException {
 
 		String path = "./logs/_WGP_";
 
@@ -1063,25 +1064,74 @@ public class LocationPlanningModel extends IloCplex {
 		out.write("variable values\n");
 
 		out.write("\n Decision\n");
+
+		// y and z
+		double yft[][] = new double[this.F][this.T];
+		double zft[][] = new double[this.F][this.T];
+
 		for (int j = 0; j < this.F; j++) {
 			for (int k = 0; k < this.T; k++) {
+
 				if (IF[j] && PIF[j]) {
+					yft[j][k] = (int) getValue(this.constructionStartPrimaryFacility[j][k]);
+					zft[j][k] = 0;
 					if (getValue(this.constructionStartPrimaryFacility[j][k]) == 1) {
 						out.write(" Primary Facility " + (j + 1) + " is build in " + (k + 1) + ". y = "
 								+ getValue(this.constructionStartPrimaryFacility[j][k]) + "\n");
 
 					}
 				} else if (IF[j] && SIF[j]) {
+					zft[j][k] =  getValue(this.constructionStartSecondaryFacility[j][k]);
+					yft[j][k] = 0;
 					if (getValue(this.constructionStartSecondaryFacility[j][k]) == 1) {
 
 						out.write(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
 								+ getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
+					System.out.println(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
+								+ getValue(this.constructionStartSecondaryFacility[j][k]) + " ");
+					System.out.println(zft[j][k]);
 					}
 
+				} else {
+					zft[j][k] = 0;
+					yft[j][k] = 0;
 				}
 			}
 		}
+
+		instanz.setConstructionStartPrimaryFacility(yft);
+		instanz.setConstructionStartSecondaryFacility(zft);
+		
+
+		// TInt
+		double[][] TInt = new double[instanz.getN()][instanz.getT()];
+
+		for (int j = 0; j < this.N; j++) {
+			for (int k = 0; k < this.T; k++) {
+				TInt[j][k] = getValue(this.taxableIncome[j][k]);
+			}
+		}
+		instanz.setTaxableIncome(TInt);
+
+		// GIft
+		double[][] GIft = new double[instanz.getF()][instanz.getT()];
+
+		for (int j = 0; j < this.F; j++) {
+			for (int k = 0; k < this.T; k++) {
+				if (IF[j]) {
+
+					GIft[j][k] = getValue(this.grossIncome[j][k]);
+				}
+
+				else {
+					GIft[j][k] = 0;
+				}
+			}
+		}
+		instanz.setGrossIncome(GIft);
+		//
 		out.close();
+
 		System.out.println("(WGP) wrote sol to file " + path + "\n");
 
 	}

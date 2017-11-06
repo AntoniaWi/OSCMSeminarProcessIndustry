@@ -1,6 +1,8 @@
 package dataManagement;
 
 import helper.Event;
+import ilog.concert.IloIntVar;
+import ilog.concert.IloNumVar;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 
@@ -80,6 +82,23 @@ public class Data {
 		private double [] demandR; //demand[f]
 		private int timeM;
 		private int timeR;
+		
+		//Result Arrays
+		private double[][][][] shippedMaterialUnitsFacilityToCustomer; // F_ifct
+		private double[][][][] shippedMaterialUnitsSupplierToFacility; // F_isft
+		private double[][][] depreciationChargePrimaryFacility; // NDC_p_ftaut
+		private double[][][] depreciationChargeSecondaryFacility; // NDC_s_ftaut
+		private double[][] availableProductionCapacity; // Q_ft
+		private double[][] taxableIncome; // TI_nt
+		private double[][][] consumedOrProducedMaterial; // x_ift
+		private double[][] consumedOrProducedAPI; // X_ft
+		private double[] capitalExpenditure; // CE_t
+		private double[][] grossIncome; // GI_ft
+		private double[][] deltaCapacityExpansion; // delta_q_ft
+		private double[][] capacityExpansionAmount; // q_ft
+
+		private double[][] constructionStartPrimaryFacility; // y_ft
+		private double[][] constructionStartSecondaryFacility; // z_ft
 
 	/**
 	 * 
@@ -1009,6 +1028,202 @@ public class Data {
 	 */
 	public void setTimeR(int timeR) {
 		this.timeR = timeR;
+	}
+
+	/**
+	 * @return the shippedMaterialUnitsFacilityToCustomer
+	 */
+	public double[][][][] getShippedMaterialUnitsFacilityToCustomer() {
+		return shippedMaterialUnitsFacilityToCustomer;
+	}
+
+	/**
+	 * @param shippedMaterialUnitsFacilityToCustomer the shippedMaterialUnitsFacilityToCustomer to set
+	 */
+	public void setShippedMaterialUnitsFacilityToCustomer(double[][][][] shippedMaterialUnitsFacilityToCustomer) {
+		this.shippedMaterialUnitsFacilityToCustomer = shippedMaterialUnitsFacilityToCustomer;
+	}
+
+	/**
+	 * @return the shippedMaterialUnitsSupplierToFacility
+	 */
+	public double[][][][] getShippedMaterialUnitsSupplierToFacility() {
+		return shippedMaterialUnitsSupplierToFacility;
+	}
+
+	/**
+	 * @param shippedMaterialUnitsSupplierToFacility the shippedMaterialUnitsSupplierToFacility to set
+	 */
+	public void setShippedMaterialUnitsSupplierToFacility(double[][][][] shippedMaterialUnitsSupplierToFacility) {
+		this.shippedMaterialUnitsSupplierToFacility = shippedMaterialUnitsSupplierToFacility;
+	}
+
+	/**
+	 * @return the depreciationChargePrimaryFacility
+	 */
+	public double[][][] getDepreciationChargePrimaryFacility() {
+		return depreciationChargePrimaryFacility;
+	}
+
+	/**
+	 * @param depreciationChargePrimaryFacility the depreciationChargePrimaryFacility to set
+	 */
+	public void setDepreciationChargePrimaryFacility(double[][][] depreciationChargePrimaryFacility) {
+		this.depreciationChargePrimaryFacility = depreciationChargePrimaryFacility;
+	}
+
+	/**
+	 * @return the depreciationChargeSecondaryFacility
+	 */
+	public double[][][] getDepreciationChargeSecondaryFacility() {
+		return depreciationChargeSecondaryFacility;
+	}
+
+	/**
+	 * @param depreciationChargeSecondaryFacility the depreciationChargeSecondaryFacility to set
+	 */
+	public void setDepreciationChargeSecondaryFacility(double[][][] depreciationChargeSecondaryFacility) {
+		this.depreciationChargeSecondaryFacility = depreciationChargeSecondaryFacility;
+	}
+
+	/**
+	 * @return the availableProductionCapacity
+	 */
+	public double[][] getAvailableProductionCapacity() {
+		return availableProductionCapacity;
+	}
+
+	/**
+	 * @param availableProductionCapacity the availableProductionCapacity to set
+	 */
+	public void setAvailableProductionCapacity(double[][] availableProductionCapacity) {
+		this.availableProductionCapacity = availableProductionCapacity;
+	}
+
+	/**
+	 * @return the taxableIncome
+	 */
+	public double[][] getTaxableIncome() {
+		return taxableIncome;
+	}
+
+	/**
+	 * @param taxableIncome the taxableIncome to set
+	 */
+	public void setTaxableIncome(double[][] taxableIncome) {
+		this.taxableIncome = taxableIncome;
+	}
+
+	/**
+	 * @return the consumedOrProducedMaterial
+	 */
+	public double[][][] getConsumedOrProducedMaterial() {
+		return consumedOrProducedMaterial;
+	}
+
+	/**
+	 * @param consumedOrProducedMaterial the consumedOrProducedMaterial to set
+	 */
+	public void setConsumedOrProducedMaterial(double[][][] consumedOrProducedMaterial) {
+		this.consumedOrProducedMaterial = consumedOrProducedMaterial;
+	}
+
+	/**
+	 * @return the consumedOrProducedAPI
+	 */
+	public double[][] getConsumedOrProducedAPI() {
+		return consumedOrProducedAPI;
+	}
+
+	/**
+	 * @param consumedOrProducedAPI the consumedOrProducedAPI to set
+	 */
+	public void setConsumedOrProducedAPI(double[][] consumedOrProducedAPI) {
+		this.consumedOrProducedAPI = consumedOrProducedAPI;
+	}
+
+	/**
+	 * @return the capitalExpenditure
+	 */
+	public double[] getCapitalExpenditure() {
+		return capitalExpenditure;
+	}
+
+	/**
+	 * @param capitalExpenditure the capitalExpenditure to set
+	 */
+	public void setCapitalExpenditure(double[] capitalExpenditure) {
+		this.capitalExpenditure = capitalExpenditure;
+	}
+
+	/**
+	 * @return the grossIncome
+	 */
+	public double[][] getGrossIncome() {
+		return grossIncome;
+	}
+
+	/**
+	 * @param grossIncome the grossIncome to set
+	 */
+	public void setGrossIncome(double[][] grossIncome) {
+		this.grossIncome = grossIncome;
+	}
+
+	/**
+	 * @return the deltaCapacityExpansion
+	 */
+	public double[][] getDeltaCapacityExpansion() {
+		return deltaCapacityExpansion;
+	}
+
+	/**
+	 * @param deltaCapacityExpansion the deltaCapacityExpansion to set
+	 */
+	public void setDeltaCapacityExpansion(double[][] deltaCapacityExpansion) {
+		this.deltaCapacityExpansion = deltaCapacityExpansion;
+	}
+
+	/**
+	 * @return the capacityExpansionAmount
+	 */
+	public double[][] getCapacityExpansionAmount() {
+		return capacityExpansionAmount;
+	}
+
+	/**
+	 * @param capacityExpansionAmount the capacityExpansionAmount to set
+	 */
+	public void setCapacityExpansionAmount(double[][] capacityExpansionAmount) {
+		this.capacityExpansionAmount = capacityExpansionAmount;
+	}
+
+	/**
+	 * @return the constructionStartPrimaryFacility
+	 */
+	public double[][] getConstructionStartPrimaryFacility() {
+		return constructionStartPrimaryFacility;
+	}
+
+	/**
+	 * @param constructionStartPrimaryFacility the constructionStartPrimaryFacility to set
+	 */
+	public void setConstructionStartPrimaryFacility(double[][] constructionStartPrimaryFacility) {
+		this.constructionStartPrimaryFacility = constructionStartPrimaryFacility;
+	}
+
+	/**
+	 * @return the constructionStartSecondaryFacility
+	 */
+	public double[][] getConstructionStartSecondaryFacility() {
+		return constructionStartSecondaryFacility;
+	}
+
+	/**
+	 * @param constructionStartSecondaryFacility the constructionStartSecondaryFacility to set
+	 */
+	public void setConstructionStartSecondaryFacility(double[][] constructionStartSecondaryFacility) {
+		this.constructionStartSecondaryFacility = constructionStartSecondaryFacility;
 	}
 
 	/**
