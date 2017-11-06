@@ -84,21 +84,21 @@ public class Data {
 		private int timeR;
 		
 		//Result Arrays
-		private double[][][][] shippedMaterialUnitsFacilityToCustomer; // F_ifct
-		private double[][][][] shippedMaterialUnitsSupplierToFacility; // F_isft
-		private double[][][] depreciationChargePrimaryFacility; // NDC_p_ftaut
-		private double[][][] depreciationChargeSecondaryFacility; // NDC_s_ftaut
-		private double[][] availableProductionCapacity; // Q_ft
-		private double[][] taxableIncome; // TI_nt
-		private double[][][] consumedOrProducedMaterial; // x_ift
-		private double[][] consumedOrProducedAPI; // X_ft
-		private double[] capitalExpenditure; // CE_t
-		private double[][] grossIncome; // GI_ft
-		private double[][] deltaCapacityExpansion; // delta_q_ft
-		private double[][] capacityExpansionAmount; // q_ft
+		private double[][][][] result_shippedMaterialUnitsFacilityToCustomer; // F_ifct
+		private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
+		private double[][][] result_depreciationChargePrimaryFacility; // NDC_p_ftaut
+		private double[][][] result_depreciationChargeSecondaryFacility; // NDC_s_ftaut
+		private double[][] result_availableProductionCapacity; // Q_ft
+		private double[][] result_taxableIncome; // TI_nt
+		private double[][][] result_consumedOrProducedMaterial; // x_ift
+		private double[][] result_consumedOrProducedAPI; // X_ft
+		private double[] result_capitalExpenditure; // CE_t
+		private double[][] result_grossIncome; // GI_ft
+		private double[][] result_deltaCapacityExpansion; // delta_q_ft
+		private double[][] result_capacityExpansionAmount; // q_ft
 
-		private double[][] constructionStartPrimaryFacility; // y_ft
-		private double[][] constructionStartSecondaryFacility; // z_ft
+		private double[][] result_constructionStartPrimaryFacility; // y_ft
+		private double[][] result_constructionStartSecondaryFacility; // z_ft
 
 	/**
 	 * 
@@ -1030,200 +1030,203 @@ public class Data {
 		this.timeR = timeR;
 	}
 
+	
 	/**
-	 * @return the shippedMaterialUnitsFacilityToCustomer
+	 * @return the result_shippedMaterialUnitsFacilityToCustomer
 	 */
-	public double[][][][] getShippedMaterialUnitsFacilityToCustomer() {
-		return shippedMaterialUnitsFacilityToCustomer;
+	public double[][][][] getResult_shippedMaterialUnitsFacilityToCustomer() {
+		return result_shippedMaterialUnitsFacilityToCustomer;
 	}
 
 	/**
-	 * @param shippedMaterialUnitsFacilityToCustomer the shippedMaterialUnitsFacilityToCustomer to set
+	 * @param result_shippedMaterialUnitsFacilityToCustomer the result_shippedMaterialUnitsFacilityToCustomer to set
 	 */
-	public void setShippedMaterialUnitsFacilityToCustomer(double[][][][] shippedMaterialUnitsFacilityToCustomer) {
-		this.shippedMaterialUnitsFacilityToCustomer = shippedMaterialUnitsFacilityToCustomer;
+	public void setResult_shippedMaterialUnitsFacilityToCustomer(
+			double[][][][] result_shippedMaterialUnitsFacilityToCustomer) {
+		this.result_shippedMaterialUnitsFacilityToCustomer = result_shippedMaterialUnitsFacilityToCustomer;
 	}
 
 	/**
-	 * @return the shippedMaterialUnitsSupplierToFacility
+	 * @return the result_shippedMaterialUnitsSupplierToFacility
 	 */
-	public double[][][][] getShippedMaterialUnitsSupplierToFacility() {
-		return shippedMaterialUnitsSupplierToFacility;
+	public double[][][][] getResult_shippedMaterialUnitsSupplierToFacility() {
+		return result_shippedMaterialUnitsSupplierToFacility;
 	}
 
 	/**
-	 * @param shippedMaterialUnitsSupplierToFacility the shippedMaterialUnitsSupplierToFacility to set
+	 * @param result_shippedMaterialUnitsSupplierToFacility the result_shippedMaterialUnitsSupplierToFacility to set
 	 */
-	public void setShippedMaterialUnitsSupplierToFacility(double[][][][] shippedMaterialUnitsSupplierToFacility) {
-		this.shippedMaterialUnitsSupplierToFacility = shippedMaterialUnitsSupplierToFacility;
+	public void setResult_shippedMaterialUnitsSupplierToFacility(
+			double[][][][] result_shippedMaterialUnitsSupplierToFacility) {
+		this.result_shippedMaterialUnitsSupplierToFacility = result_shippedMaterialUnitsSupplierToFacility;
 	}
 
 	/**
-	 * @return the depreciationChargePrimaryFacility
+	 * @return the result_depreciationChargePrimaryFacility
 	 */
-	public double[][][] getDepreciationChargePrimaryFacility() {
-		return depreciationChargePrimaryFacility;
+	public double[][][] getResult_depreciationChargePrimaryFacility() {
+		return result_depreciationChargePrimaryFacility;
 	}
 
 	/**
-	 * @param depreciationChargePrimaryFacility the depreciationChargePrimaryFacility to set
+	 * @param result_depreciationChargePrimaryFacility the result_depreciationChargePrimaryFacility to set
 	 */
-	public void setDepreciationChargePrimaryFacility(double[][][] depreciationChargePrimaryFacility) {
-		this.depreciationChargePrimaryFacility = depreciationChargePrimaryFacility;
+	public void setResult_depreciationChargePrimaryFacility(double[][][] result_depreciationChargePrimaryFacility) {
+		this.result_depreciationChargePrimaryFacility = result_depreciationChargePrimaryFacility;
 	}
 
 	/**
-	 * @return the depreciationChargeSecondaryFacility
+	 * @return the result_depreciationChargeSecondaryFacility
 	 */
-	public double[][][] getDepreciationChargeSecondaryFacility() {
-		return depreciationChargeSecondaryFacility;
+	public double[][][] getResult_depreciationChargeSecondaryFacility() {
+		return result_depreciationChargeSecondaryFacility;
 	}
 
 	/**
-	 * @param depreciationChargeSecondaryFacility the depreciationChargeSecondaryFacility to set
+	 * @param result_depreciationChargeSecondaryFacility the result_depreciationChargeSecondaryFacility to set
 	 */
-	public void setDepreciationChargeSecondaryFacility(double[][][] depreciationChargeSecondaryFacility) {
-		this.depreciationChargeSecondaryFacility = depreciationChargeSecondaryFacility;
+	public void setResult_depreciationChargeSecondaryFacility(double[][][] result_depreciationChargeSecondaryFacility) {
+		this.result_depreciationChargeSecondaryFacility = result_depreciationChargeSecondaryFacility;
 	}
 
 	/**
-	 * @return the availableProductionCapacity
+	 * @return the result_availableProductionCapacity
 	 */
-	public double[][] getAvailableProductionCapacity() {
-		return availableProductionCapacity;
+	public double[][] getResult_availableProductionCapacity() {
+		return result_availableProductionCapacity;
 	}
 
 	/**
-	 * @param availableProductionCapacity the availableProductionCapacity to set
+	 * @param result_availableProductionCapacity the result_availableProductionCapacity to set
 	 */
-	public void setAvailableProductionCapacity(double[][] availableProductionCapacity) {
-		this.availableProductionCapacity = availableProductionCapacity;
+	public void setResult_availableProductionCapacity(double[][] result_availableProductionCapacity) {
+		this.result_availableProductionCapacity = result_availableProductionCapacity;
 	}
 
 	/**
-	 * @return the taxableIncome
+	 * @return the result_taxableIncome
 	 */
-	public double[][] getTaxableIncome() {
-		return taxableIncome;
+	public double[][] getResult_taxableIncome() {
+		return result_taxableIncome;
 	}
 
 	/**
-	 * @param taxableIncome the taxableIncome to set
+	 * @param result_taxableIncome the result_taxableIncome to set
 	 */
-	public void setTaxableIncome(double[][] taxableIncome) {
-		this.taxableIncome = taxableIncome;
+	public void setResult_taxableIncome(double[][] result_taxableIncome) {
+		this.result_taxableIncome = result_taxableIncome;
 	}
 
 	/**
-	 * @return the consumedOrProducedMaterial
+	 * @return the result_consumedOrProducedMaterial
 	 */
-	public double[][][] getConsumedOrProducedMaterial() {
-		return consumedOrProducedMaterial;
+	public double[][][] getResult_consumedOrProducedMaterial() {
+		return result_consumedOrProducedMaterial;
 	}
 
 	/**
-	 * @param consumedOrProducedMaterial the consumedOrProducedMaterial to set
+	 * @param result_consumedOrProducedMaterial the result_consumedOrProducedMaterial to set
 	 */
-	public void setConsumedOrProducedMaterial(double[][][] consumedOrProducedMaterial) {
-		this.consumedOrProducedMaterial = consumedOrProducedMaterial;
+	public void setResult_consumedOrProducedMaterial(double[][][] result_consumedOrProducedMaterial) {
+		this.result_consumedOrProducedMaterial = result_consumedOrProducedMaterial;
 	}
 
 	/**
-	 * @return the consumedOrProducedAPI
+	 * @return the result_consumedOrProducedAPI
 	 */
-	public double[][] getConsumedOrProducedAPI() {
-		return consumedOrProducedAPI;
+	public double[][] getResult_consumedOrProducedAPI() {
+		return result_consumedOrProducedAPI;
 	}
 
 	/**
-	 * @param consumedOrProducedAPI the consumedOrProducedAPI to set
+	 * @param result_consumedOrProducedAPI the result_consumedOrProducedAPI to set
 	 */
-	public void setConsumedOrProducedAPI(double[][] consumedOrProducedAPI) {
-		this.consumedOrProducedAPI = consumedOrProducedAPI;
+	public void setResult_consumedOrProducedAPI(double[][] result_consumedOrProducedAPI) {
+		this.result_consumedOrProducedAPI = result_consumedOrProducedAPI;
 	}
 
 	/**
-	 * @return the capitalExpenditure
+	 * @return the result_capitalExpenditure
 	 */
-	public double[] getCapitalExpenditure() {
-		return capitalExpenditure;
+	public double[] getResult_capitalExpenditure() {
+		return result_capitalExpenditure;
 	}
 
 	/**
-	 * @param capitalExpenditure the capitalExpenditure to set
+	 * @param result_capitalExpenditure the result_capitalExpenditure to set
 	 */
-	public void setCapitalExpenditure(double[] capitalExpenditure) {
-		this.capitalExpenditure = capitalExpenditure;
+	public void setResult_capitalExpenditure(double[] result_capitalExpenditure) {
+		this.result_capitalExpenditure = result_capitalExpenditure;
 	}
 
 	/**
-	 * @return the grossIncome
+	 * @return the result_grossIncome
 	 */
-	public double[][] getGrossIncome() {
-		return grossIncome;
+	public double[][] getResult_grossIncome() {
+		return result_grossIncome;
 	}
 
 	/**
-	 * @param grossIncome the grossIncome to set
+	 * @param result_grossIncome the result_grossIncome to set
 	 */
-	public void setGrossIncome(double[][] grossIncome) {
-		this.grossIncome = grossIncome;
+	public void setResult_grossIncome(double[][] result_grossIncome) {
+		this.result_grossIncome = result_grossIncome;
 	}
 
 	/**
-	 * @return the deltaCapacityExpansion
+	 * @return the result_deltaCapacityExpansion
 	 */
-	public double[][] getDeltaCapacityExpansion() {
-		return deltaCapacityExpansion;
+	public double[][] getResult_deltaCapacityExpansion() {
+		return result_deltaCapacityExpansion;
 	}
 
 	/**
-	 * @param deltaCapacityExpansion the deltaCapacityExpansion to set
+	 * @param result_deltaCapacityExpansion the result_deltaCapacityExpansion to set
 	 */
-	public void setDeltaCapacityExpansion(double[][] deltaCapacityExpansion) {
-		this.deltaCapacityExpansion = deltaCapacityExpansion;
+	public void setResult_deltaCapacityExpansion(double[][] result_deltaCapacityExpansion) {
+		this.result_deltaCapacityExpansion = result_deltaCapacityExpansion;
 	}
 
 	/**
-	 * @return the capacityExpansionAmount
+	 * @return the result_capacityExpansionAmount
 	 */
-	public double[][] getCapacityExpansionAmount() {
-		return capacityExpansionAmount;
+	public double[][] getResult_capacityExpansionAmount() {
+		return result_capacityExpansionAmount;
 	}
 
 	/**
-	 * @param capacityExpansionAmount the capacityExpansionAmount to set
+	 * @param result_capacityExpansionAmount the result_capacityExpansionAmount to set
 	 */
-	public void setCapacityExpansionAmount(double[][] capacityExpansionAmount) {
-		this.capacityExpansionAmount = capacityExpansionAmount;
+	public void setResult_capacityExpansionAmount(double[][] result_capacityExpansionAmount) {
+		this.result_capacityExpansionAmount = result_capacityExpansionAmount;
 	}
 
 	/**
-	 * @return the constructionStartPrimaryFacility
+	 * @return the result_constructionStartPrimaryFacility
 	 */
-	public double[][] getConstructionStartPrimaryFacility() {
-		return constructionStartPrimaryFacility;
+	public double[][] getResult_constructionStartPrimaryFacility() {
+		return result_constructionStartPrimaryFacility;
 	}
 
 	/**
-	 * @param constructionStartPrimaryFacility the constructionStartPrimaryFacility to set
+	 * @param result_constructionStartPrimaryFacility the result_constructionStartPrimaryFacility to set
 	 */
-	public void setConstructionStartPrimaryFacility(double[][] constructionStartPrimaryFacility) {
-		this.constructionStartPrimaryFacility = constructionStartPrimaryFacility;
+	public void setResult_constructionStartPrimaryFacility(double[][] result_constructionStartPrimaryFacility) {
+		this.result_constructionStartPrimaryFacility = result_constructionStartPrimaryFacility;
 	}
 
 	/**
-	 * @return the constructionStartSecondaryFacility
+	 * @return the result_constructionStartSecondaryFacility
 	 */
-	public double[][] getConstructionStartSecondaryFacility() {
-		return constructionStartSecondaryFacility;
+	public double[][] getResult_constructionStartSecondaryFacility() {
+		return result_constructionStartSecondaryFacility;
 	}
 
 	/**
-	 * @param constructionStartSecondaryFacility the constructionStartSecondaryFacility to set
+	 * @param result_constructionStartSecondaryFacility the result_constructionStartSecondaryFacility to set
 	 */
-	public void setConstructionStartSecondaryFacility(double[][] constructionStartSecondaryFacility) {
-		this.constructionStartSecondaryFacility = constructionStartSecondaryFacility;
+	public void setResult_constructionStartSecondaryFacility(double[][] result_constructionStartSecondaryFacility) {
+		this.result_constructionStartSecondaryFacility = result_constructionStartSecondaryFacility;
 	}
 
 	/**

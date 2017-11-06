@@ -1099,9 +1099,8 @@ public class LocationPlanningModel extends IloCplex {
 			}
 		}
 
-		instanz.setConstructionStartPrimaryFacility(yft);
-		instanz.setConstructionStartSecondaryFacility(zft);
-		
+		instanz.setResult_constructionStartPrimaryFacility(yft);
+		instanz.setResult_constructionStartSecondaryFacility(zft);
 
 		// TInt
 		double[][] TInt = new double[instanz.getN()][instanz.getT()];
@@ -1111,7 +1110,7 @@ public class LocationPlanningModel extends IloCplex {
 				TInt[j][k] = getValue(this.taxableIncome[j][k]);
 			}
 		}
-		instanz.setTaxableIncome(TInt);
+		instanz.setResult_taxableIncome(TInt);
 
 		// GIft
 		double[][] GIft = new double[instanz.getF()][instanz.getT()];
@@ -1128,7 +1127,7 @@ public class LocationPlanningModel extends IloCplex {
 				}
 			}
 		}
-		instanz.setGrossIncome(GIft);
+		instanz.setResult_grossIncome(GIft);
 		//
 		out.close();
 
