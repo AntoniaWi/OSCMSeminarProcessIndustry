@@ -1047,18 +1047,18 @@ public class LocationPlanningModel extends IloCplex {
 		out.write("objective value=" + getObjValue() + "\n");
 		out.write("variable values\n");
 
-		out.write("\n Entscheidung\n");
+		out.write("\n Decision\n");
 		for (int j = 0; j < this.F; j++) {
 			for (int k = 0; k < this.T; k++) {
 				if(IF[j]&&PIF[j]){
 				if (getValue(this.constructionStartPrimaryFacility[j][k]) == 1) {
-					out.write(" Primary Facility " + (j + 1) + " wird in Periode " + (k+1) + " gebaut. y = " + getValue(this.constructionStartPrimaryFacility[j][k]) + "\n");
+					out.write(" Primary Facility " + (j + 1) + " is build in " + (k+1) + ". y = " + getValue(this.constructionStartPrimaryFacility[j][k]) + "\n");
 					
 				}
 				else if(IF[j]&&SIF[j]){
 					if (getValue(this.constructionStartSecondaryFacility[j][k]) == 1) {
 						
-						out.write(" Secondary Facility " + (j + 1) + " wird in Periode " + (k+1) + " gebaut. z = " + getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
+						out.write(" Secondary Facility " + (j + 1) + " is build in " + (k+1) + ". z = " + getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
 					}
 					
 			}}
