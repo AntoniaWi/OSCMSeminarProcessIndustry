@@ -1065,6 +1065,11 @@ public class LocationPlanningModel extends IloCplex {
 
 		out.write("\n Decision\n");
 
+		
+		// for writing into the solution file use: out.write ("");
+		//for writing into the Excel file transfer decision variable values into result arrays of data instance and then use writeSolution() in ReadAndWrite class
+		
+		
 		// y and z
 		double yft[][] = new double[this.F][this.T];
 		double zft[][] = new double[this.F][this.T];
