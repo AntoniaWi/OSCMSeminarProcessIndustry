@@ -103,7 +103,7 @@ public class Data {
 		
 		this.parameter_preliminaryKnowledgeAboutSuccessfulTests = 1;
 		this.parameter_preliminaryKnowledgeAboutFailedTests = 1;
-		this.parameter_thresholdSuccessfulTests = 5;
+		this.parameter_thresholdSuccessfulTests = 2;
 		
 		// Currently no test results are available
 		
@@ -135,7 +135,7 @@ public class Data {
 		
 		// Currently only available for period 0
 		
-		this.remainingYearsToBuildPrimaryFacility = new int [this.parameter_planningHorizon + 1];
+		this.remainingYearsToBuildPrimaryFacility = new int [this.parameter_planningHorizon + 2];
 		this.remainingYearsToBuildPrimaryFacility[0] = this.parameter_monthsToBuildPrimaryFacilities;
 		
 		for (int i = 1; i < this.remainingYearsToBuildPrimaryFacility.length; i++) {	
@@ -1084,20 +1084,37 @@ public class Data {
 	/**
 	 * 
 	 */
-	public void calculateRemainingPeriodsToBuildPrimaryFacility() {
+	public void calculateRemainingPeriodsToBuildPrimaryFacility(int period) {
 		
 		int count = 0;
 		
-		for (int i = 1; i < (this.countPeriods-1); i++) {
+		int index = 1;
+		
+		while (index <= period-1) {
 			
-			if(this.investmentDecisionPrimaryFacility[i] == 1) {
+			if(this.investmentDecisionPrimaryFacility[index] == 1) {
 				count++;
 			}
+			
+			index++;
 		}
 		
-		this.remainingYearsToBuildPrimaryFacility[this.countPeriods] = this.parameter_monthsToBuildPrimaryFacilities - count;
+		this.remainingYearsToBuildPrimaryFacility[period] = this.parameter_monthsToBuildPrimaryFacilities - count;
 	}
 	
+	
+	/**
+	 * 
+	 * @param period
+	 * @param new_decision
+	 */
+	public void setInvestmentDecisionPrimaryFacility (int period, int new_decision) {
+		
+		this.investmentDecisionPrimaryFacility[period] = new_decision;
+		
+	}
+	
+		
 	
 }
 

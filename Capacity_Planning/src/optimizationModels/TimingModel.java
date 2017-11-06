@@ -12,10 +12,6 @@ public class TimingModel {
 	
 	private static Data dataInstance;
 	
-	/**
-	 * 
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		
 		// Get all the parameters
@@ -24,53 +20,33 @@ public class TimingModel {
 		
 		// Generate console output
 		
-		System.out.println("Timing Model starts with following parameters:");
+		// TODO Check if all important parameters are printed out
 		
-		System.out.println("");
-		
-		System.out.println("Planning horizon (T): " + dataInstance.getParameter_planningHorizon());
-		System.out.println("Discount factor (alpha): " + dataInstance.getParameter_discountFactor());
-		
-		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstance.getParameter_monthsToBuildPrimaryFacilities());
-		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstance.getParameter_monthsToBuildSecondaryFacilities());
-		
-		System.out.println("Construction cost of a primary facility (c_p): " + dataInstance.getParameter_constructionCostPrimaryFacility());
-		System.out.println("Construction cost of a secondary facility (c_s): " + dataInstance.getParameter_constructionCostSecondaryFacility());
-		
-		System.out.println("Setup cost for a primary facility (K_p): " + dataInstance.getParameter_setupCostPrimaryFacility());
-		System.out.println("Setup cost for a secondary facility (K_s): " + dataInstance.getParameter_setupCostSecondaryFacility());
-		
-		System.out.println("Penalty cost (Phi): " + dataInstance.getParameter_penaltyCost());
-		
-		System.out.println("Preliminary knowledge of successful tests (gamma): " + dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests());
-		System.out.println("Preliminary knowledge of failed tests (zeta): " + dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests());
-
-		System.out.println("");
-		
-		System.out.println("Model 'Planning under Uncertainty' starts.");
+		printTimingModelInformationStart();
 				
-		int index = 1;
+		int period = 1;
 		
-		while (index <= dataInstance.getParameter_planningHorizon()) {
+		while (period <= dataInstance.getParameter_planningHorizon()) {
 			
 			newPeriod();
-			index++;
+			period++;
 			
 		}
 		
-		System.out.println("");
+		// Generate console output
 		
-		System.out.println("************************************************************");
-		
-		System.out.println("\nEnd of experiment run:");
-		
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountSuccessfulTests(), "Successful Tests (gamma)");
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountFailedTests(), "Failed Tests (zeta)");
-		ReadAndWrite.printArrayWithPeriodsDouble(dataInstance.getTestProbability(), "Test Probability (p)");
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getTestResults(), "Test Results (delta)");				
+		printTimingModelInformationEnd();
 	}
 	
 	
+	
+	// -------------------------------------------------------------------------------------------------------------------//
+	
+	// Main Methods
+	
+	// -------------------------------------------------------------------------------------------------------------------//
+	
+
 	/**
 	 * 
 	 */
@@ -81,15 +57,8 @@ public class TimingModel {
 		dataInstance.incrementCountPeriods();
 		
 		// Update most-up-to-date knowledge to gamma_t-1 and zeta_t-1
-		// Most-up-to-date knowledge for period 1 is the preliminary knowledge gamma_0 and zeta_0
 		
-		if (dataInstance.getCountPeriods() > 1) {
-			
-			dataInstance.updateCountSuccessfulTests(dataInstance.getCountPeriods() );
-			dataInstance.updateCountFailedTests(dataInstance.getCountPeriods() );
-		}
-		
-		// TODO:
+		TimingModel.updateFormerKnowledge();
 		
 		// Build scenario tree
 		
@@ -103,72 +72,27 @@ public class TimingModel {
 		
 		ArrayList<Double> cost = calculateV(dataInstance.getCountPeriods(), scenarioTree, strategies);
 		
-		// Search for the minimal cost
+		// Set a_t for this period and all future periods (which will be overwritten)
 		
-		double min = Double.MAX_VALUE;
-		int index = -1;
+		TimingModel.setNewInvesmentDecision(cost, strategies);
 		
-		for (int i = 0; i < cost.size(); i++) {
-			
-			if (cost.get(i) <= min) {
-				
-				min = cost.get(i);
-				index = i;
-			}
-		}
+		// Set s_t for the next period
 		
-		int [] optimal_strategy_in_t = strategies.get(index);
+		dataInstance.calculateRemainingPeriodsToBuildPrimaryFacility(dataInstance.getCountPeriods() + 1);
 		
+		// New test result
 		
-		//TODO:  Set a_t and s_t
-		
-		
-		//TODO: delete all cost in events for next calculation
-	
-		// Create new test result
-		
-		double p = dataInstance.calculateTestProbability();
-		
-		boolean newTestResult = StdRandom.bernoulli(p); 
-		
-		if (newTestResult == true) {
-			
-			dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 1;
-		}
-		
-		else {
-			
-			dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 0;
-		}
+		TimingModel.newTestResult();
 		
 		// Print all information regarding the new period
 		
-		System.out.println("");
-		
-		System.out.println("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-		System.out.println("Period # " + dataInstance.getCountPeriods() );
-		
-		System.out.println("");
-		System.out.println("Gamma " + (dataInstance.getCountPeriods() - 1) + ": " + dataInstance.getCountSuccessfulTests()[dataInstance.getCountPeriods() -1]);
-		
-		System.out.println("");
-		
-		System.out.println("Zeta " + (dataInstance.getCountPeriods() - 1) + ": " + dataInstance.getCountFailedTests()[dataInstance.getCountPeriods() -1]);
-		
-		System.out.println("");
-	
-		System.out.println("Probability p = " + dataInstance.getTestProbability()[dataInstance.getCountPeriods()]);
-	
-		System.out.println("");
-		
-		System.out.println("New test result: " + dataInstance.getTestResults()[dataInstance.getCountPeriods() ]);
-		
-
+		TimingModel.printPeriodInformation();
 	}
 	
 	
 	/**
 	 * 
+	 * @param period
 	 * @return
 	 */
 	public static ArrayList<ArrayList<Event>> generateScenarioTree (int period) {
@@ -198,7 +122,7 @@ public class TimingModel {
 				
 				// Is it a final event for which cost can be calculated?
 				
-				if (t == dataInstance.getParameter_planningHorizon()-1) {
+				if (t == dataInstance.getParameter_planningHorizon()) {
 					tmp_event.setFinalEvent(true);
 				}
 				else {
@@ -333,8 +257,172 @@ public class TimingModel {
 		}		
 		
 		return scenarioTree;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static ArrayList<int[]> generateAllPossibleStrategiesInPeriod_t() {
+		
+		ArrayList<int[]> strategies = new ArrayList<int[]> ();
+			
+		int doneInvestments = TimingModel.countTrueValuesInArray(dataInstance.getInvestmentDecisionPrimaryFacility());
+		
+		int remainingPossibleInvestment = dataInstance.getParameter_monthsToBuildPrimaryFacilities() - doneInvestments;
+		
+		int remainingPeriods = (dataInstance.getParameter_planningHorizon() - dataInstance.getCountPeriods()) + 1;
+		
+		for (int i = 0; i <= remainingPossibleInvestment; i++) {
+			
+			int [] array_tmp = new int[remainingPeriods]; 
+			
+			int index_1 = 0;
+			
+			while (index_1 < i) {
+				
+				array_tmp[index_1] = 1;
+			
+				index_1++;
+			}
+			
+			Permuter.permute(array_tmp, strategies);
+		
+		}
+		
+		return strategies;
+	}
+	
+
+	/**
+	 * 
+	 * @param period
+	 * @param strategy
+	 * @param periodsToBuild
+	 * @return
+	 */
+	public static int calculateRemainingPeriodsToBuildPrimaryFacility(int period, int [] strategy, int periodsToBuild) {
+
+		int count = 0;
+		
+		int [] array_tmp = new int[dataInstance.getParameter_planningHorizon()+1];
+		
+		int index = 0;
+		
+		// All former investment decisions that were decided before
+		
+		while (index <= period-1) {
+			
+			array_tmp[index] = dataInstance.getInvestmentDecisionPrimaryFacility()[index];
+			index++;
+		}
+		
+		// Add all future strategies
+		
+		index = period;
+		int index_2 = 0;
+		
+		while (index_2 < strategy.length) {
+			
+			array_tmp[index] = strategy[index_2];
+			index++;
+			index_2++;	
+		}
+		
+		for (int i = 0; i < array_tmp.length; i++) {
+			
+			if (array_tmp[i]==1) {
+				
+				count++;	
+			}
+		}
+		
+		int result = periodsToBuild - count;
+		
+		return result;
 		
 	}
+		
+
+
+	/**
+	 * 
+	 * @param period
+	 * @param scenarioTree
+	 * @param strategies
+	 * @return
+	 */
+	public static ArrayList<Double> calculateV (int period, ArrayList<ArrayList<Event>> scenarioTree, ArrayList<int[]> strategies) {
+		
+		ArrayList<Double> cost = new ArrayList<Double>();
+		
+		double c = dataInstance.getParameter_constructionCostPrimaryFacility();
+		double K = dataInstance.getParameter_setupCostPrimaryFacility();
+		double phi = dataInstance.getParameter_penaltyCost();
+		int gamma_c = dataInstance.getParameter_thresholdSuccessfulTests();
+		
+		// Do the cost calculation for every possible strategy
+		
+		for (int i = 0; i < strategies.size(); i++) {
+			
+			TimingModel.deleteCostCalculation(scenarioTree);
+			
+			int a_T = strategies.get(i)[strategies.get(i).length-1];
+			int s_T = calculateRemainingPeriodsToBuildPrimaryFacility(period, strategies.get(i), dataInstance.getParameter_monthsToBuildPrimaryFacilities());
+			
+			// Calculate the final cost for all final events in the scenario tree
+			
+			int last_period = scenarioTree.size()-1;
+			
+			for (int j = scenarioTree.size()-1; j >= 0; j--) {
+				
+				for (int k = 0; k < scenarioTree.get(j).size(); k++) {
+					
+					scenarioTree.get(j).get(k).calculateTotalCost(period);
+				}	
+			}
+			
+			// TODO: remaingPeriodsToBuild, cost calculation etc.period
+			
+			Event left = scenarioTree.get(0).get(0);
+			Event right = scenarioTree.get(0).get(1);
+			
+			double final_cost = left.getProbability() * left.getExpectedCost() + right.getProbability() * right.getExpectedCost();
+			
+			cost.add(final_cost);
+		}
+		
+		return cost;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void newTestResult () {
+		
+		double p = dataInstance.calculateTestProbability();
+		
+		boolean newTestResult = StdRandom.bernoulli(p); 
+		
+		if (newTestResult == true) {
+			
+			dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 1;
+		}
+		
+		else {
+			
+			dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 0;
+		}	
+	}
+	
+	
+	// -------------------------------------------------------------------------------------------------------------------//
+	
+	// Helper Methods
+	
+	// -------------------------------------------------------------------------------------------------------------------//
 	
 	
 	/**
@@ -382,140 +470,209 @@ public class TimingModel {
 	
 	/**
 	 * 
+	 * @param scenarioTree
+	 */
+	public static void deleteCostCalculation (ArrayList<ArrayList<Event>> scenarioTree) {
+		
+		for (int i = 0; i < scenarioTree.size(); i++) {
+			
+			for (int j = 0; j < scenarioTree.get(i).size(); j++) {
+				
+				scenarioTree.get(i).get(j).setExpectedCost(-1);
+				scenarioTree.get(i).get(j).setFinalCost(-1);
+			}
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param cost
 	 * @return
 	 */
-	public static ArrayList<int[]> generateAllPossibleStrategiesInPeriod_t() {
+	public static int searchForMin (ArrayList<Double> cost) {
 		
-		ArrayList<int[]> strategies = new ArrayList<int[]> ();
+		double min = Double.MAX_VALUE;
+		int index = -1;
+		
+		for (int i = 0; i < cost.size(); i++) {
 			
-		int doneInvestments = 0;
-		
-		for (int i = 0; i < dataInstance.getInvestmentDecisionPrimaryFacility().length; i++) { 	
-			if (dataInstance.getInvestmentDecisionPrimaryFacility()[i] == 1) {	
-				doneInvestments++;
-			}
-		}
-		
-		int remainingPossibleInvestment = dataInstance.getParameter_monthsToBuildPrimaryFacilities() - doneInvestments;
-		
-		int remainingPeriods = (dataInstance.getParameter_planningHorizon() - dataInstance.getCountPeriods()) + 1;
-		
-		for (int i = 0; i <= remainingPossibleInvestment; i++) {
-			
-			int [] array_tmp = new int[remainingPeriods]; 
-			
-			int index_1 = 0;
-			
-			while (index_1 < i) {
+			if (cost.get(i) <= min) {
 				
-				array_tmp[index_1] = 1;
-			
-				index_1++;
+				min = cost.get(i);
+				index = i;
 			}
-			
-			Permuter.permute(array_tmp, strategies);
-		
 		}
+		
+		return index;
+	}
+	
+	
+	/**
+	 * 
+	 * @param cost
+	 * @param strategies
+	 */
+	public static void setNewInvesmentDecision (ArrayList<Double> cost, ArrayList<int[]> strategies) {
+		
+		int min_cost = searchForMin (cost);
+		
+		dataInstance.setInvestmentDecisionPrimaryFacility(dataInstance.getCountPeriods(), strategies.get(min_cost)[0]);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void updateFormerKnowledge () {
+		
+		if (dataInstance.getCountPeriods() > 1) {
+			
+			dataInstance.updateCountSuccessfulTests(dataInstance.getCountPeriods());
+			dataInstance.updateCountFailedTests(dataInstance.getCountPeriods());
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	public static int countTrueValuesInArray (int [] array) {
+		
+		int count = 0;
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			if (array[i] == 1) {
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	
+	
+	
+	// -------------------------------------------------------------------------------------------------------------------//
+	
+	// Print Methods
+	
+	// -------------------------------------------------------------------------------------------------------------------//
+	
+	
+	/**
+	 * 
+	 */
+	public static void printPeriodInformation () {
+		
+		System.out.println("");
+		
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		
+		System.out.println("");
+		
+		System.out.println("Period # " + dataInstance.getCountPeriods() );
+		
+		System.out.println("");
+		
+		System.out.println("1. Update knowledge about former test results:");
+		
+		System.out.println("");
+		
+		System.out.println("  - Gamma_" + (dataInstance.getCountPeriods() - 1) + " = " + dataInstance.getCountSuccessfulTests()[dataInstance.getCountPeriods() -1]);
+		System.out.println("  - Zeta_" + (dataInstance.getCountPeriods() - 1) + " = " + dataInstance.getCountFailedTests()[dataInstance.getCountPeriods() -1]);
+		
+		System.out.println("");
+		
+		System.out.println("2. Decide whether to invest or not; if so, where:");
+		
+		System.out.println("");
+		
+		System.out.println("  - Investment (yes or no): " + dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()]);
+		System.out.println("  - Location: " + "empty" );
+		
+		System.out.println("");
+		
+		System.out.println("3. Obtain a new test result in the end of the period:");
+		
+		System.out.println("");
+		
+		System.out.println("  - Probability p = " + dataInstance.getTestProbability()[dataInstance.getCountPeriods()]);		
+		System.out.println("  - New test result: " + dataInstance.getTestResults()[dataInstance.getCountPeriods() ]);
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void printTimingModelInformationStart () {
+		
+		System.out.println("Timing Model starts with following parameters:");
+		
+		System.out.println("");
+		
+		System.out.println("Planning horizon (T): " + dataInstance.getParameter_planningHorizon());
+		System.out.println("Discount factor (alpha): " + dataInstance.getParameter_discountFactor());
+		
+		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstance.getParameter_monthsToBuildPrimaryFacilities());
+		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstance.getParameter_monthsToBuildSecondaryFacilities());
+		
+		System.out.println("Construction cost of a primary facility (c_p): " + dataInstance.getParameter_constructionCostPrimaryFacility());
+		System.out.println("Construction cost of a secondary facility (c_s): " + dataInstance.getParameter_constructionCostSecondaryFacility());
+		
+		System.out.println("Setup cost for a primary facility (K_p): " + dataInstance.getParameter_setupCostPrimaryFacility());
+		System.out.println("Setup cost for a secondary facility (K_s): " + dataInstance.getParameter_setupCostSecondaryFacility());
+		
+		System.out.println("Penalty cost (Phi): " + dataInstance.getParameter_penaltyCost());
+		
+		System.out.println("Preliminary knowledge of successful tests (gamma): " + dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests());
+		System.out.println("Preliminary knowledge of failed tests (zeta): " + dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests());
+
+		System.out.println("");
+		
+		System.out.println("Model 'Planning under Uncertainty' starts.");	
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void printTimingModelInformationEnd () {
+		
+		System.out.println("");
+		
+		System.out.println("********************************************************************************");
+		
+		System.out.println("\nEnd of experiment run:");
+		
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountSuccessfulTests(), "Successful Tests (gamma)");
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountFailedTests(), "Failed Tests (zeta)");
+		ReadAndWrite.printArrayWithPeriodsDouble(dataInstance.getTestProbability(), "Test Probability (p)");
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getTestResults(), "Test Results (delta)");
+	}
+	
+	
+	/**
+	 * 
+	 * @param strategies
+	 */
+	public static void printStrategies (ArrayList<int[]> strategies, int period) {
+		
+		System.out.println("\n\n--------------------------------------------------------------------------------");
+		
+		System.out.println ("\nStrategies for period: " + period);
 		
 		for (int i = 0; i < strategies.size(); i++) {
 			
 			ReadAndWrite.printArraySimple(strategies.get(i));
 		}
 		
-		return strategies;
+		System.out.println("\n--------------------------------------------------------------------------------\n\n");
 	}
-	
-
-	/**
-	 * 
-	 */
-	public static int calculateRemainingPeriodsToBuildPrimaryFacility(int period, int [] investmentDecision, int periodsToBuild) {
-		
-		int count = 0;
-		
-		for (int i = 1; i < (period-1); i++) {
-			
-			if(investmentDecision[i] == 1) {
-				count++;
-			}
-		}
-		
-		int result = periodsToBuild - count;
-		
-		return result;
-	}
-
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static ArrayList<Double> calculateV (int period, ArrayList<ArrayList<Event>> scenarioTree, ArrayList<int[]> strategies) {
-		
-		ArrayList<Double> cost = new ArrayList<Double>();
-		
-		double c = dataInstance.getParameter_constructionCostPrimaryFacility();
-		double K = dataInstance.getParameter_setupCostPrimaryFacility();
-		double phi = dataInstance.getParameter_penaltyCost();
-		int gamma_c = dataInstance.getParameter_thresholdSuccessfulTests();
-		
-		// Do the cost calculation for every possible strategy
-		
-		for (int i = 0; i < strategies.size(); i++) {
-			
-			int a_T = strategies.get(i)[dataInstance.getParameter_planningHorizon()];
-			int s_T = calculateRemainingPeriodsToBuildPrimaryFacility(period, strategies.get(i), dataInstance.getParameter_monthsToBuildPrimaryFacilities());
-			
-			// Calculate the final cost for all final events in the scenario tree
-			
-			for (int j = 0; j < scenarioTree.get(scenarioTree.size()-1).size(); j ++) {
-					
-				scenarioTree.get(j).get(scenarioTree.size()-1).calculateF(s_T, a_T, c, K, phi, gamma_c);
-			}
-			
-			for (int j = scenarioTree.size()-2; j >= 0; j--) {
-				
-				for (int k = 0; k < scenarioTree.get(j).size(); k++) {
-					
-					scenarioTree.get(j).get(k).calculateExpectedCost();
-				}
-			}
-			
-			Event left = scenarioTree.get(0).get(0);
-			Event right = scenarioTree.get(0).get(1);
-			
-			double final_cost = left.getProbability() * left.getExpectedCost() + right.getProbability() * right.getExpectedCost();
-			
-			cost.add(final_cost);
-		}
-		
-		return cost;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
