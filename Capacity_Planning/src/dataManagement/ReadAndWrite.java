@@ -24,7 +24,7 @@ import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 4;
+	public static int user = 2;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
@@ -32,6 +32,10 @@ public class ReadAndWrite {
 
 	// Paths Sarah #2
 	public static String pathExcelSarah = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\CaseDataBasic.xls";
+	public static String pathExcelSarahR = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\Result.xls";
+
+	
+	
 	// Paths Ramona #3
 	public static String pathExcelRamona = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseData-Basic.xlsx";// TODO:
 	// Paths Antonia Windows #4
@@ -55,6 +59,7 @@ public class ReadAndWrite {
 		else if (user == 2) {
 
 			path = pathExcelSarah;
+			pathR = pathExcelSarahR;
 		}
 
 		else if (user == 3) {
