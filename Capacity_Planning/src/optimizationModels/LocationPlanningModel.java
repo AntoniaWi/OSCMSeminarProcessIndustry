@@ -274,32 +274,31 @@ public class LocationPlanningModel extends IloCplex {
 		IloLinearNumExpr expr = linearNumExpr();
 
 		for (int i = 0; i < this.T; i++) {
-			double discountTerm = 1 / Math.pow(1 + this.discountfactor, (i+1));
+			double discountTerm = 1 / Math.pow(1 + this.discountfactor, (i + 1));
 			for (int j = 0; j < this.F; j++) {
 				if (IF[j]) {
 					expr.addTerm(discountTerm, this.grossIncome[j][i]);
-					
 
 				}
 			}
 		}
-		
-		//System.out.println(expr);
-		
+
+		// System.out.println(expr);
+
 		for (int i = 0; i < this.T; i++) {
-			double discountTerm = -1 / Math.pow(1 + this.discountfactor, (i+1));
+			double discountTerm = -1 / Math.pow(1 + this.discountfactor, (i + 1));
 			for (int j = 0; j < this.F; j++) {
 				if (IF[j]) {
 
 					expr.addTerm(discountTerm, this.capitalExpenditure[i]);
-					
+
 				}
 			}
 		}
-		
-		//System.out.println(expr);
+
+		// System.out.println(expr);
 		for (int i = 0; i < this.T; i++) {
-			double discountTerm = 1 / Math.pow(1 + this.discountfactor, (i+1));
+			double discountTerm = 1 / Math.pow(1 + this.discountfactor, (i + 1));
 			for (int k = 0; k < this.N; k++) {
 
 				double taxHelp = discountTerm * this.corporateTax[k];
@@ -307,8 +306,8 @@ public class LocationPlanningModel extends IloCplex {
 			}
 		}
 
-		//System.out.println(expr);
-		
+		// System.out.println(expr);
+
 		objective = addMaximize();
 		objective.setExpr(expr);
 		System.out.println(objective);
@@ -604,25 +603,24 @@ public class LocationPlanningModel extends IloCplex {
 
 							// First equation
 							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
-							
 
 							for (int m = 0; m < this.F; m++) {
-								if (IF[m]) {
-									//for (int l = 0; l < this.I; l++) {
-										if (OM[m][j] || IM[m][j]) {
-											if (OM[m][j] && IM[i][j]) {
-												massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-														this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
-											}
+								//if (IF[m]) {
+									// for (int l = 0; l < this.I; l++) {
 
-											else if (IM[m][j] && OM[i][j]) {
-
-												massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-														this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
-											}
-										//}
+									if (OM[m][j] && IM[i][j]) {
+										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+												this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
 									}
-								}
+
+									else if (IM[m][j] && OM[i][j]) {
+
+										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+												this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
+									}
+									// }
+
+								//}
 							}
 							// Second equation
 
@@ -1075,11 +1073,11 @@ public class LocationPlanningModel extends IloCplex {
 
 		out.write("\n Decision\n");
 
-		
 		// for writing into the solution file use: out.write ("");
-		//for writing into the Excel file transfer decision variable values into result arrays of data instance and then use writeSolution() in ReadAndWrite class
-		
-		
+		// for writing into the Excel file transfer decision variable values
+		// into result arrays of data instance and then use writeSolution() in
+		// ReadAndWrite class
+
 		// y and z
 		double yft[][] = new double[this.F][this.T];
 		double zft[][] = new double[this.F][this.T];
@@ -1096,15 +1094,15 @@ public class LocationPlanningModel extends IloCplex {
 
 					}
 				} else if (IF[j] && SIF[j]) {
-					zft[j][k] =  getValue(this.constructionStartSecondaryFacility[j][k]);
+					zft[j][k] = getValue(this.constructionStartSecondaryFacility[j][k]);
 					yft[j][k] = 0;
 					if (getValue(this.constructionStartSecondaryFacility[j][k]) == 1) {
 
 						out.write(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
 								+ getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
-					System.out.println(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
+						System.out.println(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
 								+ getValue(this.constructionStartSecondaryFacility[j][k]) + " ");
-					System.out.println(zft[j][k]);
+						System.out.println(zft[j][k]);
 					}
 
 				} else {
@@ -1143,41 +1141,42 @@ public class LocationPlanningModel extends IloCplex {
 			}
 		}
 		instanz.setResult_grossIncome(GIft);
-		
+
 		// CEt
-				double[] CEt = new double[instanz.getT()];
+		double[] CEt = new double[instanz.getT()];
 
-			
-					for (int k = 0; k < this.T; k++) {
-						
+		for (int k = 0; k < this.T; k++) {
 
-							CEt[k] = getValue(this.capitalExpenditure[k]);
-						}
+			CEt[k] = getValue(this.capitalExpenditure[k]);
+		}
 
-	
-				instanz.setResult_capitalExpenditure(CEt);
-				
-			//F_ifct and F_isft
-				
-			for (int i=0;i<instanz.getI();i++){
-					for (int j=0;j<instanz.getF();j++){
-						for (int k=0;k<instanz.getF();k++){
-							for (int l=0;l<instanz.getT();l++){
-								
-								if (getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) > 0) {
+		instanz.setResult_capitalExpenditure(CEt);
 
-									out.write("Material "+(i+1)+" is shipped from facility " + (j + 1) + " to customer " + (k + 1) + " in period "+(l+1)+" ."
-											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) + "\n");
-								}
-								else{
-									out.write("Material "+(i+1)+" is NOT shipped from facility " + (j + 1) + " to customer " + (k + 1) + " in period "+(l+1)+" ."
-											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) + "\n");
-							}}
-						}
+		// F_ifct and F_isft
+
+		for (int i = 0; i < instanz.getI(); i++) {
+			for (int j = 0; j < instanz.getF(); j++) {
+				for (int k = 0; k < instanz.getF(); k++) {
+					for (int l = 0; l < instanz.getT(); l++) {
+						if (IF[j]) {
+							if(OM[j][i]&&IM[k][i]){
+							if (getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) > 0) {
+
+								out.write("Material " + (i + 1) + " is shipped from facility " + (j + 1)
+										+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
+										+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
+							} else {
+								/*out.write("Material " + (i + 1) + " is NOT shipped from facility " + (j + 1)
+										+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
+										+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
+							*/
+							}
+						}}
 					}
 				}
-				
-				
+			}
+		}
+
 		//
 		out.close();
 
