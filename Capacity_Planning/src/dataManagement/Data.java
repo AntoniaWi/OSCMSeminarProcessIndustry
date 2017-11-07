@@ -105,24 +105,24 @@ public class Data {
 	 */
 	public Data () {
 
-		this.parameter_planningHorizon = 3;
+		this.parameter_planningHorizon = 5;
 		
 		this.parameter_discountFactor = 1.0;
 		
-		this.parameter_monthsToBuildPrimaryFacilities = 2;
+		this.parameter_monthsToBuildPrimaryFacilities = 5;
 		this.parameter_monthsToBuildSecondaryFacilities = 3;
 		
 		this.parameter_constructionCostPrimaryFacility = 100;
 		this.parameter_constructionCostSecondaryFacility = 25;
 		
-		this.parameter_setupCostPrimaryFacility = 10;
+		this.parameter_setupCostPrimaryFacility = 0;
 		this.parameter_setupCostSecondaryFacility = 2;
 		
-		this.parameter_penaltyCost = 30;
+		this.parameter_penaltyCost = 300;
 		
 		this.parameter_preliminaryKnowledgeAboutSuccessfulTests = 1;
 		this.parameter_preliminaryKnowledgeAboutFailedTests = 1;
-		this.parameter_thresholdSuccessfulTests = 2;
+		this.parameter_thresholdSuccessfulTests = 3;
 		
 		// Currently no test results are available
 		
