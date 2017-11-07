@@ -32,6 +32,8 @@ public class ReadAndWrite {
 
 	// Paths Sarah #2
 	public static String pathExcelSarah = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\CaseDataBasic.xls";
+	public static String pathExcelSarahR = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\Result.xls";
+
 	// Paths Ramona #3
 	public static String pathExcelRamona = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseData-Basic.xlsx";// TODO:
 	// Paths Antonia Windows #4
@@ -55,6 +57,7 @@ public class ReadAndWrite {
 		else if (user == 2) {
 
 			path = pathExcelSarah;
+			pathR = pathExcelSarahR;
 		}
 
 		else if (user == 3) {
@@ -71,11 +74,11 @@ public class ReadAndWrite {
 	/*
 	 * Excel-File:
 	 * 
-	 * - Sheet 0: DataTiming - Sheet 1: F - Sheet 2: F in N - Sheet 3: IMf - Sheet
-	 * 4: OMf - Sheet 5: Const. - Sheet 6: TRn - Sheet 7: MassBalance - Sheet 8:
-	 * DataF - Sheet 9: Dict - Sheet 10: Sis - Sheet 11: Pif - Sheet 12: CIF1sf -
-	 * Sheet 13: CIF2sf - Sheet 13: CIF3sf - Sheet 14: CIF4sf - Sheet 15: CIF5sf -
-	 * Sheet 18: IDisf
+	 * - Sheet 0: DataTiming - Sheet 1: F - Sheet 2: F in N - Sheet 3: IMf -
+	 * Sheet 4: OMf - Sheet 5: Const. - Sheet 6: TRn - Sheet 7: MassBalance -
+	 * Sheet 8: DataF - Sheet 9: Dict - Sheet 10: Sis - Sheet 11: Pif - Sheet
+	 * 12: CIF1sf - Sheet 13: CIF2sf - Sheet 13: CIF3sf - Sheet 14: CIF4sf -
+	 * Sheet 15: CIF5sf - Sheet 18: IDisf
 	 */
 
 	// ____________________________________________________________________________________________
@@ -717,11 +720,11 @@ public class ReadAndWrite {
 			sheet0.addCell(label3);
 
 		}
-		for (int i = 0; i < instanz.getF(); i++) {
-			Number label3 = new Number(0, i + 2, i + 1);
-			sheet0.addCell(label3);
+	
+			Number label30 = new Number(1, 0, instanz.getI());
+			sheet0.addCell(label30);
 
-		}
+		
 
 		// Dict
 
@@ -755,6 +758,8 @@ public class ReadAndWrite {
 			}
 		}
 		instanz.setDemand(Dict);
+		
+		
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook1.close();
@@ -926,13 +931,13 @@ public class ReadAndWrite {
 	// ____________________________________________________________________________________________
 
 	// Create Result:
-	//Step 1: Transfer decision variable values into result arrays of data instance in the location planning model
-	//Step 2: Write these result arrays into Excel Sheet (2003 compatible)
+	// Step 1: Transfer decision variable values into result arrays of data
+	// instance in the location planning model
+	// Step 2: Write these result arrays into Excel Sheet (2003 compatible)
 
 	// ____________________________________________________________________________________________
 	public static void writeSolution(Data instanz) throws BiffException, IOException, WriteException {
 
-		
 		File file;
 		WritableWorkbook writableWorkbook;
 		Workbook workbook;
@@ -947,6 +952,10 @@ public class ReadAndWrite {
 		WritableSheet sheet1 = writableWorkbook.getSheet("zft");
 		WritableSheet sheet2 = writableWorkbook.getSheet("TInt");
 		WritableSheet sheet3 = writableWorkbook.getSheet("GIft");
+		WritableSheet sheet4 = writableWorkbook.getSheet("CEt");
+		WritableSheet sheet5 = writableWorkbook.getSheet("Qft");
+		WritableSheet sheet6 = writableWorkbook.getSheet("delta_qft");
+		WritableSheet sheet7 = writableWorkbook.getSheet("Xft");
 
 		// clear sheets
 		int rows = sheet.getRows();
@@ -980,6 +989,37 @@ public class ReadAndWrite {
 
 			sheet3.removeRow(0);
 			r3++;
+		}
+		int rows4 = sheet4.getRows();
+		int r4 = 0;
+
+		while (r4 <= rows4) {
+
+			sheet4.removeRow(0);
+			r4++;
+		}
+
+		int rows5 = sheet5.getRows();
+		int r5 = 0;
+		while (r5 <= rows5) {
+
+			sheet5.removeRow(0);
+			r5++;
+		}
+
+		int rows6 = sheet6.getRows();
+		int r6 = 0;
+		while (r6 <= rows6) {
+
+			sheet6.removeRow(0);
+			r6++;
+		}
+		int rows7 = sheet7.getRows();
+		int r7 = 0;
+		while (r7 <= rows7) {
+
+			sheet7.removeRow(0);
+			r7++;
 		}
 
 		// yft
@@ -1075,7 +1115,7 @@ public class ReadAndWrite {
 
 		// GIft
 
-		//Headings
+		// Headings
 		Label label7 = new Label(0, 0, "f/t");
 		sheet3.addCell(label7);
 
@@ -1090,7 +1130,7 @@ public class ReadAndWrite {
 
 		}
 
-		//Result
+		// Result
 		for (int i = 0; i < instanz.getF(); i++) {
 			for (int j = 0; j < instanz.getT(); j++) {
 				if (instanz.getIF()[i]) {
@@ -1105,7 +1145,74 @@ public class ReadAndWrite {
 			}
 		}
 
-		//close workbook
+		// CEt
+
+		// Headings
+		Label label8 = new Label(0, 0, "t");
+		sheet4.addCell(label8);
+
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label90 = new Number(i + 1, 0, i + 1);
+			sheet4.addCell(label90);
+
+		}
+
+		// Result
+
+		for (int j = 0; j < instanz.getT(); j++) {
+
+			Number label3 = new Number(j + 1, 1, instanz.getResult_capitalExpenditure()[j]);
+			sheet4.addCell(label3);
+
+		}
+
+		// Qft, delta_qft, Xft
+
+		// Headings
+		Label label9 = new Label(0, 0, "f/t");
+		sheet5.addCell(label9);
+		Label label80 = new Label(0, 0, "f/t");
+		sheet6.addCell(label80);
+		Label label800 = new Label(0, 0, "f/t");
+		sheet7.addCell(label800);
+		
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label90 = new Number(0, i + 1, i + 1);
+			sheet5.addCell(label90);
+			Number label900 = new Number(0, i + 1, i + 1);
+			sheet6.addCell(label900);
+			Number label9000 = new Number(0, i + 1, i + 1);
+			sheet7.addCell(label9000);
+
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label90 = new Number(i + 1, 0, i + 1);
+			sheet5.addCell(label90);
+			Number label900 = new Number(i + 1, 0, i + 1);
+			sheet6.addCell(label900);
+			Number label9000 = new Number(i + 1, 0, i + 1);
+			sheet7.addCell(label9000);
+
+		}
+
+		// Result
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+				
+					Number label3 = new Number(j + 1, i+1, instanz.getResult_availableProductionCapacity()[i][j]);
+					sheet5.addCell(label3);
+					
+					Number label30 = new Number(j + 1, i+1, instanz.getResult_deltaCapacityExpansion()[i][j]);
+					sheet6.addCell(label30);
+					
+					Number label300 = new Number(j + 1, i+1, instanz.getResult_consumedOrProducedAPI()[i][j]);
+					sheet7.addCell(label300);
+				
+
+			}
+		}
+
+		// close workbook
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook.close();
