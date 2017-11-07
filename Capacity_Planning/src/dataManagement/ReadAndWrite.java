@@ -947,6 +947,7 @@ public class ReadAndWrite {
 		WritableSheet sheet1 = writableWorkbook.getSheet("zft");
 		WritableSheet sheet2 = writableWorkbook.getSheet("TInt");
 		WritableSheet sheet3 = writableWorkbook.getSheet("GIft");
+		WritableSheet sheet4 = writableWorkbook.getSheet("CEt");
 
 		// clear sheets
 		int rows = sheet.getRows();
@@ -980,6 +981,14 @@ public class ReadAndWrite {
 
 			sheet3.removeRow(0);
 			r3++;
+		}
+		int rows4 = sheet4.getRows();
+		int r4 = 0;
+
+		while (r4 <= rows4) {
+
+			sheet4.removeRow(0);
+			r4++;
 		}
 
 		// yft
@@ -1104,6 +1113,29 @@ public class ReadAndWrite {
 
 			}
 		}
+		
+		// CEt
+
+				//Headings
+				Label label8 = new Label(0, 0, "t");
+				sheet4.addCell(label8);
+
+			
+				for (int i = 0; i < instanz.getT(); i++) {
+					Number label90 = new Number(i + 1, 0, i + 1);
+					sheet4.addCell(label90);
+
+				}
+
+				//Result
+				
+					for (int j = 0; j < instanz.getT(); j++) {
+						
+							Number label3 = new Number(j + 1, 1, instanz.getResult_capitalExpenditure()[j]);
+							sheet4.addCell(label3);
+
+				
+				}
 
 		//close workbook
 		writableWorkbook.write();

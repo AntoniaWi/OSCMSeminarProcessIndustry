@@ -274,32 +274,41 @@ public class LocationPlanningModel extends IloCplex {
 		IloLinearNumExpr expr = linearNumExpr();
 
 		for (int i = 0; i < this.T; i++) {
-			double discountTerm = 1 / Math.pow(1 + this.discountfactor, T);
+			double discountTerm = 1 / Math.pow(1 + this.discountfactor, (i+1));
 			for (int j = 0; j < this.F; j++) {
 				if (IF[j]) {
 					expr.addTerm(discountTerm, this.grossIncome[j][i]);
+					
 
 				}
 			}
 		}
+		
+		//System.out.println(expr);
+		
 		for (int i = 0; i < this.T; i++) {
-			double discountTerm = 1 / Math.pow(1 + this.discountfactor, T);
+			double discountTerm = -1 / Math.pow(1 + this.discountfactor, (i+1));
 			for (int j = 0; j < this.F; j++) {
 				if (IF[j]) {
 
-					expr.addTerm(-discountTerm, this.capitalExpenditure[i]);
+					expr.addTerm(discountTerm, this.capitalExpenditure[i]);
+					
 				}
 			}
 		}
+		
+		//System.out.println(expr);
 		for (int i = 0; i < this.T; i++) {
-			double discountTerm = 1 / Math.pow(1 + this.discountfactor, T);
+			double discountTerm = 1 / Math.pow(1 + this.discountfactor, (i+1));
 			for (int k = 0; k < this.N; k++) {
 
-				double taxHelp = -discountTerm * this.corporateTax[k];
-				expr.addTerm(taxHelp, this.taxableIncome[k][i]);
+				double taxHelp = discountTerm * this.corporateTax[k];
+				expr.addTerm(-taxHelp, this.taxableIncome[k][i]);
 			}
 		}
 
+		//System.out.println(expr);
+		
 		objective = addMaximize();
 		objective.setExpr(expr);
 		System.out.println(objective);
@@ -1133,6 +1142,19 @@ public class LocationPlanningModel extends IloCplex {
 			}
 		}
 		instanz.setResult_grossIncome(GIft);
+		
+		// CEt
+				double[] CEt = new double[instanz.getT()];
+
+			
+					for (int k = 0; k < this.T; k++) {
+						
+
+							CEt[k] = getValue(this.capitalExpenditure[k]);
+						}
+
+	
+				instanz.setResult_capitalExpenditure(CEt);
 		//
 		out.close();
 
