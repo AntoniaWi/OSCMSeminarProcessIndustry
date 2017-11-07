@@ -604,22 +604,23 @@ public class LocationPlanningModel extends IloCplex {
 
 							// First equation
 							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
+							
 
 							for (int m = 0; m < this.F; m++) {
 								if (IF[m]) {
-									for (int l = 0; l < this.I; l++) {
-										if (OM[m][l] || IM[m][l]) {
-											if (OM[m][l] && IM[i][l]) {
+									//for (int l = 0; l < this.I; l++) {
+										if (OM[m][j] || IM[m][j]) {
+											if (OM[m][j] && IM[i][j]) {
 												massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-														this.shippedMaterialUnitsSupplierToFacility[l][m][i][k]);
+														this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
 											}
 
-											else if (IM[m][l] && OM[i][l]) {
+											else if (IM[m][j] && OM[i][j]) {
 
 												massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-														this.shippedMaterialUnitsFacilityToCustomer[l][i][m][k]);
+														this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
 											}
-										}
+										//}
 									}
 								}
 							}
@@ -1158,20 +1159,23 @@ public class LocationPlanningModel extends IloCplex {
 				
 			//F_ifct and F_isft
 				
-				/*for (int i=0;i<instanz.getI();i++){
+			for (int i=0;i<instanz.getI();i++){
 					for (int j=0;j<instanz.getF();j++){
 						for (int k=0;k<instanz.getF();k++){
 							for (int l=0;l<instanz.getT();l++){
-								if(IF[j]&&EF[k]){
+								
 								if (getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) > 0) {
 
 									out.write("Material "+(i+1)+" is shipped from facility " + (j + 1) + " to customer " + (k + 1) + " in period "+(l+1)+" ."
 											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) + "\n");
 								}
+								else{
+									out.write("Material "+(i+1)+" is NOT shipped from facility " + (j + 1) + " to customer " + (k + 1) + " in period "+(l+1)+" ."
+											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) + "\n");
 							}}
 						}
 					}
-				}*/
+				}
 				
 				
 		//
