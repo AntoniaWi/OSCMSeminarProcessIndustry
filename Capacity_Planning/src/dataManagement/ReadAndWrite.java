@@ -76,11 +76,11 @@ public class ReadAndWrite {
 	/*
 	 * Excel-File:
 	 * 
-	 * - Sheet 0: DataTiming - Sheet 1: F - Sheet 2: F in N - Sheet 3: IMf -
-	 * Sheet 4: OMf - Sheet 5: Const. - Sheet 6: TRn - Sheet 7: MassBalance -
-	 * Sheet 8: DataF - Sheet 9: Dict - Sheet 10: Sis - Sheet 11: Pif - Sheet
-	 * 12: CIF1sf - Sheet 13: CIF2sf - Sheet 13: CIF3sf - Sheet 14: CIF4sf -
-	 * Sheet 15: CIF5sf - Sheet 18: IDisf
+	 * - Sheet 0: DataTiming - Sheet 1: F - Sheet 2: F in N - Sheet 3: IMf - Sheet
+	 * 4: OMf - Sheet 5: Const. - Sheet 6: TRn - Sheet 7: MassBalance - Sheet 8:
+	 * DataF - Sheet 9: Dict - Sheet 10: Sis - Sheet 11: Pif - Sheet 12: CIF1sf -
+	 * Sheet 13: CIF2sf - Sheet 13: CIF3sf - Sheet 14: CIF4sf - Sheet 15: CIF5sf -
+	 * Sheet 18: IDisf
 	 */
 
 	// ____________________________________________________________________________________________
@@ -930,11 +930,14 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 
-	// Create Result
+	// Create Result:
+	//Step 1: Transfer decision variable values into result arrays of data instance in the location planning model
+	//Step 2: Write these result arrays into Excel Sheet (2003 compatible)
 
 	// ____________________________________________________________________________________________
 	public static void writeSolution(Data instanz) throws BiffException, IOException, WriteException {
 
+		
 		File file;
 		WritableWorkbook writableWorkbook;
 		Workbook workbook;
@@ -949,8 +952,9 @@ public class ReadAndWrite {
 		WritableSheet sheet1 = writableWorkbook.getSheet("zft");
 		WritableSheet sheet2 = writableWorkbook.getSheet("TInt");
 		WritableSheet sheet3 = writableWorkbook.getSheet("GIft");
+		WritableSheet sheet4 = writableWorkbook.getSheet("CEt");
 
-		// clear sheet
+		// clear sheets
 		int rows = sheet.getRows();
 		int r = 0;
 
@@ -983,8 +987,17 @@ public class ReadAndWrite {
 			sheet3.removeRow(0);
 			r3++;
 		}
+		int rows4 = sheet4.getRows();
+		int r4 = 0;
+
+		while (r4 <= rows4) {
+
+			sheet4.removeRow(0);
+			r4++;
+		}
 
 		// yft
+		// Headings
 		Label label4 = new Label(0, 0, "f/t");
 		sheet.addCell(label4);
 
@@ -998,12 +1011,13 @@ public class ReadAndWrite {
 			sheet.addCell(label3);
 
 		}
-
+		// Results
 		for (int i = 0; i < instanz.getF(); i++) {
 			for (int j = 0; j < instanz.getT(); j++) {
 				if (instanz.getIF()[i] && instanz.getPIF()[i]) {
 
-					Number label3 = new Number(j + 1, i + 1, instanz.getConstructionStartPrimaryFacility()[i][j]);
+					Number label3 = new Number(j + 1, i + 1,
+							instanz.getResult_constructionStartPrimaryFacility()[i][j]);
 					sheet.addCell(label3);
 				} else {
 					Number label3 = new Number(j + 1, i + 1, 0);
@@ -1015,6 +1029,7 @@ public class ReadAndWrite {
 		}
 
 		// zft
+		// Headings
 		Label label5 = new Label(0, 0, "f/t");
 		sheet1.addCell(label5);
 
@@ -1029,11 +1044,13 @@ public class ReadAndWrite {
 
 		}
 
+		// Result
 		for (int i = 0; i < instanz.getF(); i++) {
 			for (int j = 0; j < instanz.getT(); j++) {
 				if (instanz.getIF()[i] && instanz.getSIF()[i]) {
 
-					Number label3 = new Number(j + 1, i + 1, instanz.getConstructionStartSecondaryFacility()[i][j]);
+					Number label3 = new Number(j + 1, i + 1,
+							instanz.getResult_constructionStartSecondaryFacility()[i][j]);
 					sheet1.addCell(label3);
 				} else {
 					Number label3 = new Number(j + 1, i + 1, 0);
@@ -1043,68 +1060,89 @@ public class ReadAndWrite {
 
 			}
 		}
-		
-		//TInt
-		
-				Label label6 = new Label(0, 0, "n/t");
-				sheet2.addCell(label6);
 
-				for (int i = 0; i < instanz.getN(); i++) {
-					Number label3 = new Number(0, i + 1, i + 1);
-					sheet2.addCell(label3);
+		// TInt
 
-				}
-				for (int i = 0; i < instanz.getT(); i++) {
-					Number label3 = new Number(i + 1, 0, i + 1);
-					sheet2.addCell(label3);
+		// Headings
+		Label label6 = new Label(0, 0, "n/t");
+		sheet2.addCell(label6);
 
-				}
+		for (int i = 0; i < instanz.getN(); i++) {
+			Number label3 = new Number(0, i + 1, i + 1);
+			sheet2.addCell(label3);
 
-				for (int i = 0; i < instanz.getN(); i++) {
-					for (int j = 0; j < instanz.getT(); j++) {
-						
-							Number label3 = new Number(j + 1, i + 1, instanz.getTaxableIncome()[i][j]);
-							sheet2.addCell(label3);
-						
-							
-						
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 0, i + 1);
+			sheet2.addCell(label3);
 
-					}
-				}
-				
-				//GIft
-				
-				Label label7 = new Label(0, 0, "f/t");
-				sheet3.addCell(label7);
+		}
+		// Result
+		for (int i = 0; i < instanz.getN(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
 
-				for (int i = 0; i < instanz.getF(); i++) {
-					Number label3 = new Number(0, i + 1, i + 1);
+				Number label3 = new Number(j + 1, i + 1, instanz.getResult_taxableIncome()[i][j]);
+				sheet2.addCell(label3);
+
+			}
+		}
+
+		// GIft
+
+		//Headings
+		Label label7 = new Label(0, 0, "f/t");
+		sheet3.addCell(label7);
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label3 = new Number(0, i + 1, i + 1);
+			sheet3.addCell(label3);
+
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 0, i + 1);
+			sheet3.addCell(label3);
+
+		}
+
+		//Result
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+				if (instanz.getIF()[i]) {
+					Number label3 = new Number(j + 1, i + 1, instanz.getResult_grossIncome()[i][j]);
 					sheet3.addCell(label3);
 
-				}
-				for (int i = 0; i < instanz.getT(); i++) {
-					Number label3 = new Number(i + 1, 0, i + 1);
+				} else {
+					Number label3 = new Number(j + 1, i + 1, 0);
 					sheet3.addCell(label3);
+				}
+
+			}
+		}
+		
+		// CEt
+
+				//Headings
+				Label label8 = new Label(0, 0, "t");
+				sheet4.addCell(label8);
+
+			
+				for (int i = 0; i < instanz.getT(); i++) {
+					Number label90 = new Number(i + 1, 0, i + 1);
+					sheet4.addCell(label90);
 
 				}
 
-				for (int i = 0; i < instanz.getF(); i++) {
+				//Result
+				
 					for (int j = 0; j < instanz.getT(); j++) {
-						if(instanz.getIF()[i]){
-							Number label3 = new Number(j + 1, i + 1, instanz.getGrossIncome()[i][j]);
-							sheet3.addCell(label3);
 						
-						}
-						else{
-							Number label3 = new Number(j + 1, i + 1, 0);
-							sheet3.addCell(label3);
-						}
-						
+							Number label3 = new Number(j + 1, 1, instanz.getResult_capitalExpenditure()[j]);
+							sheet4.addCell(label3);
 
-					}
+				
 				}
 
-
+		//close workbook
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook.close();

@@ -274,32 +274,41 @@ public class LocationPlanningModel extends IloCplex {
 		IloLinearNumExpr expr = linearNumExpr();
 
 		for (int i = 0; i < this.T; i++) {
-			double discountTerm = 1 / Math.pow(1 + this.discountfactor, T);
+			double discountTerm = 1 / Math.pow(1 + this.discountfactor, (i+1));
 			for (int j = 0; j < this.F; j++) {
 				if (IF[j]) {
 					expr.addTerm(discountTerm, this.grossIncome[j][i]);
+					
 
 				}
 			}
 		}
+		
+		//System.out.println(expr);
+		
 		for (int i = 0; i < this.T; i++) {
-			double discountTerm = 1 / Math.pow(1 + this.discountfactor, T);
+			double discountTerm = -1 / Math.pow(1 + this.discountfactor, (i+1));
 			for (int j = 0; j < this.F; j++) {
 				if (IF[j]) {
 
-					expr.addTerm(-discountTerm, this.capitalExpenditure[i]);
+					expr.addTerm(discountTerm, this.capitalExpenditure[i]);
+					
 				}
 			}
 		}
+		
+		//System.out.println(expr);
 		for (int i = 0; i < this.T; i++) {
-			double discountTerm = 1 / Math.pow(1 + this.discountfactor, T);
+			double discountTerm = 1 / Math.pow(1 + this.discountfactor, (i+1));
 			for (int k = 0; k < this.N; k++) {
 
-				double taxHelp = -discountTerm * this.corporateTax[k];
-				expr.addTerm(taxHelp, this.taxableIncome[k][i]);
+				double taxHelp = discountTerm * this.corporateTax[k];
+				expr.addTerm(-taxHelp, this.taxableIncome[k][i]);
 			}
 		}
 
+		//System.out.println(expr);
+		
 		objective = addMaximize();
 		objective.setExpr(expr);
 		System.out.println(objective);
@@ -1065,6 +1074,11 @@ public class LocationPlanningModel extends IloCplex {
 
 		out.write("\n Decision\n");
 
+		
+		// for writing into the solution file use: out.write ("");
+		//for writing into the Excel file transfer decision variable values into result arrays of data instance and then use writeSolution() in ReadAndWrite class
+		
+		
 		// y and z
 		double yft[][] = new double[this.F][this.T];
 		double zft[][] = new double[this.F][this.T];
@@ -1099,9 +1113,8 @@ public class LocationPlanningModel extends IloCplex {
 			}
 		}
 
-		instanz.setConstructionStartPrimaryFacility(yft);
-		instanz.setConstructionStartSecondaryFacility(zft);
-		
+		instanz.setResult_constructionStartPrimaryFacility(yft);
+		instanz.setResult_constructionStartSecondaryFacility(zft);
 
 		// TInt
 		double[][] TInt = new double[instanz.getN()][instanz.getT()];
@@ -1111,7 +1124,7 @@ public class LocationPlanningModel extends IloCplex {
 				TInt[j][k] = getValue(this.taxableIncome[j][k]);
 			}
 		}
-		instanz.setTaxableIncome(TInt);
+		instanz.setResult_taxableIncome(TInt);
 
 		// GIft
 		double[][] GIft = new double[instanz.getF()][instanz.getT()];
@@ -1128,7 +1141,39 @@ public class LocationPlanningModel extends IloCplex {
 				}
 			}
 		}
-		instanz.setGrossIncome(GIft);
+		instanz.setResult_grossIncome(GIft);
+		
+		// CEt
+				double[] CEt = new double[instanz.getT()];
+
+			
+					for (int k = 0; k < this.T; k++) {
+						
+
+							CEt[k] = getValue(this.capitalExpenditure[k]);
+						}
+
+	
+				instanz.setResult_capitalExpenditure(CEt);
+				
+			//F_ifct and F_isft
+				
+				/*for (int i=0;i<instanz.getI();i++){
+					for (int j=0;j<instanz.getF();j++){
+						for (int k=0;k<instanz.getF();k++){
+							for (int l=0;l<instanz.getT();l++){
+								if(IF[j]&&EF[k]){
+								if (getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) > 0) {
+
+									out.write("Material "+(i+1)+" is shipped from facility " + (j + 1) + " to customer " + (k + 1) + " in period "+(l+1)+" ."
+											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) + "\n");
+								}
+							}}
+						}
+					}
+				}*/
+				
+				
 		//
 		out.close();
 
