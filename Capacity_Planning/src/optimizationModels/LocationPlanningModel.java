@@ -597,12 +597,10 @@ public class LocationPlanningModel extends IloCplex {
 							this.massbalanceEquation1.clear();
 							this.massbalanceEquation2.clear();
 
-							if (j != this.API - 1) {
-								massbalanceEquation1.addTerm(this.materialCoefficient[this.API - 1][i],
-										this.consumedOrProducedMaterial[j][i][k]);
-								massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
-										this.consumedOrProducedAPI[i][k]);
-							}
+							massbalanceEquation1.addTerm(this.materialCoefficient[this.API - 1][i],
+									this.consumedOrProducedMaterial[j][i][k]);
+							massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
+									this.consumedOrProducedAPI[i][k]);
 
 							// First equation
 							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
@@ -628,37 +626,42 @@ public class LocationPlanningModel extends IloCplex {
 			for (int j = 0; j < this.I; j++) {
 				if (IF[i]) {
 					if (OM[i][j] || IM[i][j]) {
-						if (j != this.API - 1) {
-							for (int k = 0; k < this.T; k++) {
-								this.massbalanceEquation2.clear();
-								this.massbalanceEquation3.clear();
+						for (int k = 0; k < this.T; k++) {
+							this.massbalanceEquation2.clear();
+							this.massbalanceEquation3.clear();
 
-								massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
-										this.consumedOrProducedAPI[i][k]);
-								for (int m = 0; m < this.F; m++) {
+							massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
+									this.consumedOrProducedAPI[i][k]);
+							
+							for (int m = 0; m < this.F; m++) {
 
-									if (OM[m][j] || IM[m][j]) {
+								if (OM[m][j] || IM[m][j]) {
 
-										if (OM[m][j] && IM[i][j]) {
-											massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-													this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
-
-										}
-
-										else if (IM[m][j] && OM[i][j]) {
-
-											massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-													this.shippedMaterialUnitsFacilityToCustomer[j][m][k][i]);
-										}
+									if (OM[m][j] && IM[i][j]) {
+										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+												this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
 
 									}
 
-									// Second equation
+
+									else if (IM[m][j] && OM[i][j]) {
+
+										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+												this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
+									}
 
 								}
+								if (k==0) {
+								System.out.println(this.massbalanceEquation3);
+								System.out.println("facility "+(i+1)+" s/c "+(m+1)+" material "+(j+1));
+								}
+								// Second equation
+
 							}
 							addEq(this.massbalanceEquation2, this.massbalanceEquation3);
 						}
+
+
 					}
 				}
 			}
