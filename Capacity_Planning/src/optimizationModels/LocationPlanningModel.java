@@ -640,13 +640,14 @@ public class LocationPlanningModel extends IloCplex {
 	 */
 	private void addConstraintCapacityRestrictionForProduction() throws IloException {
 
-		this.capacityRestrictionForProduction.clear();
+		//this.capacityRestrictionForProduction.clear();
 
 		for (int i = 0; i < this.F; i++) {
 			if (IF[i]) {
 				for (int j = 0; j < this.T; j++) {
 
 					addLe(this.consumedOrProducedAPI[i][j], this.availableProductionCapacity[i][j]);
+					
 				}
 			}
 		}
