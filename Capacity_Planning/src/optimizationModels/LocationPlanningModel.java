@@ -209,7 +209,7 @@ public class LocationPlanningModel extends IloCplex {
 		// 6th constraint
 		this.addConstraintAvailableCapacity();
 		// 7th constraint
-		//this.addConstraintsMassBalanceEquation();
+		// this.addConstraintsMassBalanceEquation();
 		this.addConstraintsMassBalanceEquation1();
 		this.addConstraintsMassBalanceEquation2();
 		// 8th constraint
@@ -596,11 +596,13 @@ public class LocationPlanningModel extends IloCplex {
 						for (int k = 0; k < this.T; k++) {
 							this.massbalanceEquation1.clear();
 							this.massbalanceEquation2.clear();
-							
-							massbalanceEquation1.addTerm(this.materialCoefficient[this.API - 1][i],
-									this.consumedOrProducedMaterial[j][i][k]);
-							massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
-									this.consumedOrProducedAPI[i][k]);
+
+							if (j != this.API - 1) {
+								massbalanceEquation1.addTerm(this.materialCoefficient[this.API - 1][i],
+										this.consumedOrProducedMaterial[j][i][k]);
+								massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
+										this.consumedOrProducedAPI[i][k]);
+							}
 
 							// First equation
 							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
@@ -626,34 +628,34 @@ public class LocationPlanningModel extends IloCplex {
 			for (int j = 0; j < this.I; j++) {
 				if (IF[i]) {
 					if (OM[i][j] || IM[i][j]) {
-						for (int k = 0; k < this.T; k++) {
-							this.massbalanceEquation2.clear();
-							this.massbalanceEquation3.clear();
-							
-							massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
-									this.consumedOrProducedAPI[i][k]);
-						for (int m = 0; m < this.F; m++) {
-							
-							
+						if (j != this.API - 1) {
+							for (int k = 0; k < this.T; k++) {
+								this.massbalanceEquation2.clear();
+								this.massbalanceEquation3.clear();
 
-								if (OM[m][j] || IM[m][j]) {
+								massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
+										this.consumedOrProducedAPI[i][k]);
+								for (int m = 0; m < this.F; m++) {
 
-									if (OM[m][j] && IM[i][j]) {
-										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-												this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
+									if (OM[m][j] || IM[m][j]) {
+
+										if (OM[m][j] && IM[i][j]) {
+											massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+													this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
+
+										}
+
+										else if (IM[m][j] && OM[i][j]) {
+
+											massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+													this.shippedMaterialUnitsFacilityToCustomer[j][m][k][i]);
+										}
 
 									}
 
-									else if (IM[m][j] && OM[i][j]) {
-
-										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-												this.shippedMaterialUnitsFacilityToCustomer[j][m][k][i]);
-									}
+									// Second equation
 
 								}
-
-								// Second equation
-
 							}
 							addEq(this.massbalanceEquation2, this.massbalanceEquation3);
 						}
@@ -805,15 +807,15 @@ public class LocationPlanningModel extends IloCplex {
 					for (int k = 0; k < this.I; k++) {// material i
 						demandAndSupply.clear();
 						for (int l = 0; l < this.F; l++) {
-								if (IF[l] && OM[l][k] && IM[i][k]) {// facility to customer
-									demandAndSupply.addTerm(1, this.shippedMaterialUnitsFacilityToCustomer[k][l][i][j]);
+							if (IF[l] && OM[l][k] && IM[i][k]) {// facility to customer
+								demandAndSupply.addTerm(1, this.shippedMaterialUnitsFacilityToCustomer[k][l][i][j]);
 
-								} else if (IF[l] && IM[l][k] && OM[i][k]) {// supplier to facility
-									demandAndSupply.addTerm(1, this.shippedMaterialUnitsSupplierToFacility[k][i][l][j]);
+							} else if (IF[l] && IM[l][k] && OM[i][k]) {// supplier to facility
+								demandAndSupply.addTerm(1, this.shippedMaterialUnitsSupplierToFacility[k][i][l][j]);
 
-								}
 							}
-							
+						}
+
 						double sumDS = this.supply[k][i] + this.demand[k][i][j];
 						addLe(demandAndSupply, sumDS);
 
@@ -823,8 +825,6 @@ public class LocationPlanningModel extends IloCplex {
 			}
 		}
 	}
-
-	
 
 	/**
 	 * 11th constraint: capital expenditure definition
@@ -1154,7 +1154,6 @@ public class LocationPlanningModel extends IloCplex {
 		out.write("\n Decision\n");
 
 		// for writing into the solution file use: out.write ("");
-
 
 		// y and z
 		double yft[][] = new double[this.F][this.T];
