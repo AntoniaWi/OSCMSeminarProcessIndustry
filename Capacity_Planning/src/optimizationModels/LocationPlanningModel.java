@@ -629,13 +629,14 @@ public class LocationPlanningModel extends IloCplex {
 						for (int k = 0; k < this.T; k++) {
 							this.massbalanceEquation2.clear();
 							this.massbalanceEquation3.clear();
+							
+							massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
+									this.consumedOrProducedAPI[i][k]);
 						for (int m = 0; m < this.F; m++) {
 							
-								
+							
 
 								if (OM[m][j] || IM[m][j]) {
-									massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
-											this.consumedOrProducedAPI[i][k]);
 
 									if (OM[m][j] && IM[i][j]) {
 										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
