@@ -201,9 +201,9 @@ public class LocationPlanningModel extends IloCplex {
 		this.addConstraintOneConstructionDuringPlanningHorizonPF();
 		this.addConstraintOneConstructionDuringPlanningHorizonSF();
 		// 3rd constraint
-		this.addConstraintCapacityExpansionOnlyIfConstructionIsPlanned();
+		// this.addConstraintCapacityExpansionOnlyIfConstructionIsPlanned();
 		// 4th constraint
-		this.addConstraintMinimumExpansion();
+		// this.addConstraintMinimumExpansion();
 		// 5th constraint
 		this.addConstraintExpansionSize();
 		// 6th constraint
@@ -605,22 +605,22 @@ public class LocationPlanningModel extends IloCplex {
 							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
 
 							for (int m = 0; m < this.F; m++) {
-								//if (IF[m]) {
-									// for (int l = 0; l < this.I; l++) {
+								// if (IF[m]) {
+								// for (int l = 0; l < this.I; l++) {
 
-									if (OM[m][j] && IM[i][j]) {
-										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-												this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
-									}
+								if (OM[m][j] && IM[i][j]) {
+									massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+											this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
+								}
 
-									else if (IM[m][j] && OM[i][j]) {
+								else if (IM[m][j] && OM[i][j]) {
 
-										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-												this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
-									}
-									// }
+									massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+											this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
+								}
+								// }
 
-								//}
+								// }
 							}
 							// Second equation
 
@@ -724,7 +724,7 @@ public class LocationPlanningModel extends IloCplex {
 									demandAndSupply.addTerm(1, this.shippedMaterialUnitsFacilityToCustomer[k][l][i][j]);
 
 								}
-								if (IF[l] && IM[l][k]) {// supplier to facility
+								else if (IF[l] && IM[l][k]) {// supplier to facility
 									demandAndSupply.addTerm(1, this.shippedMaterialUnitsSupplierToFacility[k][i][l][j]);
 
 								}
@@ -1152,6 +1152,29 @@ public class LocationPlanningModel extends IloCplex {
 
 		instanz.setResult_capitalExpenditure(CEt);
 
+		// Qft, delta_qft, Xft
+		double[][] Qft = new double[instanz.getF()][instanz.getT()];
+		double[][] delta_qft = new double[instanz.getF()][instanz.getT()];
+		double[][] Xft = new double[instanz.getF()][instanz.getT()];
+		
+		for (int i = 0; i < this.F; i++) {
+			for (int j = 0; j < this.T; j++) {
+				if (this.IF[i]) {
+					Qft[i][j] = getValue(this.availableProductionCapacity[i][j]);
+					delta_qft[i][j] = getValue(this.deltaCapacityExpansion[i][j]);
+					Xft[i][j] = getValue(this.consumedOrProducedAPI[i][j]);
+				} else {
+					Qft[i][j] = 0;
+					delta_qft[i][j] = 0;
+					Xft[i][j] = 0;
+				}
+			}
+		}
+
+		instanz.setResult_availableProductionCapacity(Qft);
+		instanz.setResult_deltaCapacityExpansion(delta_qft);
+		instanz.setResult_consumedOrProducedAPI(Xft);
+
 		// F_ifct and F_isft
 
 		for (int i = 0; i < instanz.getI(); i++) {
@@ -1159,19 +1182,20 @@ public class LocationPlanningModel extends IloCplex {
 				for (int k = 0; k < instanz.getF(); k++) {
 					for (int l = 0; l < instanz.getT(); l++) {
 						if (IF[j]) {
-							if(OM[j][i]&&IM[k][i]){
-							if (getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) > 0) {
+							if (OM[j][i] && IM[k][i]) {
+								if (getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) > 0) {
 
-								out.write("Material " + (i + 1) + " is shipped from facility " + (j + 1)
-										+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
-										+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
-							} else {
-								/*out.write("Material " + (i + 1) + " is NOT shipped from facility " + (j + 1)
-										+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
-										+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
-							*/
+									out.write("Material " + (i + 1) + " is shipped from facility " + (j + 1)
+											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
+											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
+								} else {
+									/*out.write("Material " + (i + 1) + " is NOT shipped from facility " + (j + 1)
+											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
+											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
+*/
+								}
 							}
-						}}
+						}
 					}
 				}
 			}
