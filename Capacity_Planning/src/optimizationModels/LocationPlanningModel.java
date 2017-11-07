@@ -1155,6 +1155,25 @@ public class LocationPlanningModel extends IloCplex {
 
 	
 				instanz.setResult_capitalExpenditure(CEt);
+				
+			//F_ifct and F_isft
+				
+				/*for (int i=0;i<instanz.getI();i++){
+					for (int j=0;j<instanz.getF();j++){
+						for (int k=0;k<instanz.getF();k++){
+							for (int l=0;l<instanz.getT();l++){
+								if(IF[j]&&EF[k]){
+								if (getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) > 0) {
+
+									out.write("Material "+(i+1)+" is shipped from facility " + (j + 1) + " to customer " + (k + 1) + " in period "+(l+1)+" ."
+											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[j][j][k][l]) + "\n");
+								}
+							}}
+						}
+					}
+				}*/
+				
+				
 		//
 		out.close();
 
