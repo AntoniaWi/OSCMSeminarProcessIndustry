@@ -317,8 +317,8 @@ public class LocationPlanningModel extends IloCplex {
 	// constraints
 
 	/**
-	 * 1st constraint: choose exactly one facility as primary facility/ Choose
-	 * at least one facility as secondary facility
+	 * 1st constraint: choose exactly one facility as primary facility/ Choose at
+	 * least one facility as secondary facility
 	 * 
 	 * @throws IloException
 	 */
@@ -353,9 +353,9 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * 2nd constraint: start exactly one construction during the planning
-	 * horizon for primary facilities/ start production for secondary facilities
-	 * not more than once during the planning horizon
+	 * 2nd constraint: start exactly one construction during the planning horizon
+	 * for primary facilities/ start production for secondary facilities not more
+	 * than once during the planning horizon
 	 * 
 	 * @throws IloException
 	 */
@@ -717,31 +717,27 @@ public class LocationPlanningModel extends IloCplex {
 				for (int j = 0; j < this.T; j++) {// t
 					for (int k = 0; k < this.I; k++) {// material i
 						demandAndSupply.clear();
-						if (OM[i][k] || IM[i][k]) {
-
-							for (int l = 0; l < this.F; l++) {
-								if (IF[l] && OM[l][k]) {// facility to customer
+						for (int l = 0; l < this.F; l++) {
+								if (IF[l] && OM[l][k] && IM[i][k]) {// facility to customer
 									demandAndSupply.addTerm(1, this.shippedMaterialUnitsFacilityToCustomer[k][l][i][j]);
 
-								}
-								else if (IF[l] && IM[l][k]) {// supplier to facility
+								} else if (IF[l] && IM[l][k] && OM[i][k]) {// supplier to facility
 									demandAndSupply.addTerm(1, this.shippedMaterialUnitsSupplierToFacility[k][i][l][j]);
 
 								}
 							}
-							double sumDS = this.supply[k][i] + this.demand[k][i][j];
-
-							addLe(demandAndSupply, sumDS);
-
-						}
+							
+						double sumDS = this.supply[k][i] + this.demand[k][i][j];
+						addLe(demandAndSupply, sumDS);
 
 					}
 
 				}
 			}
 		}
-
 	}
+
+	
 
 	/**
 	 * 11th constraint: capital expenditure definition
@@ -916,9 +912,8 @@ public class LocationPlanningModel extends IloCplex {
 							this.depreciationChargePrimaryFacilities.addTerm(variableCostPF,
 									this.constructionStartPrimaryFacility[j][k]);
 							/*
-							 * if (j==0 && k<10) { System.out.println(
-							 * "facility " +(j+1)+ " tau "+ (k+1) + " t " +
-							 * (i+1)); System.out.println(this.
+							 * if (j==0 && k<10) { System.out.println( "facility " +(j+1)+ " tau "+ (k+1) +
+							 * " t " + (i+1)); System.out.println(this.
 							 * depreciationChargePrimaryFacilities);}
 							 */
 
@@ -931,9 +926,8 @@ public class LocationPlanningModel extends IloCplex {
 							addEq(this.depreciationChargePrimaryFacilities,
 									this.depreciationChargePrimaryFacility[j][k][i]);
 							/*
-							 * if (j==0&& k<10) { System.out.println("facility "
-							 * +(j+1)+ " tau "+ (k+1) + " t " + (i+1));
-							 * System.out.println(this.
+							 * if (j==0&& k<10) { System.out.println("facility " +(j+1)+ " tau "+ (k+1) +
+							 * " t " + (i+1)); System.out.println(this.
 							 * depreciationChargePrimaryFacilities); }
 							 */
 						}
@@ -1007,10 +1001,9 @@ public class LocationPlanningModel extends IloCplex {
 						/*
 						 * for (int l = 0; l < i ; l++) { if(PIF[k]) {
 						 * this.taxableIncomeConstraint.addTerm(-1,
-						 * this.depreciationChargePrimaryFacility[k][l][i]); }
-						 * else { this.taxableIncomeConstraint.addTerm(-1,
-						 * this.depreciationChargeSecondaryFacility[k][l][i]); }
-						 * }
+						 * this.depreciationChargePrimaryFacility[k][l][i]); } else {
+						 * this.taxableIncomeConstraint.addTerm(-1,
+						 * this.depreciationChargeSecondaryFacility[k][l][i]); } }
 						 */
 
 					}
@@ -1156,7 +1149,7 @@ public class LocationPlanningModel extends IloCplex {
 		double[][] Qft = new double[instanz.getF()][instanz.getT()];
 		double[][] delta_qft = new double[instanz.getF()][instanz.getT()];
 		double[][] Xft = new double[instanz.getF()][instanz.getT()];
-		
+
 		for (int i = 0; i < this.F; i++) {
 			for (int j = 0; j < this.T; j++) {
 				if (this.IF[i]) {
@@ -1189,10 +1182,11 @@ public class LocationPlanningModel extends IloCplex {
 											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
 											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
 								} else {
-									/*out.write("Material " + (i + 1) + " is NOT shipped from facility " + (j + 1)
-											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
-											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
-*/
+									/*
+									 * out.write("Material " + (i + 1) + " is NOT shipped from facility " + (j + 1)
+									 * + " to customer " + (k + 1) + " in period " + (l + 1) + " ." +
+									 * getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
+									 */
 								}
 							}
 						}
