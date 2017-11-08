@@ -379,7 +379,6 @@ public class Event {
 		
 		this.strategy = strategy;
 		this.a_T = strategy[strategy.length-1];
-		
 		this.s_T = periodsToBuild - TimingModel.countTrueValuesInArray(strategy);
 		
 	}
@@ -430,17 +429,40 @@ public class Event {
 	 * 
 	 * @param period
 	 */
-	public void calculateTotalCost (int period) {
+	public void calculateTotalCost (int period, double c, double K, double phi, int gamma_c) {
 		
 		if (this.finalEvent) {
+			
+			this.calculatePeriodCost(period, c, K);
+			this.calculateFinalCost(c, K, phi, gamma_c);
 			
 			this.totalCost = this.periodCost + this.finalCost;
 		}
 		
 		else {
 			
+			this.calculatePeriodCost(period, c, K);
+			this.calculateExpectedCost();
+			
 			this.totalCost = this.periodCost + this.expectedCost;
 		}	
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void deleteCostCalculation () {
+		
+		this.periodCost = -1;
+		this.expectedCost = -1;
+		this.finalCost = -1;
+		this.totalCost = -1;
+		
+		this.strategy = null;
+		this.a_T = -1;
+		this.s_T = -1;
+		
 	}
 	
 	

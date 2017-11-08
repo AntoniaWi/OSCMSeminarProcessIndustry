@@ -276,7 +276,9 @@ public class TimingModel {
 		
 		int remainingPeriods = (dataInstance.getParameter_planningHorizon() - dataInstance.getCountPeriods()) + 1;
 		
-		for (int i = 0; i <= remainingPossibleInvestment; i++) {
+		int max_length = Math.min(remainingPeriods, remainingPossibleInvestment);
+		
+		for (int i = 0; i <= max_length; i++) {
 			
 			int [] array_tmp = new int[remainingPeriods]; 
 			
@@ -407,22 +409,19 @@ public class TimingModel {
 			
 			TimingModel.deleteCostCalculation(scenarioTree);
 			
-			int a_T = strategies.get(i)[strategies.get(i).length-1];
-			int s_T = calculateRemainingPeriodsToBuildPrimaryFacility(period, strategies.get(i), dataInstance.getParameter_monthsToBuildPrimaryFacilities());
-			
 			// Calculate the final cost for all final events in the scenario tree
-			
-			int last_period = scenarioTree.size()-1;
 			
 			for (int j = scenarioTree.size()-1; j >= 0; j--) {
 				
 				for (int k = 0; k < scenarioTree.get(j).size(); k++) {
 					
-					scenarioTree.get(j).get(k).calculateTotalCost(period);
+					scenarioTree.get(j).get(k).addStrategy(strategies.get(i), dataInstance.getParameter_monthsToBuildPrimaryFacilities());
+					scenarioTree.get(j).get(k).calculateTotalCost(period, c, K, phi, gamma_c);
 				}	
 			}
 			
-			// TODO: remaingPeriodsToBuild, cost calculation etc.period
+			
+			//TODO
 			
 			Event left = scenarioTree.get(0).get(0);
 			Event right = scenarioTree.get(0).get(1);
@@ -517,8 +516,7 @@ public class TimingModel {
 			
 			for (int j = 0; j < scenarioTree.get(i).size(); j++) {
 				
-				scenarioTree.get(i).get(j).setExpectedCost(-1);
-				scenarioTree.get(i).get(j).setFinalCost(-1);
+				scenarioTree.get(i).get(j).deleteCostCalculation();
 			}
 		}
 	}
@@ -556,7 +554,7 @@ public class TimingModel {
 		
 		int min_cost = searchForMin (cost);
 		
-		dataInstance.setInvestmentDecisionPrimaryFacility(dataInstance.getCountPeriods(), strategies.get(min_cost)[0]);
+		dataInstance.setInvestmentDecisionPrimaryFacility(dataInstance.getCountPeriods(), strategies.get(min_cost)[dataInstance.getCountPeriods()]);
 	}
 	
 	
