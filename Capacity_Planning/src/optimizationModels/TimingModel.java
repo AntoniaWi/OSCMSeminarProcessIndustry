@@ -64,11 +64,13 @@ public class TimingModel {
 		
 		ArrayList<ArrayList<Event>> scenarioTree = generateScenarioTree(dataInstance.getCountPeriods());
 		
+		TimingModel.printScenarioTree(scenarioTree);
+		
 		// Generate all strategies
 		
 		ArrayList<int[]> strategies = generateAllPossibleStrategies();
 		
-		TimingModel.printStrategies(strategies, dataInstance.getCountPeriods());
+		// TimingModel.printStrategies(strategies, dataInstance.getCountPeriods());
 		
 		// Calculate cost
 		
@@ -104,9 +106,9 @@ public class TimingModel {
 		// Create an ArrayList for each period t element of {t,...,T} which is added to the scenario tree
 		// Attention: index goes from t-1 to T-1
 		
-		int count = 1;
+		int count = 0;
 		
-		for (int t = period; t <= dataInstance.getParameter_planningHorizon(); t++) {
+		for (int t = period; t <= dataInstance.getParameter_planningHorizon()+1; t++) {
 			
 			ArrayList<Event> period_t = new ArrayList<Event>();
 			scenarioTree.add(period_t);
@@ -124,21 +126,32 @@ public class TimingModel {
 				
 				// Is it a final event for which cost can be calculated?
 				
-				if (t == dataInstance.getParameter_planningHorizon()) {
+				if (t == dataInstance.getParameter_planningHorizon()+1) {
 					tmp_event.setFinalEvent(true);
 				}
 				else {
 					tmp_event.setFinalEvent(false);
 				}
 				
-				// Is it the left (successful) or the right (failed) event 
+				// Is it a first event for which no test result is calculated?
 				
-				if ((index % 2) == 0) {
-					tmp_event.setTestResult(1);
+				if (t == period) {
+					tmp_event.setFirstEvent(true);
+					
+					tmp_event.setTestResult(dataInstance.getTestResults()[period-1]);
 				}
 				else {
-					tmp_event.setTestResult(0);
+					tmp_event.setFirstEvent(false);
+					
+					if ((index % 2) == 0) {
+						tmp_event.setTestResult(1);
+					}
+					else {
+						tmp_event.setTestResult(0);
+					}
 				}
+				
+				// Is it the left (successful) or the right (failed) event 
 				
 				period_t.add(tmp_event);	
 			}
@@ -161,7 +174,7 @@ public class TimingModel {
 			}
 		}
 		
-		// Setting all parents - first events in t = 1 do not have any parents
+		// Setting all parents - first events in t = 0 do not have any parents
 		
 		for (int t = scenarioTree.size()-1; t > 0; t--) {
 			
@@ -183,9 +196,9 @@ public class TimingModel {
 			}
 		}
 		
-		// Setting all countSuccessfulTestResults, countFailedTestResults, nextProbabilitySuccessful_left, nextProbabilityFailed_right
+		// Setting all counts and next probabilities except from final events
 		
-		for (int t = 0; t < scenarioTree.size(); t++) {
+		for (int t = 0; t < scenarioTree.size()-1; t++) {
 			
 			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
 				
@@ -193,14 +206,15 @@ public class TimingModel {
 				
 				if (t == 0) {
 					
-					event_tmp.setCountSuccessfulTestResults(dataInstance.getCountSuccessfulTests()[period-1] + event_tmp.getTestResult());
-					event_tmp.setCountFailedTestResults(dataInstance.getCountFailedTests()[period-1] + (1 - event_tmp.getTestResult()));
+					event_tmp.setCountSuccessfulTestResults(dataInstance.getCountSuccessfulTests()[period-1]);
+					event_tmp.setCountFailedTestResults(dataInstance.getCountFailedTests()[period-1]);
 				}
 				
 				else {
 					
-					event_tmp.setCountSuccessfulTestResults(event_tmp.getPreviousEvent().getCountSuccessfulTestResults() + event_tmp.getTestResult());
-					event_tmp.setCountFailedTestResults(event_tmp.getPreviousEvent().getCountFailedTestResults() + (1 - event_tmp.getTestResult()));
+					if (event_tmp.getPreviousEvent().getfirst
+					event_tmp.setCountSuccessfulTestResults(event_tmp.getPreviousEvent().getCountSuccessfulTestResults() + event_tmp.getPreviousEvent().getTestResult());
+					event_tmp.setCountFailedTestResults(event_tmp.getPreviousEvent().getCountFailedTestResults() + (1 - event_tmp.getPreviousEvent().getTestResult()));
 				}
 				
 				int gamma = event_tmp.getCountSuccessfulTestResults();

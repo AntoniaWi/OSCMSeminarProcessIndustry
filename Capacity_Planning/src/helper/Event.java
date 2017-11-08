@@ -8,6 +8,7 @@ public class Event {
 	private int index;
 	
 	private boolean finalEvent;
+	private boolean firstEvent;
 	
 	private double finalCost;
 	private double expectedCost;
@@ -41,6 +42,7 @@ public class Event {
 		this.index = -1;
 		
 		this.finalEvent = false;
+		this.firstEvent = false;
 		
 		this.finalCost = -1;
 		this.expectedCost = -1;
@@ -112,6 +114,22 @@ public class Event {
 	 */
 	public void setFinalEvent(boolean finalEvent) {
 		this.finalEvent = finalEvent;
+	}
+
+
+	/**
+	 * @return the firstEvent
+	 */
+	public boolean isFirstEvent() {
+		return firstEvent;
+	}
+
+
+	/**
+	 * @param firstEvent the firstEvent to set
+	 */
+	public void setFirstEvent(boolean firstEvent) {
+		this.firstEvent = firstEvent;
 	}
 
 
@@ -480,6 +498,11 @@ public class Event {
 			string += "Previous Event - period: " + this.previousEvent.period + ", index: " + this.previousEvent.index + "\n";
 		}
 		
+		else {
+			
+			string += "Previous Event - period: null\n";
+		}
+		
 		string += "Period: " + this.period + "\n";
 		string += "Index: " + this.index + "\n";
 		string += "Probability: " + this.probability + "\n";
@@ -489,16 +512,11 @@ public class Event {
 		string += "Next probability (success): " + this.nextProbabilitySuccessful_left + "\n";
 		string += "Next probability (fail): " + this.nextProbabilityFailed_right + "\n";
 		
-		if (this.finalEvent) {
-			
-			string += "Final cost (F): " + this.finalCost + "\n";
-		}
-		
-		else {
-			
-			string += "Expected cost (V): " + this.expectedCost + "\n";
-		}
-		
+		string += "Period cost: " + this.periodCost + "\n";;
+		string += "Expected cost: " + this.expectedCost + "\n";;
+		string += "Final cost: " + this.finalCost + "\n";;
+		string += "Total cost: " + this.totalCost + "\n";;
+				
 		return string;
 	}
 	
