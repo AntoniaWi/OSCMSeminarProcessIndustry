@@ -66,7 +66,9 @@ public class TimingModel {
 		
 		// Generate all strategies
 		
-		ArrayList<int[]> strategies = generateAllPossibleStrategiesInPeriod_t();
+		ArrayList<int[]> strategies = generateAllPossibleStrategies();
+		
+		TimingModel.printStrategies(strategies, dataInstance.getCountPeriods());
 		
 		// Calculate cost
 		
@@ -264,9 +266,9 @@ public class TimingModel {
 	 * 
 	 * @return
 	 */
-	public static ArrayList<int[]> generateAllPossibleStrategiesInPeriod_t() {
+	public static ArrayList<int[]> generateAllPossibleStrategies() {
 		
-		ArrayList<int[]> strategies = new ArrayList<int[]> ();
+		ArrayList<int[]> futureStrategies = new ArrayList<int[]> ();
 			
 		int doneInvestments = TimingModel.countTrueValuesInArray(dataInstance.getInvestmentDecisionPrimaryFacility());
 		
@@ -287,8 +289,45 @@ public class TimingModel {
 				index_1++;
 			}
 			
-			Permuter.permute(array_tmp, strategies);
+			Permuter.permute(array_tmp, futureStrategies);
 		
+		}
+		
+		ArrayList<int[]> strategies = TimingModel.addAllFormerInvestmentStrategies(futureStrategies);
+		return strategies;
+	}
+	
+	
+	/**
+	 * 
+	 * @param futureStrategies
+	 */
+	public static ArrayList<int[]> addAllFormerInvestmentStrategies (ArrayList<int[]> futureStrategies) {
+		
+		ArrayList<int[]> strategies = new ArrayList<int[]>();
+		
+		for (int i = 0; i < futureStrategies.size(); i++) {
+			
+			int [] strategy = new int [dataInstance.getParameter_planningHorizon()+1];
+			
+			int index_1 = 0;
+			int index_2 = 0;
+			
+			while (index_1 < dataInstance.getCountPeriods()) {
+				
+				strategy[index_1] = dataInstance.getInvestmentDecisionPrimaryFacility()[index_1];	
+				index_1++;
+			}
+			
+			while (index_1 < strategy.length) {
+				
+				strategy[index_1] = futureStrategies.get(i)[index_2];
+				index_1++;
+				index_2++;
+			}
+			
+			strategies.add(strategy);
+			
 		}
 		
 		return strategies;
@@ -653,6 +692,7 @@ public class TimingModel {
 		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountFailedTests(), "Failed Tests (zeta)");
 		ReadAndWrite.printArrayWithPeriodsDouble(dataInstance.getTestProbability(), "Test Probability (p)");
 		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getTestResults(), "Test Results (delta)");
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getInvestmentDecisionPrimaryFacility(), "Investment decision (a)");
 	}
 	
 	
