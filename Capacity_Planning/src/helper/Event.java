@@ -451,10 +451,8 @@ public class Event {
 		
 		if (this.finalEvent) {
 			
-			this.calculatePeriodCost(period, c, K);
 			this.calculateFinalCost(c, K, phi, gamma_c);
-			
-			this.totalCost = this.periodCost + this.finalCost;
+			this.totalCost = this.finalCost;
 		}
 		
 		else {
@@ -500,9 +498,11 @@ public class Event {
 		
 		else {
 			
-			string += "Previous Event - period: null\n";
+			string += "Previous Event: null\n";
 		}
 		
+		string += "First event: " + this.firstEvent + "\n";
+		string += "Final event: " + this.finalEvent + "\n";
 		string += "Period: " + this.period + "\n";
 		string += "Index: " + this.index + "\n";
 		string += "Probability: " + this.probability + "\n";

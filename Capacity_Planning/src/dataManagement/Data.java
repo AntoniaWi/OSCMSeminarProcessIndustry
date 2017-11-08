@@ -112,17 +112,17 @@ public class Data {
 		this.parameter_monthsToBuildPrimaryFacilities = 3;
 		this.parameter_monthsToBuildSecondaryFacilities = 3;
 		
-		this.parameter_constructionCostPrimaryFacility = 100;
+		this.parameter_constructionCostPrimaryFacility = 1000;
 		this.parameter_constructionCostSecondaryFacility = 25;
 		
-		this.parameter_setupCostPrimaryFacility = 0;
+		this.parameter_setupCostPrimaryFacility = 100;
 		this.parameter_setupCostSecondaryFacility = 2;
 		
-		this.parameter_penaltyCost = 300;
+		this.parameter_penaltyCost = 10;
 		
 		this.parameter_preliminaryKnowledgeAboutSuccessfulTests = 1;
 		this.parameter_preliminaryKnowledgeAboutFailedTests = 1;
-		this.parameter_thresholdSuccessfulTests = 3;
+		this.parameter_thresholdSuccessfulTests = 2;
 		
 		// Currently no test results are available
 		
@@ -164,7 +164,8 @@ public class Data {
 		// Currently no investment decision about primary facility made
 		
 		this.investmentDecisionPrimaryFacility = new int [this.parameter_planningHorizon + 1];
-		for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
+		this.investmentDecisionPrimaryFacility[0] = 0;
+		for (int i = 1; i < this.investmentDecisionPrimaryFacility.length; i++) {
 			this.investmentDecisionPrimaryFacility[i] = -1;
 		}
 		

@@ -64,7 +64,7 @@ public class TimingModel {
 		
 		ArrayList<ArrayList<Event>> scenarioTree = generateScenarioTree(dataInstance.getCountPeriods());
 		
-		TimingModel.printScenarioTree(scenarioTree);
+		// TimingModel.printScenarioTree(scenarioTree);
 		
 		// Generate all strategies
 		
@@ -137,7 +137,6 @@ public class TimingModel {
 				
 				if (t == period) {
 					tmp_event.setFirstEvent(true);
-					
 					tmp_event.setTestResult(dataInstance.getTestResults()[period-1]);
 				}
 				else {
@@ -198,7 +197,7 @@ public class TimingModel {
 		
 		// Setting all counts and next probabilities except from final events
 		
-		for (int t = 0; t < scenarioTree.size()-1; t++) {
+		for (int t = 0; t < scenarioTree.size(); t++) {
 			
 			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
 				
@@ -212,9 +211,8 @@ public class TimingModel {
 				
 				else {
 					
-					if (event_tmp.getPreviousEvent().getfirst
-					event_tmp.setCountSuccessfulTestResults(event_tmp.getPreviousEvent().getCountSuccessfulTestResults() + event_tmp.getPreviousEvent().getTestResult());
-					event_tmp.setCountFailedTestResults(event_tmp.getPreviousEvent().getCountFailedTestResults() + (1 - event_tmp.getPreviousEvent().getTestResult()));
+					event_tmp.setCountSuccessfulTestResults(event_tmp.getPreviousEvent().getCountSuccessfulTestResults() + event_tmp.getTestResult());
+					event_tmp.setCountFailedTestResults(event_tmp.getPreviousEvent().getCountFailedTestResults() + (1 - event_tmp.getTestResult()));
 				}
 				
 				int gamma = event_tmp.getCountSuccessfulTestResults();
@@ -238,21 +236,7 @@ public class TimingModel {
 				Event event_tmp = scenarioTree.get(t).get(index);
 				
 				if (t == 0) {
-					
-					int gamma = dataInstance.getCountSuccessfulTests()[period-1];
-					int zeta = dataInstance.getCountFailedTests()[period-1];
-					
-					double p = TimingModel.calculateTestProbability(gamma, zeta);
-					
-					if (event_tmp.getTestResult() == 1) {
-						
-						event_tmp.setProbability(p);
-					}
-					
-					else {
-						
-						event_tmp.setProbability(1-p);
-					}
+					event_tmp.setProbability(1.0);
 				}
 				
 				else {
@@ -433,16 +417,18 @@ public class TimingModel {
 					scenarioTree.get(j).get(k).calculateTotalCost(period, c, K, phi, gamma_c);
 				}	
 			}
+						
+			cost.add(scenarioTree.get(0).get(0).getTotalCost());
 			
+			System.out.println();
 			
-			//TODO
+			System.out.println("Strategy:");
 			
-			Event left = scenarioTree.get(0).get(0);
-			Event right = scenarioTree.get(0).get(1);
+			System.out.println();
 			
-			double final_cost = left.getProbability() * left.getExpectedCost() + right.getProbability() * right.getExpectedCost();
+			ReadAndWrite.printArraySimple(strategies.get(i));
 			
-			cost.add(final_cost);
+			TimingModel.printScenarioTree(scenarioTree);
 		}
 		
 		return cost;
@@ -488,20 +474,6 @@ public class TimingModel {
 		double p = gamma / (gamma + zeta);
 		
 		return p;
-	}
-	
-	
-	/**
-	 * 
-	 * @param s_T
-	 * @param a_T
-	 * @return
-	 */
-	public double calculateF (int s_T, int a_T, int gamma_T) {
-		
-		double result = s_T * dataInstance.getParameter_constructionCostPrimaryFacility() + dataInstance.getParameter_penaltyCost() * s_T + dataInstance.getParameter_setupCostPrimaryFacility() * Math.max((1-a_T),0);
-		
-		return result;
 	}
 	
 	
