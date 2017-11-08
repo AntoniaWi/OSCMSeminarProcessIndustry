@@ -209,9 +209,7 @@ public class LocationPlanningModel extends IloCplex {
 		// 6th constraint
 		this.addConstraintAvailableCapacity();
 		// 7th constraint
-		// this.addConstraintsMassBalanceEquation();
-		this.addConstraintsMassBalanceEquation1();
-		this.addConstraintsMassBalanceEquation2();
+		this.addConstraintsMassBalanceEquation();
 		// 8th constraint
 		this.addConstraintCapacityRestrictionForProduction();
 		// 9th constraint
@@ -319,8 +317,8 @@ public class LocationPlanningModel extends IloCplex {
 	// constraints
 
 	/**
-	 * 1st constraint: choose exactly one facility as primary facility/ Choose at
-	 * least one facility as secondary facility
+	 * 1st constraint: choose exactly one facility as primary facility/ Choose
+	 * at least one facility as secondary facility
 	 * 
 	 * @throws IloException
 	 */
@@ -355,9 +353,9 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * 2nd constraint: start exactly one construction during the planning horizon
-	 * for primary facilities/ start production for secondary facilities not more
-	 * than once during the planning horizon
+	 * 2nd constraint: start exactly one construction during the planning
+	 * horizon for primary facilities/ start production for secondary facilities
+	 * not more than once during the planning horizon
 	 * 
 	 * @throws IloException
 	 */
@@ -580,96 +578,6 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * 7th constraint: mass-balance equation1
-	 * 
-	 * @throws IloException
-	 */
-	private void addConstraintsMassBalanceEquation1() throws IloException {
-
-		this.massbalanceEquation1.clear();
-		this.massbalanceEquation2.clear();
-
-		for (int i = 0; i < this.F; i++) {
-			for (int j = 0; j < this.I; j++) {
-				if (IF[i]) {
-					if (OM[i][j] || IM[i][j]) {
-						for (int k = 0; k < this.T; k++) {
-							this.massbalanceEquation1.clear();
-							this.massbalanceEquation2.clear();
-
-							massbalanceEquation1.addTerm(this.materialCoefficient[this.API - 1][i],
-									this.consumedOrProducedMaterial[j][i][k]);
-							massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
-									this.consumedOrProducedAPI[i][k]);
-
-							// First equation
-							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
-
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * 7th constraint: mass-balance equation2
-	 * 
-	 * @throws IloException
-	 */
-	private void addConstraintsMassBalanceEquation2() throws IloException {
-
-		this.massbalanceEquation2.clear();
-		this.massbalanceEquation3.clear();
-
-		for (int i = 0; i < this.F; i++) {
-			for (int j = 0; j < this.I; j++) {
-				if (IF[i]) {
-					if (OM[i][j] || IM[i][j]) {
-						for (int k = 0; k < this.T; k++) {
-							this.massbalanceEquation2.clear();
-							this.massbalanceEquation3.clear();
-
-							massbalanceEquation2.addTerm(this.materialCoefficient[j][i],
-									this.consumedOrProducedAPI[i][k]);
-							
-							for (int m = 0; m < this.F; m++) {
-
-								if (OM[m][j] || IM[m][j]) {
-
-									if (OM[m][j] && IM[i][j]) {
-										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-												this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
-
-									}
-
-
-									else if (IM[m][j] && OM[i][j]) {
-
-										massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-												this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
-									}
-
-								}
-								if (k==0) {
-								System.out.println(this.massbalanceEquation3);
-								System.out.println("facility "+(i+1)+" s/c "+(m+1)+" material "+(j+1));
-								}
-								// Second equation
-
-							}
-							addEq(this.massbalanceEquation2, this.massbalanceEquation3);
-						}
-
-
-					}
-				}
-			}
-		}
-
-	}
-
-	/**
 	 * 7th constraint: mass-balance equation
 	 * 
 	 * @throws IloException
@@ -717,9 +625,9 @@ public class LocationPlanningModel extends IloCplex {
 							// Second equation
 
 						}
-
+						addEq(this.massbalanceEquation2, this.massbalanceEquation3);
 					}
-					addEq(this.massbalanceEquation2, this.massbalanceEquation3);
+					
 				}
 			}
 		}
@@ -732,13 +640,14 @@ public class LocationPlanningModel extends IloCplex {
 	 */
 	private void addConstraintCapacityRestrictionForProduction() throws IloException {
 
-		this.capacityRestrictionForProduction.clear();
+		//this.capacityRestrictionForProduction.clear();
 
 		for (int i = 0; i < this.F; i++) {
 			if (IF[i]) {
 				for (int j = 0; j < this.T; j++) {
 
 					addLe(this.consumedOrProducedAPI[i][j], this.availableProductionCapacity[i][j]);
+					
 				}
 			}
 		}
@@ -809,24 +718,30 @@ public class LocationPlanningModel extends IloCplex {
 				for (int j = 0; j < this.T; j++) {// t
 					for (int k = 0; k < this.I; k++) {// material i
 						demandAndSupply.clear();
-						for (int l = 0; l < this.F; l++) {
-							if (IF[l] && OM[l][k] && IM[i][k]) {// facility to customer
-								demandAndSupply.addTerm(1, this.shippedMaterialUnitsFacilityToCustomer[k][l][i][j]);
+						if (OM[i][k] || IM[i][k]) {
 
-							} else if (IF[l] && IM[l][k] && OM[i][k]) {// supplier to facility
-								demandAndSupply.addTerm(1, this.shippedMaterialUnitsSupplierToFacility[k][i][l][j]);
+							for (int l = 0; l < this.F; l++) {
+								if (IF[l] && OM[l][k]) {// facility to customer
+									demandAndSupply.addTerm(1, this.shippedMaterialUnitsFacilityToCustomer[k][l][i][j]);
 
+								}
+								else if (IF[l] && IM[l][k]) {// supplier to facility
+									demandAndSupply.addTerm(1, this.shippedMaterialUnitsSupplierToFacility[k][i][l][j]);
+
+								}
 							}
-						}
+							double sumDS = this.supply[k][i] + this.demand[k][i][j];
 
-						double sumDS = this.supply[k][i] + this.demand[k][i][j];
-						addLe(demandAndSupply, sumDS);
+							addLe(demandAndSupply, sumDS);
+
+						}
 
 					}
 
 				}
 			}
 		}
+
 	}
 
 	/**
@@ -928,9 +843,8 @@ public class LocationPlanningModel extends IloCplex {
 
 							for (int m = 0; m < this.F; m++) {
 								for (int l = 0; l < this.I; l++) {
-									if (IM[m][l]) {
-										// System.out.println("Check gleiches
-										// Material: "+k+" und "+l+" ?");
+									if (IM[m][k]&&k==l) {
+										//System.out.println("Check gleiches Material: "+k+" und "+l+" ?");
 										this.grossIncomeConstraint.addTerm(this.unitSellingPrice[k][j],
 												this.shippedMaterialUnitsFacilityToCustomer[k][j][m][i]);
 
@@ -942,9 +856,8 @@ public class LocationPlanningModel extends IloCplex {
 
 							for (int m = 0; m < this.F; m++) {
 								for (int l = 0; l < this.I; l++) {
-									if (OM[m][l]) {
-										// System.out.println("Check gleiches
-										// Material: "+k+" und "+l+" ?");
+									if (OM[m][k]&&k==l) {
+										//System.out.println("Check gleiches Material: "+k+" und "+l+" ?");
 
 										double costCoefficient = this.costInsuranceFreight[k][m][j]
 												+ (this.costInsuranceFreight[k][m][j] * this.importDuty[m][j]);
@@ -1002,8 +915,9 @@ public class LocationPlanningModel extends IloCplex {
 							this.depreciationChargePrimaryFacilities.addTerm(variableCostPF,
 									this.constructionStartPrimaryFacility[j][k]);
 							/*
-							 * if (j==0 && k<10) { System.out.println( "facility " +(j+1)+ " tau "+ (k+1) +
-							 * " t " + (i+1)); System.out.println(this.
+							 * if (j==0 && k<10) { System.out.println(
+							 * "facility " +(j+1)+ " tau "+ (k+1) + " t " +
+							 * (i+1)); System.out.println(this.
 							 * depreciationChargePrimaryFacilities);}
 							 */
 
@@ -1016,8 +930,9 @@ public class LocationPlanningModel extends IloCplex {
 							addEq(this.depreciationChargePrimaryFacilities,
 									this.depreciationChargePrimaryFacility[j][k][i]);
 							/*
-							 * if (j==0&& k<10) { System.out.println("facility " +(j+1)+ " tau "+ (k+1) +
-							 * " t " + (i+1)); System.out.println(this.
+							 * if (j==0&& k<10) { System.out.println("facility "
+							 * +(j+1)+ " tau "+ (k+1) + " t " + (i+1));
+							 * System.out.println(this.
 							 * depreciationChargePrimaryFacilities); }
 							 */
 						}
@@ -1091,9 +1006,10 @@ public class LocationPlanningModel extends IloCplex {
 						/*
 						 * for (int l = 0; l < i ; l++) { if(PIF[k]) {
 						 * this.taxableIncomeConstraint.addTerm(-1,
-						 * this.depreciationChargePrimaryFacility[k][l][i]); } else {
-						 * this.taxableIncomeConstraint.addTerm(-1,
-						 * this.depreciationChargeSecondaryFacility[k][l][i]); } }
+						 * this.depreciationChargePrimaryFacility[k][l][i]); }
+						 * else { this.taxableIncomeConstraint.addTerm(-1,
+						 * this.depreciationChargeSecondaryFacility[k][l][i]); }
+						 * }
 						 */
 
 					}
@@ -1157,6 +1073,9 @@ public class LocationPlanningModel extends IloCplex {
 		out.write("\n Decision\n");
 
 		// for writing into the solution file use: out.write ("");
+		// for writing into the Excel file transfer decision variable values
+		// into result arrays of data instance and then use writeSolution() in
+		// ReadAndWrite class
 
 		// y and z
 		double yft[][] = new double[this.F][this.T];
@@ -1236,7 +1155,7 @@ public class LocationPlanningModel extends IloCplex {
 		double[][] Qft = new double[instanz.getF()][instanz.getT()];
 		double[][] delta_qft = new double[instanz.getF()][instanz.getT()];
 		double[][] Xft = new double[instanz.getF()][instanz.getT()];
-
+		
 		for (int i = 0; i < this.F; i++) {
 			for (int j = 0; j < this.T; j++) {
 				if (this.IF[i]) {
@@ -1269,11 +1188,12 @@ public class LocationPlanningModel extends IloCplex {
 											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
 											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
 								} else {
-									/*
-									 * out.write("Material " + (i + 1) + " is NOT shipped from facility " + (j + 1)
-									 * + " to customer " + (k + 1) + " in period " + (l + 1) + " ." +
-									 * getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
-									 */
+
+									/*out.write("Material " + (i + 1) + " is NOT shipped from facility " + (j + 1)
+											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
+											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
+*/
+
 								}
 							}
 						}
