@@ -214,7 +214,7 @@ public class LocationPlanningModel extends IloCplex {
 		// 8th constraint
 		this.addConstraintCapacityRestrictionForProduction();
 		// 9th constraint
-		this.addConstraintLowerLimitOfProduction();
+		//this.addConstraintLowerLimitOfProduction();
 		// 10th constraint
 		this.addConstraintSupplyAndDemand();
 		// 11th constraint
@@ -719,7 +719,7 @@ public class LocationPlanningModel extends IloCplex {
 				if (IF[j] && PIF[j]) {
 					this.lowerLimitForProductionPF2.clear();
 					this.lowerLimitForProductionPF2.addTerm(this.lowerLimitProductionAPI[j],
-							this.constructionStartPrimaryFacility[j][1]);
+							this.constructionStartPrimaryFacility[j][0]);
 					addLe(this.lowerLimitForProductionPF2, this.consumedOrProducedAPI[j][i]);
 				}
 			}
