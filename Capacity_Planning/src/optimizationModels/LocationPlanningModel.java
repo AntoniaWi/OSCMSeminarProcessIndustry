@@ -626,11 +626,11 @@ public class LocationPlanningModel extends IloCplex {
 
 								// }
 
-								if (k == 0) {
+								/*if (k == 0) {
 									System.out.println(this.massbalanceEquation3);
 									System.out.println(
 											"facility " + (i + 1) + " s/c " + (m + 1) + " material " + (j + 1));
-								}
+								}*/
 
 							}
 							// Second equation
