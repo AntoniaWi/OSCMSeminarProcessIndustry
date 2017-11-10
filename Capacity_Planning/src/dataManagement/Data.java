@@ -118,7 +118,7 @@ public class Data {
 		this.parameter_setupCostPrimaryFacility = 100;
 		this.parameter_setupCostSecondaryFacility = 2;
 		
-		this.parameter_penaltyCost = 10;
+		this.parameter_penaltyCost = 10000;
 		
 		this.parameter_preliminaryKnowledgeAboutSuccessfulTests = 1;
 		this.parameter_preliminaryKnowledgeAboutFailedTests = 1;
