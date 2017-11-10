@@ -350,8 +350,8 @@ public class LocationPlanningModel extends IloCplex {
 								- this.monthsToBuildSecondaryFacility]);
 			}
 		}
-		addGe(this.numberOfSecondaryFacilities, 1);
-
+		addEq(this.numberOfSecondaryFacilities, 2);
+		//addGe(this.numberOfSecondaryFacilities, 1);
 	}
 
 	/**
