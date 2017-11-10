@@ -12,6 +12,7 @@ public class Event {
 	
 	private double finalCost;
 	private double expectedCost;
+	private double discountedExpectedCost;
 	private double periodCost;
 	private double totalCost;
 	
@@ -46,6 +47,7 @@ public class Event {
 		
 		this.finalCost = -1;
 		this.expectedCost = -1;
+		this.discountedExpectedCost = -1;
 		this.periodCost = -1;
 		this.totalCost = -1; 
 		
@@ -162,6 +164,22 @@ public class Event {
 	 */
 	public void setExpectedCost(double expectedCost) {
 		this.expectedCost = expectedCost;
+	}
+
+
+	/**
+	 * @return the discountedExpectedCost
+	 */
+	public double getDiscountedExpectedCost() {
+		return discountedExpectedCost;
+	}
+
+
+	/**
+	 * @param discountedExpectedCost the discountedExpectedCost to set
+	 */
+	public void setDiscountedExpectedCost(double discountedExpectedCost) {
+		this.discountedExpectedCost = discountedExpectedCost;
 	}
 
 
@@ -406,9 +424,9 @@ public class Event {
 	 * 
 	 * @return
 	 */
-	public void calculatePeriodCost (int period, double c, double K) {
+	public void calculatePeriodCost (double c, double K) {
 		
-		this.periodCost = this.strategy[period] * c + K * Math.max(strategy[period]-strategy[period-1], 0);
+		this.periodCost = this.strategy[this.period] * c + K * Math.max(strategy[this.period]-strategy[this.period-1], 0);
 	}
 	
 	
@@ -419,6 +437,16 @@ public class Event {
 		
 		this.expectedCost = this.nextProbabilitySuccessful_left * this.left_nextSuccessfulTestResult.totalCost
 							+ this.nextProbabilityFailed_right * this.right_nextFailedTestResult.totalCost;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param alpha
+	 */
+	public void calculateDiscountedExpectedCost (double alpha) {
+		
+		this.discountedExpectedCost = alpha * this.expectedCost;	
 	}
 	
 	
@@ -447,7 +475,7 @@ public class Event {
 	 * 
 	 * @param period
 	 */
-	public void calculateTotalCost (int period, double c, double K, double phi, int gamma_c) {
+	public void calculateTotalCost (double c, double K, double phi, int gamma_c, double alpha) {
 		
 		if (this.finalEvent) {
 			
@@ -457,10 +485,11 @@ public class Event {
 		
 		else {
 			
-			this.calculatePeriodCost(period, c, K);
+			this.calculatePeriodCost(c, K);
 			this.calculateExpectedCost();
+			this.calculateDiscountedExpectedCost(alpha);
 			
-			this.totalCost = this.periodCost + this.expectedCost;
+			this.totalCost = this.periodCost + this.discountedExpectedCost;
 		}	
 	}
 	
@@ -472,6 +501,7 @@ public class Event {
 		
 		this.periodCost = -1;
 		this.expectedCost = -1;
+		this.discountedExpectedCost = -1;
 		this.finalCost = -1;
 		this.totalCost = -1;
 		
@@ -513,9 +543,10 @@ public class Event {
 		string += "Next probability (fail): " + this.nextProbabilityFailed_right + "\n";
 		
 		string += "Period cost: " + this.periodCost + "\n";;
-		string += "Expected cost: " + this.expectedCost + "\n";;
-		string += "Final cost: " + this.finalCost + "\n";;
-		string += "Total cost: " + this.totalCost + "\n";;
+		string += "Expected cost: " + this.expectedCost + "\n";
+		string += "Discounted expected cost: " + this.discountedExpectedCost + "\n";
+		string += "Final cost: " + this.finalCost + "\n";
+		string += "Total cost: " + this.totalCost + "\n";
 				
 		return string;
 	}
