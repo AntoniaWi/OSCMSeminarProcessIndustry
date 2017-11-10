@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 4;
+	public static int user = 3;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";

@@ -1,7 +1,5 @@
 package helper;
 
-import optimizationModels.TimingModel;
-
 public class Event {
 	
 	private int period;
@@ -415,7 +413,7 @@ public class Event {
 		
 		this.strategy = strategy;
 		this.a_T = strategy[strategy.length-1];
-		this.s_T = periodsToBuild - TimingModel.countTrueValuesInArray(strategy);
+		this.s_T = periodsToBuild - countTrueValuesInArray(strategy);
 		
 	}
 	
@@ -424,7 +422,7 @@ public class Event {
 	 * 
 	 * @return
 	 */
-	public void calculatePeriodCost (double c, double K) {
+	private void calculatePeriodCost (double c, double K) {
 		
 		this.periodCost = this.strategy[this.period] * c + K * Math.max(strategy[this.period]-strategy[this.period-1], 0);
 	}
@@ -433,7 +431,7 @@ public class Event {
 	/**
 	 * 
 	 */
-	public void calculateExpectedCost () {
+	private void calculateExpectedCost () {
 		
 		this.expectedCost = this.nextProbabilitySuccessful_left * this.left_nextSuccessfulTestResult.totalCost
 							+ this.nextProbabilityFailed_right * this.right_nextFailedTestResult.totalCost;	
@@ -444,7 +442,7 @@ public class Event {
 	 * 
 	 * @param alpha
 	 */
-	public void calculateDiscountedExpectedCost (double alpha) {
+	private void calculateDiscountedExpectedCost (double alpha) {
 		
 		this.discountedExpectedCost = alpha * this.expectedCost;	
 	}
@@ -457,7 +455,7 @@ public class Event {
 	 * @param phi
 	 * @param gamma_c
 	 */
-	public void calculateFinalCost (double c, double K, double phi, int gamma_c) {
+	private void calculateFinalCost (double c, double K, double phi, int gamma_c) {
 			
 		if (this.countSuccessfulTestResults >= gamma_c) {
 				
@@ -509,6 +507,26 @@ public class Event {
 		this.a_T = -1;
 		this.s_T = -1;
 		
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static int countTrueValuesInArray (int [] array) {
+		
+		int count = 0;
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			if (array[i] == 1) {
+				count++;
+			}
+		}
+		
+		return count;
 	}
 	
 	
