@@ -747,7 +747,7 @@ public class ReadAndWrite {
 		writableWorkbook = Workbook.createWorkbook(file1, workbook1);
 
 		WritableSheet sheet0 = writableWorkbook.getSheet("Dict");
-		Sheet sheet = workbook1.getSheet("Const.");
+		
 
 		// headings
 
@@ -792,7 +792,19 @@ public class ReadAndWrite {
 			}
 		}
 		instanz.setDemand(Dict);
+		
+		writableWorkbook.write();
+		writableWorkbook.close();
+		workbook1.close();
 
+		File file2;
+		Workbook workbook2;
+
+		file2 = new File(path);
+
+		workbook2 = Workbook.getWorkbook(file2);
+		Sheet sheet = workbook2.getSheet("Const.");
+		
 		// read budget
 		Cell cell4 = sheet.getCell(1, 2);
 		NumberCell cell5 = (NumberCell) cell4;
@@ -805,10 +817,7 @@ public class ReadAndWrite {
 		}
 		instanz.setCapitalBudget(budget);
 
-		writableWorkbook.write();
-		writableWorkbook.close();
-		workbook1.close();
-
+		
 	}
 	// ____________________________________________________________________________________________
 
