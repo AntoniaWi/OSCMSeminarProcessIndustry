@@ -849,11 +849,11 @@ public class ReadAndWrite {
 		Sheet sheet2 = workbook.getSheet("CIF2sf");
 		Sheet sheet3 = workbook.getSheet("CIF3sf");
 		Sheet sheet4 = workbook.getSheet("CIF4sf");
-		Sheet sheet5 = workbook.getSheet("CIF5sf");
+		//Sheet sheet5 = workbook.getSheet("CIF5sf");
 
 		// read CIF[i][s][f]
 
-		double[][][] CIF = new double[instanz.getI()][instanz.getF()][instanz.getF()];
+		double[][][] CIF = new double[instanz.getI()-1][instanz.getF()][instanz.getF()];
 
 		for (int i = 0; i < instanz.getI(); i++) {// i
 			for (int j = 0; j < instanz.getF(); j++) {// s
@@ -879,12 +879,12 @@ public class ReadAndWrite {
 						NumberCell cell2 = (NumberCell) cell1;
 						double cell3 = cell2.getValue();
 						CIF[i][j][k] = cell3;
-					} else if (i == 4) {
+					} /*else if (i == 4) {
 						Cell cell1 = sheet5.getCell(k + 1, j + 1);
 						NumberCell cell2 = (NumberCell) cell1;
 						double cell3 = cell2.getValue();
 						CIF[i][j][k] = cell3;
-					}
+					}*/
 
 				}
 
