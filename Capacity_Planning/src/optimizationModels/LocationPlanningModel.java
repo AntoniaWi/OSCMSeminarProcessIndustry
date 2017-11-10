@@ -112,7 +112,6 @@ public class LocationPlanningModel extends IloCplex {
 		
 		this.datainstanz = datainstanz;
 		
-		ReadAndWrite.createAndWriteDict(datainstanz);
 		
 		// Sets
 		this.IF = datainstanz.getIF(); // IF[f] internal facilities
@@ -128,6 +127,9 @@ public class LocationPlanningModel extends IloCplex {
 		this.F = datainstanz.getF(); // number of all facilities
 		this.T = datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR();
 		ReadAndWrite.writeTransferParameter(datainstanz);
+		
+		ReadAndWrite.createAndWriteDict(datainstanz);
+		
 		this.N = datainstanz.getN(); // number of nations
 		this.capitalBudget = datainstanz.getCapitalBudget();// capitalBudget[t]
 															// CB_t
