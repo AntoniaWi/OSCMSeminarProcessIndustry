@@ -202,7 +202,7 @@ public class Data {
 	 * @throws WriteException
 	 */
 	public Data (int x) throws BiffException, IOException, WriteException {
-		ReadAndWrite.readConst(this);
+		
 		ReadAndWrite.readDataTiming(this);
 		ReadAndWrite.readF(this);
 		ReadAndWrite.readFinN(this);
@@ -284,12 +284,6 @@ public class Data {
 		// Start in period t = 0
 		
 		this.countPeriods = 0;
-		
-		
-		
-		// Nach TimingModel aufrufen
-		
-		ReadAndWrite.createAndWriteDict(this);
 		
 	
 		}

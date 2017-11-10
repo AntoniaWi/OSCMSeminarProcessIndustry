@@ -8,16 +8,33 @@ import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
+import ilog.concert.*;
+import ilog.cplex.*;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+
+import dataManagement.Data;
+import dataManagement.ReadAndWrite;
+import jxl.read.biff.BiffException;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 public class Algorithm {
 	
 	public static Data dataInstance;
 	public static TimingModel timingModel;
 	public static LocationPlanningModel locationPlanningModel;
+	public static boolean firstInvestment = true;
 	
 	public static void main (String [] args) throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 		
-		// dataInstance = new Data (1); // right constructor
-		dataInstance = new Data (); // Dummy constructor for testing timing model
+		dataInstance = new Data (); 
 		
 		timingModel = new TimingModel(dataInstance);
 		
@@ -41,7 +58,7 @@ public class Algorithm {
 	/**
 	 * 
 	 */
-	public static void nextPeriod () {
+	public static void nextPeriod () throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 		
 		dataInstance.incrementCountPeriods();
 		
@@ -51,11 +68,17 @@ public class Algorithm {
 		
 		// TODO:
 		
-		/*if (dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()] == 1) {
+		if (dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()] == 1 && firstInvestment == true ) {
+			
+			int tmp_remainingTime = (dataInstance.getParameter_planningHorizon() - dataInstance.getCountPeriods()) * 12;
+			dataInstance.setRemainingTimeofClinicalTrials(tmp_remainingTime);
+			
+			
 			
 			locationPlanningModel = new LocationPlanningModel(dataInstance);
 			locationPlanningModel.run();
-		}*/
+			firstInvestment = false;
+		}
 		
 		newTestResult();
 		
