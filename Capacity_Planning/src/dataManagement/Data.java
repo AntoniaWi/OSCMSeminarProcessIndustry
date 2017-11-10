@@ -74,6 +74,7 @@ public class Data {
 		private int API; //
 		private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
 		private int initialCapacity; // Q0
+		private double monthlyDiscountFactor;
     
 		//Help parameter for demand
 		private double [] demandM; //demandM[f]
@@ -204,6 +205,7 @@ public class Data {
 	public Data (int x) throws BiffException, IOException, WriteException {
 		
 		ReadAndWrite.readDataTiming(this);
+		ReadAndWrite.readConst(this);
 		ReadAndWrite.readF(this);
 		ReadAndWrite.readFinN(this);
 		ReadAndWrite.readIMf(this);
@@ -1325,6 +1327,22 @@ public class Data {
 	public void setResult_constructionStartSecondaryFacility(double[][] result_constructionStartSecondaryFacility) {
 		this.result_constructionStartSecondaryFacility = result_constructionStartSecondaryFacility;
 	}
+
+	/**
+	 * @return the monthlyDiscountFactor
+	 */
+	public double getMonthlyDiscountFactor() {
+		return monthlyDiscountFactor;
+	}
+
+
+	/**
+	 * @param monthlyDiscountFactor the monthlyDiscountFactor to set
+	 */
+	public void setMonthlyDiscountFactor(double monthlyDiscountFactor) {
+		this.monthlyDiscountFactor = monthlyDiscountFactor;
+	}
+
 
 	/**
 	 * Increments period count by one

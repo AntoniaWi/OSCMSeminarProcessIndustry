@@ -3,7 +3,7 @@ package dataManagement;
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex.UnknownObjectException;
 
-import java.io.File;
+import java.io.*;
 
 import jxl.*;
 import jxl.read.biff.BiffException;
@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 3;
+	public static int user = 2;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
@@ -36,8 +36,8 @@ public class ReadAndWrite {
 	public static String pathExcelSarahR = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\Result.xls";
 
 	// Paths Ramona #3
-	public static String pathExcelRamona = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";  //TODO:
-	
+	public static String pathExcelRamona = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls"; // TODO:
+
 	// Paths Antonia Windows #4
 	public static String pathExcelAntonia1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";//
 	public static String pathExcelAntoniaR1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Result.xls";
@@ -76,11 +76,11 @@ public class ReadAndWrite {
 	/*
 	 * Excel-File:
 	 * 
-	 * - Sheet 0: DataTiming - Sheet 1: F - Sheet 2: F in N - Sheet 3: IMf -
-	 * Sheet 4: OMf - Sheet 5: Const. - Sheet 6: TRn - Sheet 7: MassBalance -
-	 * Sheet 8: DataF - Sheet 9: Dict - Sheet 10: Sis - Sheet 11: Pif - Sheet
-	 * 12: CIF1sf - Sheet 13: CIF2sf - Sheet 13: CIF3sf - Sheet 14: CIF4sf -
-	 * Sheet 15: CIF5sf - Sheet 18: IDisf
+	 * - Sheet 0: DataTiming - Sheet 1: F - Sheet 2: F in N - Sheet 3: IMf - Sheet
+	 * 4: OMf - Sheet 5: Const. - Sheet 6: TRn - Sheet 7: MassBalance - Sheet 8:
+	 * DataF - Sheet 9: Dict - Sheet 10: Sis - Sheet 11: Pif - Sheet 12: CIF1sf -
+	 * Sheet 13: CIF2sf - Sheet 13: CIF3sf - Sheet 14: CIF4sf - Sheet 15: CIF5sf -
+	 * Sheet 18: IDisf
 	 */
 
 	// ____________________________________________________________________________________________
@@ -457,28 +457,16 @@ public class ReadAndWrite {
 
 		// read numberMonths T
 
-		/*Cell cell13 = sheet.getCell(1, 8);
-		NumberCell cell14 = (NumberCell) cell13;
-		double cell15 = cell14.getValue();
-		instanz.setT((int) cell15);*/
+		/*
+		 * Cell cell13 = sheet.getCell(1, 8); NumberCell cell14 = (NumberCell) cell13;
+		 * double cell15 = cell14.getValue(); instanz.setT((int) cell15);
+		 */
 
 		// read numberOfNations N
 		Cell cell16 = sheet.getCell(1, 9);
 		NumberCell cell17 = (NumberCell) cell16;
 		double cell18 = cell17.getValue();
 		instanz.setN((int) cell18);
-
-		// read budget
-		Cell cell4 = sheet.getCell(1, 2);
-		NumberCell cell5 = (NumberCell) cell4;
-		double cell6 = cell5.getValue();
-
-		double budget[] = new double[instanz.getT()];
-		budget[0] = cell6;
-		for (int i = 1; i < instanz.getT(); i++) {
-			budget[i] = 0;
-		}
-		instanz.setCapitalBudget(budget);
 
 		// read initial capacity Q0
 
@@ -505,12 +493,55 @@ public class ReadAndWrite {
 		NumberCell cell29 = (NumberCell) cell28;
 		double cell30 = cell29.getValue();
 		instanz.setTimeR((int) cell30);
-
-		/*// read remainingTimeOfClinicalTrials
-		Cell cell31 = sheet.getCell(1, 13);
+		
+		//read monthlyDiscountFactor
+		Cell cell31 = sheet.getCell(1, 15);
 		NumberCell cell32 = (NumberCell) cell31;
 		double cell33 = cell32.getValue();
-		instanz.setRemainingTimeofClinicalTrials((int) cell33);*/
+		instanz.setMonthlyDiscountFactor(cell33);
+
+		/*
+		 * // read remainingTimeOfClinicalTrials Cell cell31 = sheet.getCell(1, 13);
+		 * NumberCell cell32 = (NumberCell) cell31; double cell33 = cell32.getValue();
+		 * instanz.setRemainingTimeofClinicalTrials((int) cell33);
+		 */
+
+	}
+
+	// ____________________________________________________________________________________________
+
+	// Sheet 5: Const.: Write remaining time and time horizon T for LPM
+
+	// ____________________________________________________________________________________________
+	public static void writeTransferParameter(Data instanz) throws BiffException, IOException, WriteException {
+
+		File file;
+		WritableWorkbook writableWorkbook;
+		Workbook workbook;
+		choosePaths();
+
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		writableWorkbook = Workbook.createWorkbook(file, workbook);
+
+		WritableSheet sheet = writableWorkbook.getSheet("Const.");
+
+		
+
+		// remaining Time
+
+		Number label3 = new Number(1, 13, instanz.getRemainingTimeofClinicalTrials());
+		sheet.addCell(label3);
+
+		// planning horizon T
+		Number label4 = new Number(1, 8, instanz.getT());
+		sheet.addCell(label4);
+
+		// close workbook
+		writableWorkbook.write();
+		writableWorkbook.close();
+		workbook.close();
 
 	}
 
@@ -703,17 +734,38 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 	public static void createAndWriteDict(Data instanz) throws BiffException, IOException, WriteException {
+		File file2;
+		Workbook workbook2;
+		choosePaths();
+		file2 = new File(path);
 
+		workbook2 = Workbook.getWorkbook(file2);
+		Sheet sheet = workbook2.getSheet("Const.");
+		
+		// read budget
+		Cell cell4 = sheet.getCell(1, 2);
+		NumberCell cell5 = (NumberCell) cell4;
+		double cell6 = cell5.getValue();
+
+		double budget[] = new double[instanz.getT()];
+		budget[0] = cell6;
+		for (int i = 1; i < instanz.getT(); i++) {
+			budget[i] = 0;
+		}
+		instanz.setCapitalBudget(budget);
+
+		
 		File file1;
 		WritableWorkbook writableWorkbook;
 		Workbook workbook1;
-
+		choosePaths();
 		file1 = new File(path);
 
 		workbook1 = Workbook.getWorkbook(file1);
 		writableWorkbook = Workbook.createWorkbook(file1, workbook1);
 
 		WritableSheet sheet0 = writableWorkbook.getSheet("Dict");
+		
 
 		// headings
 
@@ -722,11 +774,9 @@ public class ReadAndWrite {
 			sheet0.addCell(label3);
 
 		}
-	
-			Number label30 = new Number(1, 0, instanz.getI());
-			sheet0.addCell(label30);
 
-		
+		Number label30 = new Number(1, 0, instanz.getI());
+		sheet0.addCell(label30);
 
 		// Dict
 
@@ -761,11 +811,12 @@ public class ReadAndWrite {
 		}
 		instanz.setDemand(Dict);
 		
-		
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook1.close();
 
+		
+		
 	}
 	// ____________________________________________________________________________________________
 
@@ -851,11 +902,10 @@ public class ReadAndWrite {
 		Sheet sheet2 = workbook.getSheet("CIF2sf");
 		Sheet sheet3 = workbook.getSheet("CIF3sf");
 		Sheet sheet4 = workbook.getSheet("CIF4sf");
-		
 
 		// read CIF[i][s][f]
 
-		double[][][] CIF = new double[instanz.getI()-1][instanz.getF()][instanz.getF()];
+		double[][][] CIF = new double[instanz.getI() - 1][instanz.getF()][instanz.getF()];
 
 		for (int i = 0; i < instanz.getI(); i++) {// i
 			for (int j = 0; j < instanz.getF(); j++) {// s
@@ -881,7 +931,7 @@ public class ReadAndWrite {
 						NumberCell cell2 = (NumberCell) cell1;
 						double cell3 = cell2.getValue();
 						CIF[i][j][k] = cell3;
-					} 
+					}
 
 				}
 
@@ -1172,7 +1222,7 @@ public class ReadAndWrite {
 		sheet6.addCell(label80);
 		Label label800 = new Label(0, 0, "f/t");
 		sheet7.addCell(label800);
-		
+
 		for (int i = 0; i < instanz.getF(); i++) {
 			Number label90 = new Number(0, i + 1, i + 1);
 			sheet5.addCell(label90);
@@ -1195,16 +1245,15 @@ public class ReadAndWrite {
 		// Result
 		for (int i = 0; i < instanz.getF(); i++) {
 			for (int j = 0; j < instanz.getT(); j++) {
-				
-					Number label3 = new Number(j + 1, i+1, instanz.getResult_availableProductionCapacity()[i][j]);
-					sheet5.addCell(label3);
-					
-					Number label30 = new Number(j + 1, i+1, instanz.getResult_deltaCapacityExpansion()[i][j]);
-					sheet6.addCell(label30);
-					
-					Number label300 = new Number(j + 1, i+1, instanz.getResult_consumedOrProducedAPI()[i][j]);
-					sheet7.addCell(label300);
-				
+
+				Number label3 = new Number(j + 1, i + 1, instanz.getResult_availableProductionCapacity()[i][j]);
+				sheet5.addCell(label3);
+
+				Number label30 = new Number(j + 1, i + 1, instanz.getResult_deltaCapacityExpansion()[i][j]);
+				sheet6.addCell(label30);
+
+				Number label300 = new Number(j + 1, i + 1, instanz.getResult_consumedOrProducedAPI()[i][j]);
+				sheet7.addCell(label300);
 
 			}
 		}
@@ -1291,36 +1340,34 @@ public class ReadAndWrite {
 
 		System.out.println("");
 	}
-	
-	
+
 	/**
 	 * 
 	 * @param strategies
 	 */
-	public static void printStrategies (ArrayList<int[]> strategies, int period) {
-		
+	public static void printStrategies(ArrayList<int[]> strategies, int period) {
+
 		System.out.println("\n\n--------------------------------------------------------------------------------");
-		
-		System.out.println ("\nStrategies for period: " + period);
-		
+
+		System.out.println("\nStrategies for period: " + period);
+
 		for (int i = 0; i < strategies.size(); i++) {
-			
+
 			ReadAndWrite.printArraySimple(strategies.get(i));
 		}
-		
+
 		System.out.println("\n--------------------------------------------------------------------------------\n\n");
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public static void printScenarioTree (ArrayList<ArrayList<Event>> scenarioTree) {
-		
+	public static void printScenarioTree(ArrayList<ArrayList<Event>> scenarioTree) {
+
 		for (int t = 0; t < scenarioTree.size(); t++) {
-			
+
 			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
-				
+
 				System.out.println(scenarioTree.get(t).get(index).toString());
 			}
 		}

@@ -34,7 +34,7 @@ public class Algorithm {
 	
 	public static void main (String [] args) throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 		
-		dataInstance = new Data (); 
+		dataInstance = new Data (1); 
 		
 		timingModel = new TimingModel(dataInstance);
 		
@@ -70,8 +70,8 @@ public class Algorithm {
 		
 		if (dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()] == 1 && firstInvestment == true ) {
 			
-			int tmp_remainingTime = (dataInstance.getParameter_planningHorizon() - dataInstance.getCountPeriods()) * 12;
-			dataInstance.setRemainingTimeofClinicalTrials(tmp_remainingTime);
+			int tmp_remainingTime = (dataInstance.getParameter_planningHorizon() - dataInstance.getCountPeriods());
+			dataInstance.setRemainingTimeofClinicalTrials(tmp_remainingTime+1);
 			
 			
 			
