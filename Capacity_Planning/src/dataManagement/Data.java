@@ -203,8 +203,8 @@ public class Data {
 	 */
 	public Data (int x) throws BiffException, IOException, WriteException {
 		
-		ReadAndWrite.readConst(this);
 		ReadAndWrite.readDataTiming(this);
+		ReadAndWrite.readConst(this);
 		ReadAndWrite.readF(this);
 		ReadAndWrite.readFinN(this);
 		ReadAndWrite.readIMf(this);
