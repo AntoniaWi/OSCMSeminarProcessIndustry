@@ -10,7 +10,8 @@ public class Data {
 	
 	private int parameter_planningHorizon;  							// T
 	
-	private double parameter_discountFactor;							// alpha
+	private double parameter_discountFactor_timing;							// alpha
+	private double parameter_discountFactor_location;							// alpha
 	
 	private int parameter_monthsToBuildPrimaryFacilities;				// s_p_0 - in whole years
 	private int parameter_monthsToBuildSecondaryFacilities;			// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
@@ -105,7 +106,7 @@ public class Data {
 
 		this.parameter_planningHorizon = 3;
 		
-		this.parameter_discountFactor = 1.0;
+		this.parameter_discountFactor_timing = 1.0;
 		
 		this.parameter_monthsToBuildPrimaryFacilities = 3;
 		this.parameter_monthsToBuildSecondaryFacilities = 3;
@@ -310,7 +311,7 @@ public class Data {
 	 * @return the parameter_discountFactor
 	 */
 	public double getParameter_discountFactor() {
-		return parameter_discountFactor;
+		return parameter_discountFactor_timing;
 	}
 
 
@@ -318,7 +319,7 @@ public class Data {
 	 * @param parameter_discountFactor the parameter_discountFactor to set
 	 */
 	public void setParameter_discountFactor(double parameter_discountFactor) {
-		this.parameter_discountFactor = parameter_discountFactor;
+		this.parameter_discountFactor_timing = parameter_discountFactor;
 	}
 
 
@@ -1326,6 +1327,38 @@ public class Data {
 	public void setResult_constructionStartSecondaryFacility(double[][] result_constructionStartSecondaryFacility) {
 		this.result_constructionStartSecondaryFacility = result_constructionStartSecondaryFacility;
 	}
+
+	/**
+	 * @return the parameter_discountFactor_timing
+	 */
+	public double getParameter_discountFactor_timing() {
+		return parameter_discountFactor_timing;
+	}
+
+
+	/**
+	 * @param parameter_discountFactor_timing the parameter_discountFactor_timing to set
+	 */
+	public void setParameter_discountFactor_timing(double parameter_discountFactor_timing) {
+		this.parameter_discountFactor_timing = parameter_discountFactor_timing;
+	}
+
+
+	/**
+	 * @return the parameter_discountFactor_location
+	 */
+	public double getParameter_discountFactor_location() {
+		return parameter_discountFactor_location;
+	}
+
+
+	/**
+	 * @param parameter_discountFactor_location the parameter_discountFactor_location to set
+	 */
+	public void setParameter_discountFactor_location(double parameter_discountFactor_location) {
+		this.parameter_discountFactor_location = parameter_discountFactor_location;
+	}
+
 
 	/**
 	 * Increments period count by one
