@@ -171,6 +171,10 @@ public class LocationPlanningModel extends IloCplex {
 		this.capacityExpansionAmount = new IloNumVar[this.F][this.T]; // q_ft
 	}
 
+	
+	
+	// TODO: should be deleted in the end, here only for testing
+	
 	public static void main(String[] args)
 			throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 		int x = 0;
@@ -184,6 +188,32 @@ public class LocationPlanningModel extends IloCplex {
 		ReadAndWrite.writeSolution(instanz);
 		// lpm.ergebnisschreibenRobust(lpm);
 	}
+	
+	
+	/**
+	 * Runs the Location Planning Model 
+	 * @throws IloException
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws RowsExceededException
+	 * @throws WriteException
+	 */
+	public void run (Data dataInstance) throws IloException, BiffException, IOException, RowsExceededException, WriteException {
+
+		LocationPlanningModel lpm = new LocationPlanningModel(dataInstance);
+		
+		// TODO: ReadAndWrite.createAndWriteDict(this); darf erst nach Timing Model call aufgerufen werden
+
+		lpm.build();
+		lpm.solve();
+		lpm.writeSolution(new int[] { 1, 2, 3 }, dataInstance);
+		ReadAndWrite.writeSolution(dataInstance);
+		// lpm.ergebnisschreibenRobust(lpm);
+		
+		
+	}
+	
+	
 
 	public void build() throws IloException {
 		long start = System.currentTimeMillis();

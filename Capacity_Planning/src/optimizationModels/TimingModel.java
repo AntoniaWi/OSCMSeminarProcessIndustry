@@ -1,5 +1,6 @@
 package optimizationModels;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import dataManagement.Data;
@@ -7,35 +8,86 @@ import dataManagement.ReadAndWrite;
 import dataManagement.StdRandom;
 import helper.Event;
 import helper.Permuter;
+import ilog.concert.IloException;
+import jxl.read.biff.BiffException;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 public class TimingModel {
 	
-	private static Data dataInstance;
+	private Data dataInstance;
 	
-	public static void main(String[] args) {
+	
+	public TimingModel (Data dataInstance) {
+		
+		this.dataInstance = dataInstance;
+		
+	}
+	
+	public static void main(String[] args) throws BiffException, IOException, WriteException {
 		
 		// Get all the parameters
 		
-		dataInstance = new Data();
+		Data dataInstance = new Data();
+		
+		TimingModel tm = new TimingModel (dataInstance);
 		
 		// Generate console output
 		
 		// TODO Check if all important parameters are printed out
 		
-		printTimingModelInformationStart();
+		tm.printTimingModelInformationStart();
 				
 		int period = 1;
 		
 		while (period <= dataInstance.getParameter_planningHorizon()) {
 			
-			newPeriod();
+			tm.newPeriod();
 			period++;
 			
 		}
 		
 		// Generate console output
 		
-		printTimingModelInformationEnd();
+		tm.printTimingModelInformationEnd();
+		
+		
+	}
+	
+	
+	
+	
+	
+	public void run () throws IloException, BiffException, IOException, RowsExceededException, WriteException {
+		
+		// Get all the parameters
+		
+		Data dataInstance = new Data();
+		
+		// Data dataInstance = new Data(x);
+		
+		TimingModel tm = new TimingModel (dataInstance);
+		
+		// Generate console output
+		
+		// TODO Check if all important parameters are printed out
+		
+		tm.printTimingModelInformationStart();
+				
+		int period = 1;
+		
+		while (period <= dataInstance.getParameter_planningHorizon()) {
+			
+			tm.newPeriod();
+			period++;
+			
+		}
+		
+		// Generate console output
+		
+		tm.printTimingModelInformationEnd();
+		
+		
 	}
 	
 	
@@ -50,15 +102,15 @@ public class TimingModel {
 	/**
 	 * 
 	 */
-	public static void newPeriod () {
+	public void newPeriod () {
 		
 		// New period
 		
-		dataInstance.incrementCountPeriods();
+		this.dataInstance.incrementCountPeriods();
 		
 		// Update most-up-to-date knowledge to gamma_t-1 and zeta_t-1
 		
-		TimingModel.updateFormerKnowledge();
+		this.updateFormerKnowledge();
 		
 		// Build scenario tree
 		
@@ -74,20 +126,22 @@ public class TimingModel {
 		
 		// Set investment decision and fill a_t and s_t
 		
-		TimingModel.setNewInvesmentDecision(cost, strategies);
+		this.setNewInvesmentDecision(cost, strategies);
 		
 		if (dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()] == 1) {
 			
 			// TODO: call Location Planning Model
+			
+			// 
 		}
 		
 		// New test result
 		
-		TimingModel.newTestResult();
+		this.newTestResult();
 		
 		// Print all information regarding the new period
 		
-		TimingModel.printPeriodInformation();
+		this.printPeriodInformation();
 	}
 	
 	
@@ -96,7 +150,7 @@ public class TimingModel {
 	 * @param period
 	 * @return
 	 */
-	public static ArrayList<ArrayList<Event>> generateScenarioTree (int period) {
+	public ArrayList<ArrayList<Event>> generateScenarioTree (int period) {
 		
 		ArrayList<ArrayList<Event>> scenarioTree = new ArrayList<ArrayList<Event>>();
 		
@@ -105,7 +159,7 @@ public class TimingModel {
 		
 		int count = 0;
 		
-		for (int t = period; t <= dataInstance.getParameter_planningHorizon()+1; t++) {
+		for (int t = period; t <= this.dataInstance.getParameter_planningHorizon()+1; t++) {
 			
 			ArrayList<Event> period_t = new ArrayList<Event>();
 			scenarioTree.add(period_t);
@@ -123,7 +177,7 @@ public class TimingModel {
 				
 				// Is it a final event for which cost can be calculated?
 				
-				if (t == dataInstance.getParameter_planningHorizon()+1) {
+				if (t == this.dataInstance.getParameter_planningHorizon()+1) {
 					tmp_event.setFinalEvent(true);
 				}
 				else {
@@ -134,7 +188,7 @@ public class TimingModel {
 				
 				if (t == period) {
 					tmp_event.setFirstEvent(true);
-					tmp_event.setTestResult(dataInstance.getTestResults()[period-1]);
+					tmp_event.setTestResult(this.dataInstance.getTestResults()[period-1]);
 				}
 				else {
 					tmp_event.setFirstEvent(false);
@@ -202,8 +256,8 @@ public class TimingModel {
 				
 				if (t == 0) {
 					
-					event_tmp.setCountSuccessfulTestResults(dataInstance.getCountSuccessfulTests()[period-1]);
-					event_tmp.setCountFailedTestResults(dataInstance.getCountFailedTests()[period-1]);
+					event_tmp.setCountSuccessfulTestResults(this.dataInstance.getCountSuccessfulTests()[period-1]);
+					event_tmp.setCountFailedTestResults(this.dataInstance.getCountFailedTests()[period-1]);
 				}
 				
 				else {
@@ -261,15 +315,15 @@ public class TimingModel {
 	 * 
 	 * @return
 	 */
-	public static ArrayList<int[]> generateAllPossibleStrategies() {
+	public ArrayList<int[]> generateAllPossibleStrategies() {
 		
 		ArrayList<int[]> futureStrategies = new ArrayList<int[]> ();
 			
-		int doneInvestments = TimingModel.countTrueValuesInArray(dataInstance.getInvestmentDecisionPrimaryFacility());
+		int doneInvestments = TimingModel.countTrueValuesInArray(this.dataInstance.getInvestmentDecisionPrimaryFacility());
 		
-		int remainingPossibleInvestment = dataInstance.getParameter_monthsToBuildPrimaryFacilities() - doneInvestments;
+		int remainingPossibleInvestment = this.dataInstance.getParameter_monthsToBuildPrimaryFacilities() - doneInvestments;
 		
-		int remainingPeriods = (dataInstance.getParameter_planningHorizon() - dataInstance.getCountPeriods()) + 1;
+		int remainingPeriods = (this.dataInstance.getParameter_planningHorizon() - this.dataInstance.getCountPeriods()) + 1;
 		
 		int max_length = Math.min(remainingPeriods, remainingPossibleInvestment);
 		
@@ -290,7 +344,7 @@ public class TimingModel {
 		
 		}
 		
-		ArrayList<int[]> strategies = TimingModel.addAllFormerInvestmentStrategies(futureStrategies);
+		ArrayList<int[]> strategies = this.addAllFormerInvestmentStrategies(futureStrategies);
 		return strategies;
 	}
 	
@@ -299,20 +353,20 @@ public class TimingModel {
 	 * 
 	 * @param futureStrategies
 	 */
-	public static ArrayList<int[]> addAllFormerInvestmentStrategies (ArrayList<int[]> futureStrategies) {
+	public ArrayList<int[]> addAllFormerInvestmentStrategies (ArrayList<int[]> futureStrategies) {
 		
 		ArrayList<int[]> strategies = new ArrayList<int[]>();
 		
 		for (int i = 0; i < futureStrategies.size(); i++) {
 			
-			int [] strategy = new int [dataInstance.getParameter_planningHorizon()+1];
+			int [] strategy = new int [this.dataInstance.getParameter_planningHorizon()+1];
 			
 			int index_1 = 0;
 			int index_2 = 0;
 			
-			while (index_1 < dataInstance.getCountPeriods()) {
+			while (index_1 < this.dataInstance.getCountPeriods()) {
 				
-				strategy[index_1] = dataInstance.getInvestmentDecisionPrimaryFacility()[index_1];	
+				strategy[index_1] = this.dataInstance.getInvestmentDecisionPrimaryFacility()[index_1];	
 				index_1++;
 			}
 			
@@ -338,11 +392,11 @@ public class TimingModel {
 	 * @param periodsToBuild
 	 * @return
 	 */
-	public static int calculateRemainingPeriodsToBuildPrimaryFacility(int period, int [] strategy, int periodsToBuild) {
+	public int calculateRemainingPeriodsToBuildPrimaryFacility(int period, int [] strategy, int periodsToBuild) {
 
 		int count = 0;
 		
-		int [] array_tmp = new int[dataInstance.getParameter_planningHorizon()+1];
+		int [] array_tmp = new int[this.dataInstance.getParameter_planningHorizon()+1];
 		
 		int index = 0;
 		
@@ -350,7 +404,7 @@ public class TimingModel {
 		
 		while (index <= period-1) {
 			
-			array_tmp[index] = dataInstance.getInvestmentDecisionPrimaryFacility()[index];
+			array_tmp[index] = this.dataInstance.getInvestmentDecisionPrimaryFacility()[index];
 			index++;
 		}
 		
@@ -389,15 +443,15 @@ public class TimingModel {
 	 * @param strategies
 	 * @return
 	 */
-	public static ArrayList<Double> calculateV (int period, ArrayList<ArrayList<Event>> scenarioTree, ArrayList<int[]> strategies) {
+	public ArrayList<Double> calculateV (int period, ArrayList<ArrayList<Event>> scenarioTree, ArrayList<int[]> strategies) {
 		
 		ArrayList<Double> cost = new ArrayList<Double>();
 		
-		double c = dataInstance.getParameter_constructionCostPrimaryFacility();
-		double K = dataInstance.getParameter_setupCostPrimaryFacility();
-		double phi = dataInstance.getParameter_penaltyCost();
-		int gamma_c = dataInstance.getParameter_thresholdSuccessfulTests();
-		double alpha = dataInstance.getParameter_discountFactor();
+		double c = this.dataInstance.getParameter_constructionCostPrimaryFacility();
+		double K = this.dataInstance.getParameter_setupCostPrimaryFacility();
+		double phi = this.dataInstance.getParameter_penaltyCost();
+		int gamma_c = this.dataInstance.getParameter_thresholdSuccessfulTests();
+		double alpha = this.dataInstance.getParameter_discountFactor();
 		
 		// Do the cost calculation for every possible strategy
 		
@@ -418,7 +472,7 @@ public class TimingModel {
 						
 			cost.add(scenarioTree.get(0).get(0).getTotalCost());
 			
-			TimingModel.printScenarioTree(scenarioTree);
+			// TimingModel.printScenarioTree(scenarioTree);
 
 		}
 		
@@ -429,22 +483,44 @@ public class TimingModel {
 	/**
 	 * 
 	 */
-	public static void newTestResult () {
+	public void newTestResult () {
 		
-		double p = dataInstance.calculateTestProbability();
+		double p = this.dataInstance.calculateTestProbability();
 		
 		boolean newTestResult = StdRandom.bernoulli(p); 
 		
 		if (newTestResult == true) {
 			
-			dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 1;
+			this.dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 1;
 		}
 		
 		else {
 			
-			dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 0;
+			this.dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 0;
 		}	
 	}
+	
+	
+	/**
+	 * 
+	 * @throws IloException
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws RowsExceededException
+	 * @throws WriteException
+	 */
+	public static void runLocationModel (Data dataInstance) throws IloException, BiffException, IOException, RowsExceededException, WriteException {
+
+		LocationPlanningModel lpm = new LocationPlanningModel(dataInstance);
+
+		lpm.build();
+		lpm.solve();
+		lpm.writeSolution(new int[] { 1, 2, 3 }, dataInstance);
+		ReadAndWrite.writeSolution(dataInstance);
+	
+	}
+	
+	
 	
 	
 	// -------------------------------------------------------------------------------------------------------------------//
@@ -527,28 +603,28 @@ public class TimingModel {
 	 * @param cost
 	 * @param strategies
 	 */
-	public static void setNewInvesmentDecision (ArrayList<Double> cost, ArrayList<int[]> strategies) {
+	public void setNewInvesmentDecision (ArrayList<Double> cost, ArrayList<int[]> strategies) {
 		
 		int min_cost_index = searchForMin (cost);
 		
-		int period = dataInstance.getCountPeriods();
+		int period = this.dataInstance.getCountPeriods();
 		
-		dataInstance.setInvestmentDecisionPrimaryFacility(period, strategies.get(min_cost_index)[period]);
-		dataInstance.addNewStrategyDecision(period, strategies.get(min_cost_index));
+		this.dataInstance.setInvestmentDecisionPrimaryFacility(period, strategies.get(min_cost_index)[period]);
+		this.dataInstance.addNewStrategyDecision(period, strategies.get(min_cost_index));
 		
-		dataInstance.calculateRemainingPeriodsToBuildPrimaryFacility(dataInstance.getCountPeriods() + 1);
+		this.dataInstance.calculateRemainingPeriodsToBuildPrimaryFacility(dataInstance.getCountPeriods() + 1);
 	}
 	
 	
 	/**
 	 * 
 	 */
-	public static void updateFormerKnowledge () {
+	public void updateFormerKnowledge () {
 		
-		if (dataInstance.getCountPeriods() > 1) {
+		if (this.dataInstance.getCountPeriods() > 1) {
 			
-			dataInstance.updateCountSuccessfulTests(dataInstance.getCountPeriods());
-			dataInstance.updateCountFailedTests(dataInstance.getCountPeriods());
+			this.dataInstance.updateCountSuccessfulTests(this.dataInstance.getCountPeriods());
+			this.dataInstance.updateCountFailedTests(this.dataInstance.getCountPeriods());
 		}
 	}
 	
@@ -585,7 +661,7 @@ public class TimingModel {
 	/**
 	 * 
 	 */
-	public static void printPeriodInformation () {
+	public void printPeriodInformation () {
 		
 		System.out.println("");
 		
@@ -593,7 +669,7 @@ public class TimingModel {
 		
 		System.out.println("");
 		
-		System.out.println("Period # " + dataInstance.getCountPeriods() );
+		System.out.println("Period # " + this.dataInstance.getCountPeriods() );
 		
 		System.out.println("");
 		
@@ -601,8 +677,8 @@ public class TimingModel {
 		
 		System.out.println("");
 		
-		System.out.println("  - Gamma_" + (dataInstance.getCountPeriods() - 1) + " = " + dataInstance.getCountSuccessfulTests()[dataInstance.getCountPeriods() -1]);
-		System.out.println("  - Zeta_" + (dataInstance.getCountPeriods() - 1) + " = " + dataInstance.getCountFailedTests()[dataInstance.getCountPeriods() -1]);
+		System.out.println("  - Gamma_" + (this.dataInstance.getCountPeriods() - 1) + " = " + this.dataInstance.getCountSuccessfulTests()[this.dataInstance.getCountPeriods() -1]);
+		System.out.println("  - Zeta_" + (this.dataInstance.getCountPeriods() - 1) + " = " + this.dataInstance.getCountFailedTests()[this.dataInstance.getCountPeriods() -1]);
 		
 		System.out.println("");
 		
@@ -610,7 +686,7 @@ public class TimingModel {
 		
 		System.out.println("");
 		
-		System.out.println("  - Investment (yes or no): " + dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()]);
+		System.out.println("  - Investment (yes or no): " + this.dataInstance.getInvestmentDecisionPrimaryFacility()[this.dataInstance.getCountPeriods()]);
 		System.out.println("  - Location: " + "empty" );
 		
 		System.out.println("");
@@ -619,8 +695,8 @@ public class TimingModel {
 		
 		System.out.println("");
 		
-		System.out.println("  - Probability p = " + dataInstance.getTestProbability()[dataInstance.getCountPeriods()]);		
-		System.out.println("  - New test result: " + dataInstance.getTestResults()[dataInstance.getCountPeriods() ]);
+		System.out.println("  - Probability p = " + this.dataInstance.getTestProbability()[this.dataInstance.getCountPeriods()]);		
+		System.out.println("  - New test result: " + this.dataInstance.getTestResults()[this.dataInstance.getCountPeriods() ]);
 		
 	}
 	
@@ -628,28 +704,28 @@ public class TimingModel {
 	/**
 	 * 
 	 */
-	public static void printTimingModelInformationStart () {
+	public void printTimingModelInformationStart () {
 		
 		System.out.println("Timing Model starts with following parameters:");
 		
 		System.out.println("");
 		
-		System.out.println("Planning horizon (T): " + dataInstance.getParameter_planningHorizon());
-		System.out.println("Discount factor (alpha): " + dataInstance.getParameter_discountFactor());
+		System.out.println("Planning horizon (T): " + this.dataInstance.getParameter_planningHorizon());
+		System.out.println("Discount factor (alpha): " + this.dataInstance.getParameter_discountFactor());
 		
-		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstance.getParameter_monthsToBuildPrimaryFacilities());
-		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstance.getParameter_monthsToBuildSecondaryFacilities());
+		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + this.dataInstance.getParameter_monthsToBuildPrimaryFacilities());
+		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + this.dataInstance.getParameter_monthsToBuildSecondaryFacilities());
 		
-		System.out.println("Construction cost of a primary facility (c_p): " + dataInstance.getParameter_constructionCostPrimaryFacility());
-		System.out.println("Construction cost of a secondary facility (c_s): " + dataInstance.getParameter_constructionCostSecondaryFacility());
+		System.out.println("Construction cost of a primary facility (c_p): " + this.dataInstance.getParameter_constructionCostPrimaryFacility());
+		System.out.println("Construction cost of a secondary facility (c_s): " + this.dataInstance.getParameter_constructionCostSecondaryFacility());
 		
-		System.out.println("Setup cost for a primary facility (K_p): " + dataInstance.getParameter_setupCostPrimaryFacility());
-		System.out.println("Setup cost for a secondary facility (K_s): " + dataInstance.getParameter_setupCostSecondaryFacility());
+		System.out.println("Setup cost for a primary facility (K_p): " + this.dataInstance.getParameter_setupCostPrimaryFacility());
+		System.out.println("Setup cost for a secondary facility (K_s): " + this.dataInstance.getParameter_setupCostSecondaryFacility());
 		
-		System.out.println("Penalty cost (Phi): " + dataInstance.getParameter_penaltyCost());
+		System.out.println("Penalty cost (Phi): " + this.dataInstance.getParameter_penaltyCost());
 		
-		System.out.println("Preliminary knowledge of successful tests (gamma): " + dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests());
-		System.out.println("Preliminary knowledge of failed tests (zeta): " + dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests());
+		System.out.println("Preliminary knowledge of successful tests (gamma): " + this.dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests());
+		System.out.println("Preliminary knowledge of failed tests (zeta): " + this.dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests());
 
 		System.out.println("");
 		
@@ -660,7 +736,7 @@ public class TimingModel {
 	/**
 	 * 
 	 */
-	public static void printTimingModelInformationEnd () {
+	public void printTimingModelInformationEnd () {
 		
 		System.out.println("");
 		
@@ -672,13 +748,13 @@ public class TimingModel {
 		//ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountFailedTests(), "Failed Tests (zeta)");
 		//ReadAndWrite.printArrayWithPeriodsDouble(dataInstance.getTestProbability(), "Test Probability (p)");
 		
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getTestResults(), "Test Results (delta)");
+		ReadAndWrite.printArrayWithPeriodsInt(this.dataInstance.getTestResults(), "Test Results (delta)");
 		
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getInvestmentDecisionPrimaryFacility(), "Investment decision (a)");
+		ReadAndWrite.printArrayWithPeriodsInt(this.dataInstance.getInvestmentDecisionPrimaryFacility(), "Investment decision (a)");
 		
-		for (int i = 1; i < dataInstance.getInvestmentStrategies().length; i++) {
+		for (int i = 1; i < this.dataInstance.getInvestmentStrategies().length; i++) {
 			
-			ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getInvestmentStrategies()[i],"Investment strategy in period " + i + ":");
+			ReadAndWrite.printArrayWithPeriodsInt(this.dataInstance.getInvestmentStrategies()[i],"Investment strategy in period " + i + ":");
 		}
 	}
 	
