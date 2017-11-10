@@ -214,7 +214,7 @@ public class LocationPlanningModel extends IloCplex {
 		// 8th constraint
 		this.addConstraintCapacityRestrictionForProduction();
 		// 9th constraint
-		// this.addConstraintLowerLimitOfProduction();
+		//this.addConstraintLowerLimitOfProduction();
 		// 10th constraint
 		this.addConstraintSupplyAndDemand();
 		// 11th constraint
@@ -590,7 +590,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.massbalanceEquation2.clear();
 		this.massbalanceEquation3.clear();
 
-		for (int i = 0; i < this.F; i++) {
+		/*for (int i = 0; i < this.F; i++) {
 			for (int j = 0; j < this.I; j++) {
 				for (int k = 0; k < this.T; k++) {
 					for (int m = 0; m < this.F; m++) {
@@ -603,12 +603,12 @@ public class LocationPlanningModel extends IloCplex {
 					}
 				}
 			}
-		}
+		}*/
 
 		for (int i = 0; i < this.F; i++) {
 			for (int j = 0; j < this.I; j++) {
 				if (IF[i]) {
-					// if (OM[i][j] || IM[i][j]) {
+					if (OM[i][j] || IM[i][j]) {
 					for (int k = 0; k < this.T; k++) {
 						// this.massbalanceEquation1.clear();
 						this.massbalanceEquation2.clear();
@@ -636,6 +636,16 @@ public class LocationPlanningModel extends IloCplex {
 								massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
 										this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
 							}
+							/*if (OM[i][j] && IM[m][j]) {
+								massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+										this.shippedMaterialUnitsSupplierToFacility[j][i][m][k]);
+							}
+
+							else if (IM[i][j] && OM[m][j]) {
+
+								massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
+										this.shippedMaterialUnitsFacilityToCustomer[j][m][i][k]);
+							}*/
 							// }
 
 							// }
@@ -645,13 +655,15 @@ public class LocationPlanningModel extends IloCplex {
 							 * System.out.println( "facility " + (i + 1) + " s/c " + (m + 1) + " material "
 							 * + (j + 1)); }
 							 */
-
+							addEq(this.shippedMaterialUnitsSupplierToFacility[j][m][i][k],
+									this.shippedMaterialUnitsFacilityToCustomer[j][m][i][k]);
 						}
 						// Second equation
 						addEq(this.massbalanceEquation2, this.massbalanceEquation3);
+						
 					}
 
-					// }
+					}
 
 				}
 			}
@@ -686,49 +698,49 @@ public class LocationPlanningModel extends IloCplex {
 	 */
 	private void addConstraintLowerLimitOfProduction() throws IloException {
 
+		//this.lowerLimitForProductionPF.clear();
 		this.lowerLimitForProductionPF1.clear();
-		this.lowerLimitForProductionPF2.clear();
 		this.lowerLimitForProductionSF.clear();
 
-		/*
-		 * for (int j = 0; j < this.T; j++) { for (int i = 0; i < this.F; i++) {
-		 * this.lowerLimitForProductionPF.clear();
-		 * this.lowerLimitForProductionSF.clear(); if (IF[i] && PIF[i]) {
-		 * 
-		 * int tau1 = this.T - this.monthsToBuildPrimaryFacility; if (tau1 < 0) { tau1 =
-		 * 0; } for (int k = 0; k < tau1; k++) {
-		 * 
-		 * this.lowerLimitForProductionPF.addTerm(this.lowerLimitProductionAPI[i],
-		 * this.constructionStartPrimaryFacility[i][k]);
-		 * 
-		 * }
-		 * 
-		 * addLe(this.lowerLimitForProductionPF, this.consumedOrProducedAPI[i][j]);
-		 * 
-		 * }
-		 * 
-		 * else if (IF[i] && SIF[i]) { int tau2 = this.T -
-		 * this.monthsToBuildSecondaryFacility; if (tau2 < 0) { tau2 = 0; } for (int k =
-		 * 0; k < tau2; k++) {
-		 * 
-		 * this.lowerLimitForProductionSF.addTerm(this.lowerLimitProductionAPI[i],
-		 * this.constructionStartSecondaryFacility[i][k]);
-		 * 
-		 * }
-		 * 
-		 * addLe(this.lowerLimitForProductionSF, this.consumedOrProducedAPI[i][j]); } }
-		 * }
-		 */
+		
+		  for (int j = 0; j < this.T; j++) { for (int i = 0; i < this.F; i++) {
+		 this.lowerLimitForProductionPF1.clear();
+		  this.lowerLimitForProductionSF.clear(); if (IF[i] && PIF[i]) {
+		  
+		  int tau1 = this.T - this.monthsToBuildPrimaryFacility; if (tau1 < 0) { tau1 =
+		  0; } for (int k = 0; k < tau1; k++) {
+		  
+		 this.lowerLimitForProductionPF1.addTerm(this.lowerLimitProductionAPI[i],
+		 this.constructionStartPrimaryFacility[i][k]);
+		  
+		 }
+		  
+		  addLe(this.lowerLimitForProductionPF1, this.consumedOrProducedAPI[i][j]);
+		 
+		  }
+		  
+		  else if (IF[i] && SIF[i]) { int tau2 = this.T -
+		  this.monthsToBuildSecondaryFacility; if (tau2 < 0) { tau2 = 0; } for (int k =
+		  0; k < tau2; k++) {
+		  
+		  this.lowerLimitForProductionSF.addTerm(this.lowerLimitProductionAPI[i],
+		  this.constructionStartSecondaryFacility[i][k]);
+		  
+		  }
+		  
+		  addLe(this.lowerLimitForProductionSF, this.consumedOrProducedAPI[i][j]); } }
+		  }
+		 
 
-		/*
-		 * for (int i=0; i<this.monthsToBuildPrimaryFacility; i++) { for (int j=0;
-		 * j<this.F; j++) { this.lowerLimitForProductionPF1.clear(); if (IF[j]&&PIF[j])
-		 * { this.lowerLimitForProductionPF1.addTerm(1,
-		 * this.consumedOrProducedAPI[j][i]); }
-		 * addEq(this.lowerLimitForProductionPF1,0); } }
-		 */
+		
+		  for (int i=0; i<this.monthsToBuildPrimaryFacility; i++) { for (int j=0;
+		  j<this.F; j++) { this.lowerLimitForProductionPF1.clear(); if (IF[j]&&PIF[j])
+		  { this.lowerLimitForProductionPF1.addTerm(1,
+		  this.consumedOrProducedAPI[j][i]); }
+		  addEq(this.lowerLimitForProductionPF1,0); } }
+		 
 
-		for (int i = (this.monthsToBuildPrimaryFacility); i < this.T; i++) {
+		/*for (int i = (this.monthsToBuildPrimaryFacility); i < this.T; i++) {
 			for (int j = 0; j < this.F; j++) {
 				if (IF[j] && PIF[j]) {
 					this.lowerLimitForProductionPF2.clear();
@@ -737,7 +749,7 @@ public class LocationPlanningModel extends IloCplex {
 					addLe(this.lowerLimitForProductionPF2, this.consumedOrProducedAPI[j][i]);
 				}
 			}
-		}
+		}*/
 	}
 
 	/**
