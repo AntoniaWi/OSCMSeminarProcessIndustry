@@ -34,7 +34,7 @@ public class Algorithm {
 	
 	public static void main (String [] args) throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 		
-		dataInstance = new Data (); 
+		dataInstance = new Data (1); 
 		
 		timingModel = new TimingModel(dataInstance);
 		

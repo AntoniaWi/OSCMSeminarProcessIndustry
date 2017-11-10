@@ -112,7 +112,6 @@ public class LocationPlanningModel extends IloCplex {
 		
 		this.datainstanz = datainstanz;
 		
-		ReadAndWrite.readConst(datainstanz);
 		ReadAndWrite.createAndWriteDict(datainstanz);
 		
 		// Sets
