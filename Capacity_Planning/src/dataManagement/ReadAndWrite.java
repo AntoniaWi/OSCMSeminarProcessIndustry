@@ -18,13 +18,14 @@ import java.io.IOException;
 import java.io.FileWriter;
 import java.util.*;
 
+import helper.Event;
 import jxl.*;
 
 import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 4;
+	public static int user = 3;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
@@ -35,7 +36,8 @@ public class ReadAndWrite {
 	public static String pathExcelSarahR = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\Result.xls";
 
 	// Paths Ramona #3
-	public static String pathExcelRamona = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseData-Basic.xlsx";// TODO:
+	public static String pathExcelRamona = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";  //TODO:
+	
 	// Paths Antonia Windows #4
 	public static String pathExcelAntonia1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";//
 	public static String pathExcelAntoniaR1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Result.xls";
@@ -455,10 +457,10 @@ public class ReadAndWrite {
 
 		// read numberMonths T
 
-		Cell cell13 = sheet.getCell(1, 8);
+		/*Cell cell13 = sheet.getCell(1, 8);
 		NumberCell cell14 = (NumberCell) cell13;
 		double cell15 = cell14.getValue();
-		instanz.setT((int) cell15);
+		instanz.setT((int) cell15);*/
 
 		// read numberOfNations N
 		Cell cell16 = sheet.getCell(1, 9);
@@ -504,11 +506,11 @@ public class ReadAndWrite {
 		double cell30 = cell29.getValue();
 		instanz.setTimeR((int) cell30);
 
-		// read remainingTimeOfClinicalTrials
+		/*// read remainingTimeOfClinicalTrials
 		Cell cell31 = sheet.getCell(1, 13);
 		NumberCell cell32 = (NumberCell) cell31;
 		double cell33 = cell32.getValue();
-		instanz.setRemainingTimeofClinicalTrials((int) cell33);
+		instanz.setRemainingTimeofClinicalTrials((int) cell33);*/
 
 	}
 
@@ -849,7 +851,7 @@ public class ReadAndWrite {
 		Sheet sheet2 = workbook.getSheet("CIF2sf");
 		Sheet sheet3 = workbook.getSheet("CIF3sf");
 		Sheet sheet4 = workbook.getSheet("CIF4sf");
-		//Sheet sheet5 = workbook.getSheet("CIF5sf");
+		
 
 		// read CIF[i][s][f]
 
@@ -879,12 +881,7 @@ public class ReadAndWrite {
 						NumberCell cell2 = (NumberCell) cell1;
 						double cell3 = cell2.getValue();
 						CIF[i][j][k] = cell3;
-					} /*else if (i == 4) {
-						Cell cell1 = sheet5.getCell(k + 1, j + 1);
-						NumberCell cell2 = (NumberCell) cell1;
-						double cell3 = cell2.getValue();
-						CIF[i][j][k] = cell3;
-					}*/
+					} 
 
 				}
 
@@ -1293,6 +1290,40 @@ public class ReadAndWrite {
 		}
 
 		System.out.println("");
+	}
+	
+	
+	/**
+	 * 
+	 * @param strategies
+	 */
+	public static void printStrategies (ArrayList<int[]> strategies, int period) {
+		
+		System.out.println("\n\n--------------------------------------------------------------------------------");
+		
+		System.out.println ("\nStrategies for period: " + period);
+		
+		for (int i = 0; i < strategies.size(); i++) {
+			
+			ReadAndWrite.printArraySimple(strategies.get(i));
+		}
+		
+		System.out.println("\n--------------------------------------------------------------------------------\n\n");
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void printScenarioTree (ArrayList<ArrayList<Event>> scenarioTree) {
+		
+		for (int t = 0; t < scenarioTree.size(); t++) {
+			
+			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
+				
+				System.out.println(scenarioTree.get(t).get(index).toString());
+			}
+		}
 	}
 
 }
