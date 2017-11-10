@@ -126,8 +126,8 @@ public class LocationPlanningModel extends IloCplex {
 		this.I = datainstanz.getI(); // number of material types
 		this.F = datainstanz.getF(); // number of all facilities
 		this.T = datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR();
+		this.datainstanz.setT(this.T);
 		ReadAndWrite.writeTransferParameter(datainstanz);
-		
 		ReadAndWrite.createAndWriteDict(datainstanz);
 		
 		this.N = datainstanz.getN(); // number of nations
