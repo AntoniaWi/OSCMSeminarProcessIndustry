@@ -468,18 +468,7 @@ public class ReadAndWrite {
 		double cell18 = cell17.getValue();
 		instanz.setN((int) cell18);
 
-		// read budget
-		Cell cell4 = sheet.getCell(1, 2);
-		NumberCell cell5 = (NumberCell) cell4;
-		double cell6 = cell5.getValue();
-
-		double budget[] = new double[instanz.getT()];
-		budget[0] = cell6;
-		for (int i = 1; i < instanz.getT(); i++) {
-			budget[i] = 0;
-		}
-		instanz.setCapitalBudget(budget);
-
+		
 		// read initial capacity Q0
 
 		Cell cell19 = sheet.getCell(1, 3);
@@ -759,6 +748,7 @@ public class ReadAndWrite {
 		writableWorkbook = Workbook.createWorkbook(file1, workbook1);
 
 		WritableSheet sheet0 = writableWorkbook.getSheet("Dict");
+		Sheet sheet = workbook1.getSheet("Const.");
 
 		// headings
 
@@ -804,6 +794,21 @@ public class ReadAndWrite {
 		}
 		instanz.setDemand(Dict);
 
+		
+		// read budget
+				Cell cell4 = sheet.getCell(1, 2);
+				NumberCell cell5 = (NumberCell) cell4;
+				double cell6 = cell5.getValue();
+
+				double budget[] = new double[instanz.getT()];
+				budget[0] = cell6;
+				for (int i = 1; i < instanz.getT(); i++) {
+					budget[i] = 0;
+				}
+				instanz.setCapitalBudget(budget);
+
+		
+		
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook1.close();
