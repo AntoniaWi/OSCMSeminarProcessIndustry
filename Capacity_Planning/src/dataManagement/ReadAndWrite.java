@@ -498,7 +498,7 @@ public class ReadAndWrite {
 		Cell cell31 = sheet.getCell(1, 15);
 		NumberCell cell32 = (NumberCell) cell31;
 		double cell33 = cell32.getValue();
-		instanz.setMonthlyDiscountFactor(cell33);
+		instanz.setParameter_discountFactor_location(cell33);
 
 		/*
 		 * // read remainingTimeOfClinicalTrials Cell cell31 = sheet.getCell(1, 13);

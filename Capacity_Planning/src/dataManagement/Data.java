@@ -75,7 +75,7 @@ public class Data {
 		private int API; //
 		private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
 		private int initialCapacity; // Q0
-		private double monthlyDiscountFactor;
+		
     
 		//Help parameter for demand
 		private double [] demandM; //demandM[f]
@@ -1347,6 +1347,22 @@ public class Data {
 
 
 
+
+
+	/**
+	 * @return the parameter_discountFactor_timing
+	 */
+	public double getParameter_discountFactor_timing() {
+		return parameter_discountFactor_timing;
+	}
+
+
+	/**
+	 * @param parameter_discountFactor_location the parameter_discountFactor_location to set
+	 */
+	public void setParameter_discountFactor_location(double parameter_discountFactor_location) {
+		this.parameter_discountFactor_location = parameter_discountFactor_location;
+	}
 
 
 	/**
