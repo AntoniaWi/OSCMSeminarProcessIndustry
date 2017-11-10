@@ -413,6 +413,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.limitationOfConstructionStartsSecondaryFacilities.clear();
 
 		for (int i = 0; i < this.F; i++) {
+			this.limitationOfConstructionStartsSecondaryFacilities.clear();
 			if (IF[i] && SIF[i]) {
 				for (int j = 0; j < this.T; j++) {
 
