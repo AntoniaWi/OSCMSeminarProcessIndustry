@@ -112,9 +112,10 @@ public class LocationPlanningModel extends IloCplex {
 		
 		this.datainstanz = datainstanz;
 		
-		this.datainstanz.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
+
+		datainstanz.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
+
 		ReadAndWrite.writeTransferParameter(datainstanz);
-		
 		ReadAndWrite.createAndWriteDict(datainstanz);
 		
 		// Initialization of decision variables

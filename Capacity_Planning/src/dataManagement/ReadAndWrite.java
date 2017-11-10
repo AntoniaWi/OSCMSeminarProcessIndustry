@@ -3,7 +3,7 @@ package dataManagement;
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex.UnknownObjectException;
 
-import java.io.File;
+import java.io.*;
 
 import jxl.*;
 import jxl.read.biff.BiffException;
@@ -493,6 +493,12 @@ public class ReadAndWrite {
 		NumberCell cell29 = (NumberCell) cell28;
 		double cell30 = cell29.getValue();
 		instanz.setTimeR((int) cell30);
+		
+		//read monthlyDiscountFactor
+		Cell cell31 = sheet.getCell(1, 15);
+		NumberCell cell32 = (NumberCell) cell31;
+		double cell33 = cell32.getValue();
+		instanz.setMonthlyDiscountFactor(cell33);
 
 		/*
 		 * // read remainingTimeOfClinicalTrials Cell cell31 = sheet.getCell(1, 13);
@@ -521,15 +527,7 @@ public class ReadAndWrite {
 
 		WritableSheet sheet = writableWorkbook.getSheet("Const.");
 
-		// clear sheets
-		int rows = sheet.getRows();
-		int r = 0;
-
-		while (r <= rows) {
-
-			sheet.removeRow(0);
-			r++;
-		}
+		
 
 		// remaining Time
 
@@ -736,11 +734,31 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 	public static void createAndWriteDict(Data instanz) throws BiffException, IOException, WriteException {
+		File file2;
+		Workbook workbook2;
+		choosePaths();
+		file2 = new File(path);
 
+		workbook2 = Workbook.getWorkbook(file2);
+		Sheet sheet = workbook2.getSheet("Const.");
+		
+		// read budget
+		Cell cell4 = sheet.getCell(1, 2);
+		NumberCell cell5 = (NumberCell) cell4;
+		double cell6 = cell5.getValue();
+
+		double budget[] = new double[instanz.getT()];
+		budget[0] = cell6;
+		for (int i = 1; i < instanz.getT(); i++) {
+			budget[i] = 0;
+		}
+		instanz.setCapitalBudget(budget);
+
+		
 		File file1;
 		WritableWorkbook writableWorkbook;
 		Workbook workbook1;
-
+		choosePaths();
 		file1 = new File(path);
 
 		workbook1 = Workbook.getWorkbook(file1);
@@ -797,26 +815,7 @@ public class ReadAndWrite {
 		writableWorkbook.close();
 		workbook1.close();
 
-		File file2;
-		Workbook workbook2;
-
-		file2 = new File(path);
-
-		workbook2 = Workbook.getWorkbook(file2);
-		Sheet sheet = workbook2.getSheet("Const.");
 		
-		// read budget
-		Cell cell4 = sheet.getCell(1, 2);
-		NumberCell cell5 = (NumberCell) cell4;
-		double cell6 = cell5.getValue();
-
-		double budget[] = new double[instanz.getT()];
-		budget[0] = cell6;
-		for (int i = 1; i < instanz.getT(); i++) {
-			budget[i] = 0;
-		}
-		instanz.setCapitalBudget(budget);
-
 		
 	}
 	// ____________________________________________________________________________________________
@@ -905,9 +904,6 @@ public class ReadAndWrite {
 		Sheet sheet4 = workbook.getSheet("CIF4sf");
 
 		// read CIF[i][s][f]
-
-		System.out.println(instanz.getI());
-		System.out.println(instanz.getF());
 
 		double[][][] CIF = new double[instanz.getI() - 1][instanz.getF()][instanz.getF()];
 
