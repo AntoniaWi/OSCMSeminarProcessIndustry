@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 3;
+	public static int user = 2;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
@@ -900,6 +900,9 @@ public class ReadAndWrite {
 		Sheet sheet4 = workbook.getSheet("CIF4sf");
 
 		// read CIF[i][s][f]
+		
+		System.out.println(instanz.getI());
+		System.out.println(instanz.getF());
 
 		double[][][] CIF = new double[instanz.getI() - 1][instanz.getF()][instanz.getF()];
 
