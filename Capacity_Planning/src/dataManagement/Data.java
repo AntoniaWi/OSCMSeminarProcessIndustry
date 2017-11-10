@@ -41,6 +41,9 @@ public class Data {
 	
 	private int [] investmentDecisionPrimaryFacility;					// a_p_t
 	private int investmentDecisionSecondaryFacility;					// a_s_T+1 - secondary facility is built in period T+1 if clinical trails are successful
+	private int[][] investmentStrategies;
+	
+	
 	
 	private int countPeriods;										// t
 	
@@ -107,7 +110,7 @@ public class Data {
 
 		this.parameter_planningHorizon = 3;
 		
-		this.parameter_discountFactor = 1.0;
+		this.parameter_discountFactor = 0.9;
 		
 		this.parameter_monthsToBuildPrimaryFacilities = 3;
 		this.parameter_monthsToBuildSecondaryFacilities = 3;
@@ -131,8 +134,6 @@ public class Data {
 		for (int i = 0; i < this.testResults.length; i++) {	
 			this.testResults[i] = -1;
 		}
-		
-		
 		
 		// Currently no knowledge available except from preliminary knowledge
 		
@@ -180,9 +181,20 @@ public class Data {
 		
 		this.investmentDecisionSecondaryFacility = -1;
 		
+		// Initiate strategy list to see how strategy updates influence the overall decision making, period 0 does not have any strategy
+		
+		this.investmentStrategies = new int [this.parameter_planningHorizon + 1][this.parameter_planningHorizon + 1];
+		
+		for (int i = 0; i < this.parameter_planningHorizon; i++) {
+			
+			this.investmentStrategies[0][i] = -1;
+		}
+		
+		
 		// Start in period t = 0
 		
 		this.countPeriods = 0;
+		
 				
 	}
 	
@@ -480,6 +492,20 @@ public class Data {
 		this.investmentDecisionSecondaryFacility = investmentDecisionSecondaryFacility;
 	}
 
+
+	/**
+	 * @return the investmentStrategies
+	 */
+	public int[][] getInvestmentStrategies() {
+		return investmentStrategies;
+	}
+
+	/**
+	 * @param investmentStrategies the investmentStrategies to set
+	 */
+	public void setInvestmentStrategies(int[][] investmentStrategies) {
+		this.investmentStrategies = investmentStrategies;
+	}
 
 	/**
 	 * @return the countPeriods
@@ -1330,6 +1356,18 @@ public class Data {
 	public void setInvestmentDecisionPrimaryFacility (int period, int new_decision) {
 		
 		this.investmentDecisionPrimaryFacility[period] = new_decision;
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @param period
+	 * @param strategy
+	 */
+	public void addNewStrategyDecision (int period, int [] strategy) {
+		
+		this.investmentStrategies[period] = strategy;
 		
 	}
 	
