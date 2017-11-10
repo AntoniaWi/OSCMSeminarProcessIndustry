@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.FileWriter;
 import java.util.*;
 
+import helper.Event;
 import jxl.*;
 
 import java.io.FileOutputStream;
@@ -1294,6 +1295,40 @@ public class ReadAndWrite {
 		}
 
 		System.out.println("");
+	}
+	
+	
+	/**
+	 * 
+	 * @param strategies
+	 */
+	public static void printStrategies (ArrayList<int[]> strategies, int period) {
+		
+		System.out.println("\n\n--------------------------------------------------------------------------------");
+		
+		System.out.println ("\nStrategies for period: " + period);
+		
+		for (int i = 0; i < strategies.size(); i++) {
+			
+			ReadAndWrite.printArraySimple(strategies.get(i));
+		}
+		
+		System.out.println("\n--------------------------------------------------------------------------------\n\n");
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static void printScenarioTree (ArrayList<ArrayList<Event>> scenarioTree) {
+		
+		for (int t = 0; t < scenarioTree.size(); t++) {
+			
+			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
+				
+				System.out.println(scenarioTree.get(t).get(index).toString());
+			}
+		}
 	}
 
 }

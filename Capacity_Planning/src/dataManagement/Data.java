@@ -110,7 +110,7 @@ public class Data {
 
 		this.parameter_planningHorizon = 3;
 		
-		this.parameter_discountFactor = 0.9;
+		this.parameter_discountFactor = 1.0;
 		
 		this.parameter_monthsToBuildPrimaryFacilities = 3;
 		this.parameter_monthsToBuildSecondaryFacilities = 3;
