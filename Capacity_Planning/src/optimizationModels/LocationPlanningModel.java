@@ -19,6 +19,8 @@ import lombok.Getter;
 
 public class LocationPlanningModel extends IloCplex {
 
+	private Data datainstanz;
+	
 	// Sets
 	private boolean[] IF; // IF[f] internal facilities
 	private boolean[] EF; // EF[f] external facilities
@@ -106,7 +108,13 @@ public class LocationPlanningModel extends IloCplex {
 	private IloLinearNumExpr depreciationChargeSecondaryFacilities = linearNumExpr();
 	private IloLinearNumExpr taxableIncomeConstraint = linearNumExpr();
 
-	public LocationPlanningModel(Data datainstanz) throws IloException {
+	public LocationPlanningModel(Data datainstanz) throws IloException, BiffException, WriteException, IOException {
+		
+		this.datainstanz = datainstanz;
+		
+		ReadAndWrite.readConst(datainstanz);
+		ReadAndWrite.createAndWriteDict(datainstanz);
+		
 		// Sets
 		this.IF = datainstanz.getIF(); // IF[f] internal facilities
 		this.EF = datainstanz.getEF(); // EF[f] external facilities
@@ -119,7 +127,7 @@ public class LocationPlanningModel extends IloCplex {
 		// Parameter
 		this.I = datainstanz.getI(); // number of material types
 		this.F = datainstanz.getF(); // number of all facilities
-		this.T = datainstanz.getT(); // number of months in planning horizon
+		this.T = datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR();
 		this.N = datainstanz.getN(); // number of nations
 		this.capitalBudget = datainstanz.getCapitalBudget();// capitalBudget[t]
 															// CB_t
@@ -145,7 +153,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.initialCapacity = datainstanz.getInitialCapacity(); // Q0
 
 		// Transfer parameter
-		this.remainingTimeOfClinicalTrials = datainstanz.getRemainingTimeofClinicalTrials();
+		//this.remainingTimeOfClinicalTrials = datainstanz.getRemainingTimeofClinicalTrials();
 		this.discountfactor = datainstanz.getParameter_discountFactor();
 		this.monthsToBuildPrimaryFacility = datainstanz.getParameter_monthsToBuildPrimaryFacilities();
 		this.monthsToBuildSecondaryFacility = datainstanz.getParameter_monthsToBuildSecondaryFacilities();
@@ -171,6 +179,10 @@ public class LocationPlanningModel extends IloCplex {
 		this.capacityExpansionAmount = new IloNumVar[this.F][this.T]; // q_ft
 	}
 
+	
+	
+	// TODO: should be deleted in the end, here only for testing
+	
 	public static void main(String[] args)
 			throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 		int x = 0;
@@ -184,6 +196,30 @@ public class LocationPlanningModel extends IloCplex {
 		ReadAndWrite.writeSolution(instanz);
 		// lpm.ergebnisschreibenRobust(lpm);
 	}
+	
+	
+	/**
+	 * Runs the Location Planning Model 
+	 * @throws IloException
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws RowsExceededException
+	 * @throws WriteException
+	 */
+	public void run () throws IloException, BiffException, IOException, RowsExceededException, WriteException {
+		
+		// TODO: ReadAndWrite.createAndWriteDict(this); darf erst nach Timing Model call aufgerufen werden
+
+		this.build();
+		this.solve();
+		this.writeSolution(new int[] { 1, 2, 3 }, datainstanz);
+		ReadAndWrite.writeSolution(this.datainstanz);
+		// lpm.ergebnisschreibenRobust(lpm);
+		
+		
+	}
+	
+	
 
 	public void build() throws IloException {
 		long start = System.currentTimeMillis();
@@ -350,8 +386,8 @@ public class LocationPlanningModel extends IloCplex {
 								- this.monthsToBuildSecondaryFacility]);
 			}
 		}
+		//addEq(this.numberOfSecondaryFacilities, 2);
 		addGe(this.numberOfSecondaryFacilities, 1);
-
 	}
 
 	/**
@@ -383,6 +419,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.limitationOfConstructionStartsSecondaryFacilities.clear();
 
 		for (int i = 0; i < this.F; i++) {
+			this.limitationOfConstructionStartsSecondaryFacilities.clear();
 			if (IF[i] && SIF[i]) {
 				for (int j = 0; j < this.T; j++) {
 

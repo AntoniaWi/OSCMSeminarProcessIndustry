@@ -1,13 +1,8 @@
 package dataManagement;
 
-import helper.Event;
-import ilog.concert.IloIntVar;
-import ilog.concert.IloNumVar;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
-
 import java.io.IOException;
-import java.util.*;
 
 public class Data {
 	
@@ -41,6 +36,9 @@ public class Data {
 	
 	private int [] investmentDecisionPrimaryFacility;					// a_p_t
 	private int investmentDecisionSecondaryFacility;					// a_s_T+1 - secondary facility is built in period T+1 if clinical trails are successful
+	private int[][] investmentStrategies;
+	
+	
 	
 	private int countPeriods;										// t
 	
@@ -132,7 +130,100 @@ public class Data {
 			this.testResults[i] = -1;
 		}
 		
+		// Currently no knowledge available except from preliminary knowledge
 		
+		this.countSuccessfulTests = new int [this.parameter_planningHorizon + 1];
+		this.countSuccessfulTests[0] = this.parameter_preliminaryKnowledgeAboutSuccessfulTests;
+	
+		for (int i = 1; i < this.countSuccessfulTests.length; i++) {	
+			this.countSuccessfulTests[i] = -1;
+		}
+		
+		// Currently no knowledge available except from preliminary knowledge
+		
+		this.countFailedTests = new int [this.parameter_planningHorizon + 1];
+		this.countFailedTests[0] = this.parameter_preliminaryKnowledgeAboutFailedTests;
+		
+		for (int i = 1; i < this.countFailedTests.length; i++) {	
+			this.countFailedTests[i] = -1;
+		}		
+		
+		// Currently only available for period 0
+		
+		this.remainingYearsToBuildPrimaryFacility = new int [this.parameter_planningHorizon + 2];
+		this.remainingYearsToBuildPrimaryFacility[0] = this.parameter_monthsToBuildPrimaryFacilities;
+		
+		for (int i = 1; i < this.remainingYearsToBuildPrimaryFacility.length; i++) {	
+			this.remainingYearsToBuildPrimaryFacility[i] = -1;
+		}	
+		
+		// Currently no investment decision about primary facility made
+		
+		this.investmentDecisionPrimaryFacility = new int [this.parameter_planningHorizon + 1];
+		this.investmentDecisionPrimaryFacility[0] = 0;
+		for (int i = 1; i < this.investmentDecisionPrimaryFacility.length; i++) {
+			this.investmentDecisionPrimaryFacility[i] = -1;
+		}
+		
+		// Currently no test probability is calculated
+		
+		this.testProbability = new double [this.parameter_planningHorizon + 1];
+		for (int i = 0; i < this.testProbability.length; i++) {
+			this.testProbability[i] = -1;
+		}
+		
+		// Currently no investment decision about secondary facility made
+		
+		this.investmentDecisionSecondaryFacility = -1;
+		
+		// Initiate strategy list to see how strategy updates influence the overall decision making, period 0 does not have any strategy
+		
+		this.investmentStrategies = new int [this.parameter_planningHorizon + 1][this.parameter_planningHorizon + 1];
+		
+		for (int i = 0; i < this.parameter_planningHorizon; i++) {
+			
+			this.investmentStrategies[0][i] = -1;
+		}
+		
+		
+		// Start in period t = 0
+		
+		this.countPeriods = 0;
+		
+				
+	}
+	
+	
+	/**
+	 * 
+	 * @param x
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws WriteException
+	 */
+	public Data (int x) throws BiffException, IOException, WriteException {
+		
+		ReadAndWrite.readDataTiming(this);
+		ReadAndWrite.readF(this);
+		ReadAndWrite.readFinN(this);
+		ReadAndWrite.readIMf(this);
+		ReadAndWrite.readOMf(this);
+		ReadAndWrite.readTRn(this);
+		ReadAndWrite.readMassbalance(this);
+		ReadAndWrite.readDataF(this);
+		ReadAndWrite.readSis(this);
+		ReadAndWrite.readPif(this);
+		ReadAndWrite.readIDsf(this);
+		ReadAndWrite.readCIFsf(this);
+		ReadAndWrite.readDictBasics(this);
+		
+		// Currently no test results are available
+		
+		this.testResults = new int [this.parameter_planningHorizon + 1];	
+		
+		for (int i = 0; i < this.testResults.length; i++) {	
+			this.testResults[i] = -1;
+		}
 		
 		// Currently no knowledge available except from preliminary knowledge
 		
@@ -180,28 +271,19 @@ public class Data {
 		
 		this.investmentDecisionSecondaryFacility = -1;
 		
+		// Initiate strategy list to see how strategy updates influence the overall decision making, period 0 does not have any strategy
+		
+		this.investmentStrategies = new int [this.parameter_planningHorizon + 1][this.parameter_planningHorizon + 1];
+		
+		for (int i = 0; i < this.parameter_planningHorizon; i++) {
+			
+			this.investmentStrategies[0][i] = -1;
+		}
+		
+		
 		// Start in period t = 0
 		
 		this.countPeriods = 0;
-				
-	}
-	
-	public Data (int x) throws BiffException, IOException, WriteException {
-		ReadAndWrite.readConst(this);
-		ReadAndWrite.readDataTiming(this);
-		ReadAndWrite.readF(this);
-		ReadAndWrite.readFinN(this);
-		ReadAndWrite.readIMf(this);
-		ReadAndWrite.readOMf(this);
-		ReadAndWrite.readTRn(this);
-		ReadAndWrite.readMassbalance(this);
-		ReadAndWrite.readDataF(this);
-		ReadAndWrite.readSis(this);
-		ReadAndWrite.readPif(this);
-		ReadAndWrite.readIDsf(this);
-		ReadAndWrite.readCIFsf(this);
-		ReadAndWrite.readDictBasics(this);
-		ReadAndWrite.createAndWriteDict(this);
 		
 	
 		}
@@ -480,6 +562,20 @@ public class Data {
 		this.investmentDecisionSecondaryFacility = investmentDecisionSecondaryFacility;
 	}
 
+
+	/**
+	 * @return the investmentStrategies
+	 */
+	public int[][] getInvestmentStrategies() {
+		return investmentStrategies;
+	}
+
+	/**
+	 * @param investmentStrategies the investmentStrategies to set
+	 */
+	public void setInvestmentStrategies(int[][] investmentStrategies) {
+		this.investmentStrategies = investmentStrategies;
+	}
 
 	/**
 	 * @return the countPeriods
@@ -1330,6 +1426,18 @@ public class Data {
 	public void setInvestmentDecisionPrimaryFacility (int period, int new_decision) {
 		
 		this.investmentDecisionPrimaryFacility[period] = new_decision;
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @param period
+	 * @param strategy
+	 */
+	public void addNewStrategyDecision (int period, int [] strategy) {
+		
+		this.investmentStrategies[period] = strategy;
 		
 	}
 	

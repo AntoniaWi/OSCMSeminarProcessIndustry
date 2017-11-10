@@ -5,14 +5,24 @@ public class TestClass {
 
 	
 	public static void main(String[] args) {
-	    System.out.println("Hallo");
+	
+		double p = 0.5;
+		
+		double left_value = 13100;
+		
+		double right_value = 7600;
+		
+		
+		
+	    double result = (p * left_value) + ((1-p) * right_value);
 	    
-	    int a = 2;
-	    int b = 3;
+	    System.out.println("Result: " + result);
 	    
-	    int summe = a + b;
 	    
-	    System.out.println("Summe: " + summe);
+	    double result_2 = result + 1100;
+	    
+	    System.out.println("Result 2: " + result_2);
+	    
 	}
 }
 

@@ -1,7 +1,5 @@
 package helper;
 
-import optimizationModels.TimingModel;
-
 public class Event {
 	
 	private int period;
@@ -12,6 +10,7 @@ public class Event {
 	
 	private double finalCost;
 	private double expectedCost;
+	private double discountedExpectedCost;
 	private double periodCost;
 	private double totalCost;
 	
@@ -46,6 +45,7 @@ public class Event {
 		
 		this.finalCost = -1;
 		this.expectedCost = -1;
+		this.discountedExpectedCost = -1;
 		this.periodCost = -1;
 		this.totalCost = -1; 
 		
@@ -162,6 +162,22 @@ public class Event {
 	 */
 	public void setExpectedCost(double expectedCost) {
 		this.expectedCost = expectedCost;
+	}
+
+
+	/**
+	 * @return the discountedExpectedCost
+	 */
+	public double getDiscountedExpectedCost() {
+		return discountedExpectedCost;
+	}
+
+
+	/**
+	 * @param discountedExpectedCost the discountedExpectedCost to set
+	 */
+	public void setDiscountedExpectedCost(double discountedExpectedCost) {
+		this.discountedExpectedCost = discountedExpectedCost;
 	}
 
 
@@ -397,7 +413,7 @@ public class Event {
 		
 		this.strategy = strategy;
 		this.a_T = strategy[strategy.length-1];
-		this.s_T = periodsToBuild - TimingModel.countTrueValuesInArray(strategy);
+		this.s_T = periodsToBuild - countTrueValuesInArray(strategy);
 		
 	}
 	
@@ -406,19 +422,29 @@ public class Event {
 	 * 
 	 * @return
 	 */
-	public void calculatePeriodCost (int period, double c, double K) {
+	private void calculatePeriodCost (double c, double K) {
 		
-		this.periodCost = this.strategy[period] * c + K * Math.max(strategy[period]-strategy[period-1], 0);
+		this.periodCost = this.strategy[this.period] * c + K * Math.max(strategy[this.period]-strategy[this.period-1], 0);
 	}
 	
 	
 	/**
 	 * 
 	 */
-	public void calculateExpectedCost () {
+	private void calculateExpectedCost () {
 		
 		this.expectedCost = this.nextProbabilitySuccessful_left * this.left_nextSuccessfulTestResult.totalCost
 							+ this.nextProbabilityFailed_right * this.right_nextFailedTestResult.totalCost;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param alpha
+	 */
+	private void calculateDiscountedExpectedCost (double alpha) {
+		
+		this.discountedExpectedCost = alpha * this.expectedCost;	
 	}
 	
 	
@@ -429,7 +455,7 @@ public class Event {
 	 * @param phi
 	 * @param gamma_c
 	 */
-	public void calculateFinalCost (double c, double K, double phi, int gamma_c) {
+	private void calculateFinalCost (double c, double K, double phi, int gamma_c) {
 			
 		if (this.countSuccessfulTestResults >= gamma_c) {
 				
@@ -447,7 +473,7 @@ public class Event {
 	 * 
 	 * @param period
 	 */
-	public void calculateTotalCost (int period, double c, double K, double phi, int gamma_c) {
+	public void calculateTotalCost (double c, double K, double phi, int gamma_c, double alpha) {
 		
 		if (this.finalEvent) {
 			
@@ -457,10 +483,11 @@ public class Event {
 		
 		else {
 			
-			this.calculatePeriodCost(period, c, K);
+			this.calculatePeriodCost(c, K);
 			this.calculateExpectedCost();
+			this.calculateDiscountedExpectedCost(alpha);
 			
-			this.totalCost = this.periodCost + this.expectedCost;
+			this.totalCost = this.periodCost + this.discountedExpectedCost;
 		}	
 	}
 	
@@ -472,6 +499,7 @@ public class Event {
 		
 		this.periodCost = -1;
 		this.expectedCost = -1;
+		this.discountedExpectedCost = -1;
 		this.finalCost = -1;
 		this.totalCost = -1;
 		
@@ -479,6 +507,26 @@ public class Event {
 		this.a_T = -1;
 		this.s_T = -1;
 		
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static int countTrueValuesInArray (int [] array) {
+		
+		int count = 0;
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			if (array[i] == 1) {
+				count++;
+			}
+		}
+		
+		return count;
 	}
 	
 	
@@ -513,9 +561,10 @@ public class Event {
 		string += "Next probability (fail): " + this.nextProbabilityFailed_right + "\n";
 		
 		string += "Period cost: " + this.periodCost + "\n";;
-		string += "Expected cost: " + this.expectedCost + "\n";;
-		string += "Final cost: " + this.finalCost + "\n";;
-		string += "Total cost: " + this.totalCost + "\n";;
+		string += "Expected cost: " + this.expectedCost + "\n";
+		string += "Discounted expected cost: " + this.discountedExpectedCost + "\n";
+		string += "Final cost: " + this.finalCost + "\n";
+		string += "Total cost: " + this.totalCost + "\n";
 				
 		return string;
 	}
