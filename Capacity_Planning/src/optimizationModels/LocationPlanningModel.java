@@ -108,9 +108,12 @@ public class LocationPlanningModel extends IloCplex {
 	private IloLinearNumExpr depreciationChargeSecondaryFacilities = linearNumExpr();
 	private IloLinearNumExpr taxableIncomeConstraint = linearNumExpr();
 
-	public LocationPlanningModel(Data datainstanz) throws IloException {
+	public LocationPlanningModel(Data datainstanz) throws IloException, BiffException, WriteException, IOException {
 		
 		this.datainstanz = datainstanz;
+		
+		ReadAndWrite.readConst(datainstanz);
+		ReadAndWrite.createAndWriteDict(datainstanz);
 		
 		// Sets
 		this.IF = datainstanz.getIF(); // IF[f] internal facilities
@@ -124,7 +127,7 @@ public class LocationPlanningModel extends IloCplex {
 		// Parameter
 		this.I = datainstanz.getI(); // number of material types
 		this.F = datainstanz.getF(); // number of all facilities
-		this.T = datainstanz.getT(); // number of months in planning horizon
+		this.T = datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR();
 		this.N = datainstanz.getN(); // number of nations
 		this.capitalBudget = datainstanz.getCapitalBudget();// capitalBudget[t]
 															// CB_t
@@ -150,7 +153,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.initialCapacity = datainstanz.getInitialCapacity(); // Q0
 
 		// Transfer parameter
-		this.remainingTimeOfClinicalTrials = datainstanz.getRemainingTimeofClinicalTrials();
+		//this.remainingTimeOfClinicalTrials = datainstanz.getRemainingTimeofClinicalTrials();
 		this.discountfactor = datainstanz.getParameter_discountFactor();
 		this.monthsToBuildPrimaryFacility = datainstanz.getParameter_monthsToBuildPrimaryFacilities();
 		this.monthsToBuildSecondaryFacility = datainstanz.getParameter_monthsToBuildSecondaryFacilities();

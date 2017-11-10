@@ -1,13 +1,8 @@
 package dataManagement;
 
-import helper.Event;
-import ilog.concert.IloIntVar;
-import ilog.concert.IloNumVar;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
-
 import java.io.IOException;
-import java.util.*;
 
 public class Data {
 	
@@ -207,7 +202,7 @@ public class Data {
 	 * @throws WriteException
 	 */
 	public Data (int x) throws BiffException, IOException, WriteException {
-		ReadAndWrite.readConst(this);
+		
 		ReadAndWrite.readDataTiming(this);
 		ReadAndWrite.readF(this);
 		ReadAndWrite.readFinN(this);
@@ -289,12 +284,6 @@ public class Data {
 		// Start in period t = 0
 		
 		this.countPeriods = 0;
-		
-		
-		
-		// Nach TimingModel aufrufen
-		
-		ReadAndWrite.createAndWriteDict(this);
 		
 	
 		}
