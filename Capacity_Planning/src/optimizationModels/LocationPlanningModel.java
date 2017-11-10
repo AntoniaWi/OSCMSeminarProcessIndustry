@@ -19,6 +19,8 @@ import lombok.Getter;
 
 public class LocationPlanningModel extends IloCplex {
 
+	private Data datainstanz;
+	
 	// Sets
 	private boolean[] IF; // IF[f] internal facilities
 	private boolean[] EF; // EF[f] external facilities
@@ -107,6 +109,9 @@ public class LocationPlanningModel extends IloCplex {
 	private IloLinearNumExpr taxableIncomeConstraint = linearNumExpr();
 
 	public LocationPlanningModel(Data datainstanz) throws IloException {
+		
+		this.datainstanz = datainstanz;
+		
 		// Sets
 		this.IF = datainstanz.getIF(); // IF[f] internal facilities
 		this.EF = datainstanz.getEF(); // EF[f] external facilities
@@ -198,16 +203,14 @@ public class LocationPlanningModel extends IloCplex {
 	 * @throws RowsExceededException
 	 * @throws WriteException
 	 */
-	public void run (Data dataInstance) throws IloException, BiffException, IOException, RowsExceededException, WriteException {
-
-		LocationPlanningModel lpm = new LocationPlanningModel(dataInstance);
+	public void run () throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 		
 		// TODO: ReadAndWrite.createAndWriteDict(this); darf erst nach Timing Model call aufgerufen werden
 
-		lpm.build();
-		lpm.solve();
-		lpm.writeSolution(new int[] { 1, 2, 3 }, dataInstance);
-		ReadAndWrite.writeSolution(dataInstance);
+		this.build();
+		this.solve();
+		this.writeSolution(new int[] { 1, 2, 3 }, datainstanz);
+		ReadAndWrite.writeSolution(this.datainstanz);
 		// lpm.ergebnisschreibenRobust(lpm);
 		
 		

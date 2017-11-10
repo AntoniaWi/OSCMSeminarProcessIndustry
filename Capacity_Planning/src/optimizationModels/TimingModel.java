@@ -1,17 +1,8 @@
 package optimizationModels;
 
-import java.io.IOException;
 import java.util.ArrayList;
-
-import dataManagement.Data;
-import dataManagement.ReadAndWrite;
-import dataManagement.StdRandom;
-import helper.Event;
-import helper.Permuter;
-import ilog.concert.IloException;
-import jxl.read.biff.BiffException;
-import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
+import dataManagement.*;
+import helper.*;
 
 public class TimingModel {
 	
@@ -24,127 +15,22 @@ public class TimingModel {
 		
 	}
 	
-	public static void main(String[] args) throws BiffException, IOException, WriteException {
-		
-		// Get all the parameters
-		
-		Data dataInstance = new Data();
-		
-		TimingModel tm = new TimingModel (dataInstance);
-		
-		// Generate console output
-		
-		// TODO Check if all important parameters are printed out
-		
-		tm.printTimingModelInformationStart();
-				
-		int period = 1;
-		
-		while (period <= dataInstance.getParameter_planningHorizon()) {
-			
-			tm.newPeriod();
-			period++;
-			
-		}
-		
-		// Generate console output
-		
-		tm.printTimingModelInformationEnd();
-		
-		
-	}
 	
-	
-	
-	
-	
-	public void run () throws IloException, BiffException, IOException, RowsExceededException, WriteException {
-		
-		// Get all the parameters
-		
-		Data dataInstance = new Data();
-		
-		// Data dataInstance = new Data(x);
-		
-		TimingModel tm = new TimingModel (dataInstance);
-		
-		// Generate console output
-		
-		// TODO Check if all important parameters are printed out
-		
-		tm.printTimingModelInformationStart();
-				
-		int period = 1;
-		
-		while (period <= dataInstance.getParameter_planningHorizon()) {
-			
-			tm.newPeriod();
-			period++;
-			
-		}
-		
-		// Generate console output
-		
-		tm.printTimingModelInformationEnd();
-		
-		
-	}
-	
-	
-	
-	// -------------------------------------------------------------------------------------------------------------------//
-	
-	// Main Methods
-	
-	// -------------------------------------------------------------------------------------------------------------------//
-	
-
 	/**
 	 * 
 	 */
-	public void newPeriod () {
-		
-		// New period
-		
-		this.dataInstance.incrementCountPeriods();
-		
-		// Update most-up-to-date knowledge to gamma_t-1 and zeta_t-1
-		
-		this.updateFormerKnowledge();
-		
-		// Build scenario tree
-		
+	public void run () {
+				
 		ArrayList<ArrayList<Event>> scenarioTree = generateScenarioTree(dataInstance.getCountPeriods());
-		
-		// Generate all strategies
 		
 		ArrayList<int[]> strategies = generateAllPossibleStrategies();
 		
-		// Calculate cost
-		
 		ArrayList<Double> cost = calculateV(dataInstance.getCountPeriods(), scenarioTree, strategies);
 		
-		// Set investment decision and fill a_t and s_t
-		
 		this.setNewInvesmentDecision(cost, strategies);
-		
-		if (dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()] == 1) {
-			
-			// TODO: call Location Planning Model
-			
-			// 
-		}
-		
-		// New test result
-		
-		this.newTestResult();
-		
-		// Print all information regarding the new period
-		
-		this.printPeriodInformation();
 	}
 	
-	
+
 	/**
 	 * 
 	 * @param period
@@ -435,7 +321,6 @@ public class TimingModel {
 	}
 		
 
-
 	/**
 	 * 
 	 * @param period
@@ -472,64 +357,14 @@ public class TimingModel {
 						
 			cost.add(scenarioTree.get(0).get(0).getTotalCost());
 			
-			// TimingModel.printScenarioTree(scenarioTree);
+			ReadAndWrite.printScenarioTree(scenarioTree);
 
 		}
 		
 		return cost;
 	}
 	
-	
-	/**
-	 * 
-	 */
-	public void newTestResult () {
-		
-		double p = this.dataInstance.calculateTestProbability();
-		
-		boolean newTestResult = StdRandom.bernoulli(p); 
-		
-		if (newTestResult == true) {
-			
-			this.dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 1;
-		}
-		
-		else {
-			
-			this.dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 0;
-		}	
-	}
-	
-	
-	/**
-	 * 
-	 * @throws IloException
-	 * @throws BiffException
-	 * @throws IOException
-	 * @throws RowsExceededException
-	 * @throws WriteException
-	 */
-	public static void runLocationModel (Data dataInstance) throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 
-		LocationPlanningModel lpm = new LocationPlanningModel(dataInstance);
-
-		lpm.build();
-		lpm.solve();
-		lpm.writeSolution(new int[] { 1, 2, 3 }, dataInstance);
-		ReadAndWrite.writeSolution(dataInstance);
-	
-	}
-	
-	
-	
-	
-	// -------------------------------------------------------------------------------------------------------------------//
-	
-	// Helper Methods
-	
-	// -------------------------------------------------------------------------------------------------------------------//
-	
-	
 	/**
 	 * 
 	 * @param gamma
@@ -541,21 +376,6 @@ public class TimingModel {
 		double p = gamma / (gamma + zeta);
 		
 		return p;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public static void printScenarioTree (ArrayList<ArrayList<Event>> scenarioTree) {
-		
-		for (int t = 0; t < scenarioTree.size(); t++) {
-			
-			for (int index = 0; index < scenarioTree.get(t).size(); index++) {
-				
-				System.out.println(scenarioTree.get(t).get(index).toString());
-			}
-		}
 	}
 	
 	
@@ -618,19 +438,6 @@ public class TimingModel {
 	
 	/**
 	 * 
-	 */
-	public void updateFormerKnowledge () {
-		
-		if (this.dataInstance.getCountPeriods() > 1) {
-			
-			this.dataInstance.updateCountSuccessfulTests(this.dataInstance.getCountPeriods());
-			this.dataInstance.updateCountFailedTests(this.dataInstance.getCountPeriods());
-		}
-	}
-	
-	
-	/**
-	 * 
 	 * @param array
 	 * @return
 	 */
@@ -647,162 +454,4 @@ public class TimingModel {
 		
 		return count;
 	}
-	
-	
-	
-	
-	// -------------------------------------------------------------------------------------------------------------------//
-	
-	// Print Methods
-	
-	// -------------------------------------------------------------------------------------------------------------------//
-	
-	
-	/**
-	 * 
-	 */
-	public void printPeriodInformation () {
-		
-		System.out.println("");
-		
-		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		
-		System.out.println("");
-		
-		System.out.println("Period # " + this.dataInstance.getCountPeriods() );
-		
-		System.out.println("");
-		
-		System.out.println("1. Update knowledge about former test results:");
-		
-		System.out.println("");
-		
-		System.out.println("  - Gamma_" + (this.dataInstance.getCountPeriods() - 1) + " = " + this.dataInstance.getCountSuccessfulTests()[this.dataInstance.getCountPeriods() -1]);
-		System.out.println("  - Zeta_" + (this.dataInstance.getCountPeriods() - 1) + " = " + this.dataInstance.getCountFailedTests()[this.dataInstance.getCountPeriods() -1]);
-		
-		System.out.println("");
-		
-		System.out.println("2. Decide whether to invest or not; if so, where:");
-		
-		System.out.println("");
-		
-		System.out.println("  - Investment (yes or no): " + this.dataInstance.getInvestmentDecisionPrimaryFacility()[this.dataInstance.getCountPeriods()]);
-		System.out.println("  - Location: " + "empty" );
-		
-		System.out.println("");
-		
-		System.out.println("3. Obtain a new test result in the end of the period:");
-		
-		System.out.println("");
-		
-		System.out.println("  - Probability p = " + this.dataInstance.getTestProbability()[this.dataInstance.getCountPeriods()]);		
-		System.out.println("  - New test result: " + this.dataInstance.getTestResults()[this.dataInstance.getCountPeriods() ]);
-		
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void printTimingModelInformationStart () {
-		
-		System.out.println("Timing Model starts with following parameters:");
-		
-		System.out.println("");
-		
-		System.out.println("Planning horizon (T): " + this.dataInstance.getParameter_planningHorizon());
-		System.out.println("Discount factor (alpha): " + this.dataInstance.getParameter_discountFactor());
-		
-		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + this.dataInstance.getParameter_monthsToBuildPrimaryFacilities());
-		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + this.dataInstance.getParameter_monthsToBuildSecondaryFacilities());
-		
-		System.out.println("Construction cost of a primary facility (c_p): " + this.dataInstance.getParameter_constructionCostPrimaryFacility());
-		System.out.println("Construction cost of a secondary facility (c_s): " + this.dataInstance.getParameter_constructionCostSecondaryFacility());
-		
-		System.out.println("Setup cost for a primary facility (K_p): " + this.dataInstance.getParameter_setupCostPrimaryFacility());
-		System.out.println("Setup cost for a secondary facility (K_s): " + this.dataInstance.getParameter_setupCostSecondaryFacility());
-		
-		System.out.println("Penalty cost (Phi): " + this.dataInstance.getParameter_penaltyCost());
-		
-		System.out.println("Preliminary knowledge of successful tests (gamma): " + this.dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests());
-		System.out.println("Preliminary knowledge of failed tests (zeta): " + this.dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests());
-
-		System.out.println("");
-		
-		System.out.println("Model 'Planning under Uncertainty' starts.");	
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void printTimingModelInformationEnd () {
-		
-		System.out.println("");
-		
-		System.out.println("********************************************************************************");
-		
-		System.out.println("\nEnd of experiment run:");
-		
-		//ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountSuccessfulTests(), "Successful Tests (gamma)");
-		//ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountFailedTests(), "Failed Tests (zeta)");
-		//ReadAndWrite.printArrayWithPeriodsDouble(dataInstance.getTestProbability(), "Test Probability (p)");
-		
-		ReadAndWrite.printArrayWithPeriodsInt(this.dataInstance.getTestResults(), "Test Results (delta)");
-		
-		ReadAndWrite.printArrayWithPeriodsInt(this.dataInstance.getInvestmentDecisionPrimaryFacility(), "Investment decision (a)");
-		
-		for (int i = 1; i < this.dataInstance.getInvestmentStrategies().length; i++) {
-			
-			ReadAndWrite.printArrayWithPeriodsInt(this.dataInstance.getInvestmentStrategies()[i],"Investment strategy in period " + i + ":");
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param strategies
-	 */
-	public static void printStrategies (ArrayList<int[]> strategies, int period) {
-		
-		System.out.println("\n\n--------------------------------------------------------------------------------");
-		
-		System.out.println ("\nStrategies for period: " + period);
-		
-		for (int i = 0; i < strategies.size(); i++) {
-			
-			ReadAndWrite.printArraySimple(strategies.get(i));
-		}
-		
-		System.out.println("\n--------------------------------------------------------------------------------\n\n");
-	}
-	
-	
-	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
