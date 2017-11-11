@@ -809,12 +809,14 @@ public class ReadAndWrite {
 						P[i][j][k] = cell6;
 
 					}
-
+					System.out.println("Price material"+(i+1)+" facility "+(j+1)+" period "+(k+1));
 				}
 
 			}
 		}
 		instanz.setUnitSellingPrice(P);
+	
+		
 
 		File file2;
 		Workbook workbook2;
