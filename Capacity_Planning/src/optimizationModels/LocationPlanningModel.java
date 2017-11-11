@@ -123,8 +123,8 @@ public class LocationPlanningModel extends IloCplex {
 		this.constructionStartSecondaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
 		this.shippedMaterialUnitsFacilityToCustomer = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_ifct
 		this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
-		this.depreciationChargePrimaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // NDC_p_ftaut
-		this.depreciationChargeSecondaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // NDC_s_ftaut
+		this.depreciationChargePrimaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()][this.datainstanz.getT()]; // NDC_p_ftaut
+		this.depreciationChargeSecondaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()][this.datainstanz.getT()]; // NDC_s_ftaut
 		this.availableProductionCapacity = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // Q_ft
 		this.taxableIncome = new IloNumVar[this.datainstanz.getN()][this.datainstanz.getT()]; // TI_nt
 		this.consumedOrProducedMaterial = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getT()]; // x_ift
