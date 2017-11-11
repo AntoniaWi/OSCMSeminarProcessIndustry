@@ -39,6 +39,10 @@ public class Data {
 	private int investmentDecisionSecondaryFacility;					// a_s_T+1 - secondary facility is built in period T+1 if clinical trails are successful
 	private int[][] investmentStrategies;
 	
+	private double totalConstructionCost_primary;
+	private double totalSetUpCost_primary;
+	private double totalPenaltyCost_primary;
+	private double totalExpansionCost_primary;
 	
 	
 	private int countPeriods;										// t
@@ -288,6 +292,10 @@ public class Data {
 		
 		this.countPeriods = 0;
 		
+		this.totalConstructionCost_primary = 0;
+		this.totalSetUpCost_primary = 0;
+		this.totalPenaltyCost_primary = 0;
+		this.totalExpansionCost_primary = 0; 
 	
 		}
 
@@ -1366,6 +1374,70 @@ public class Data {
 
 
 	/**
+	 * @return the totalConstructionCost_primary
+	 */
+	public double getTotalConstructionCost_primary() {
+		return totalConstructionCost_primary;
+	}
+
+
+	/**
+	 * @param totalConstructionCost_primary the totalConstructionCost_primary to set
+	 */
+	public void setTotalConstructionCost_primary(double totalConstructionCost_primary) {
+		this.totalConstructionCost_primary = totalConstructionCost_primary;
+	}
+
+
+	/**
+	 * @return the totalSetUpCost_primary
+	 */
+	public double getTotalSetUpCost_primary() {
+		return totalSetUpCost_primary;
+	}
+
+
+	/**
+	 * @param totalSetUpCost_primary the totalSetUpCost_primary to set
+	 */
+	public void setTotalSetUpCost_primary(double totalSetUpCost_primary) {
+		this.totalSetUpCost_primary = totalSetUpCost_primary;
+	}
+
+
+	/**
+	 * @return the totalPenaltyCost_primary
+	 */
+	public double getTotalPenaltyCost_primary() {
+		return totalPenaltyCost_primary;
+	}
+
+
+	/**
+	 * @param totalPenaltyCost_primary the totalPenaltyCost_primary to set
+	 */
+	public void setTotalPenaltyCost_primary(double totalPenaltyCost_primary) {
+		this.totalPenaltyCost_primary = totalPenaltyCost_primary;
+	}
+
+
+	/**
+	 * @return the totalExpansionCost_primary
+	 */
+	public double getTotalExpansionCost_primary() {
+		return totalExpansionCost_primary;
+	}
+
+
+	/**
+	 * @param totalExpansionCost_primary the totalExpansionCost_primary to set
+	 */
+	public void setTotalExpansionCost_primary(double totalExpansionCost_primary) {
+		this.totalExpansionCost_primary = totalExpansionCost_primary;
+	}
+
+
+	/**
 	 * Increments period count by one
 	 */
 	public void incrementCountPeriods() {
@@ -1431,6 +1503,80 @@ public class Data {
 		
 		return p;		
 	}
+	
+	
+	/**
+	 * 
+	 */
+	private void calculateTotalConstructionCost () {
+	
+		double constructionCost = 0;
+		
+		for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
+			
+			constructionCost += this.investmentDecisionPrimaryFacility[i] * this.parameter_constructionCostPrimaryFacility;
+		}
+		
+		this.totalConstructionCost_primary = constructionCost;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	private void calculateTotalSetUpCost () {
+		
+		double setUpCost = 0;
+		
+		for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
+			
+			int setUp = Math.max(this.investmentDecisionPrimaryFacility[i] - this.investmentDecisionPrimaryFacility[i-1], 0);
+			
+			setUpCost += this.parameter_setupCostPrimaryFacility * setUp;
+		}
+		
+		this.totalSetUpCost_primary = setUpCost;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	private void calculateTotalPenaltyCost () {
+		
+		double penaltyCost = 0;
+		
+		int countInvestments = 0;
+		
+		for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
+			
+			if (investmentDecisionPrimaryFacility[i] == 1) {
+				
+				countInvestments++;
+			}
+		}
+		
+		int remainingPeriodsToBuild = this.parameter_monthsToBuildPrimaryFacilities - countInvestments;
+		penaltyCost = this.parameter_penaltyCost * remainingPeriodsToBuild;
+		
+		this.totalPenaltyCost_primary = penaltyCost;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void calculateTotalExpansionCost () {
+		
+		this.calculateTotalConstructionCost();
+		this.calculateTotalSetUpCost();
+		this.calculateTotalPenaltyCost();
+		
+		this.totalExpansionCost_primary = this.totalConstructionCost_primary + this.totalSetUpCost_primary + this.totalPenaltyCost_primary;
+		
+		
+	}
+	
 	
 	// TODO RAMONA: create several toString Method for console output
 	

@@ -6,22 +6,13 @@ public class TestClass {
 	
 	public static void main(String[] args) {
 	
-		double p = 0.5;
-		
-		double left_value = 13100;
-		
-		double right_value = 7600;
+		double d = 0.8;
 		
 		
 		
-	    double result = (p * left_value) + ((1-p) * right_value);
-	    
-	    System.out.println("Result: " + result);
-	    
-	    
-	    double result_2 = result + 1100;
-	    
-	    System.out.println("Result 2: " + result_2);
+		long i = Math.round(d);
+		
+		System.out.println(i);
 	    
 	}
 }
