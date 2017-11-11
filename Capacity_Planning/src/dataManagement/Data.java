@@ -93,6 +93,7 @@ public class Data {
 		private int timeR;
 		
 		//Result Arrays
+		private double result_netPresentValue; //NPV - Objective Function
 		private double[][][][] result_shippedMaterialUnitsFacilityToCustomer; // F_ifct
 		private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
 		private double[][][] result_depreciationChargePrimaryFacility; // NDC_p_ftaut
@@ -1521,6 +1522,22 @@ public class Data {
 	 */
 	public void setSuccessOfClinicalTrials(boolean successOfClinicalTrials) {
 		this.successOfClinicalTrials = successOfClinicalTrials;
+	}
+
+
+	/**
+	 * @return the result_netPresentValue
+	 */
+	public double getResult_netPresentValue() {
+		return result_netPresentValue;
+	}
+
+
+	/**
+	 * @param result_netPresentValue the result_netPresentValue to set
+	 */
+	public void setResult_netPresentValue(double result_netPresentValue) {
+		this.result_netPresentValue = result_netPresentValue;
 	}
 
 

@@ -1371,6 +1371,23 @@ public class ReadAndWrite {
 		sheet.addCell(label3);
 
 		// Revenue TODO:
+		double revenue=0;
+		for  (int i=0;i<instanz.getI();i++) {
+			for (int j=0;j<instanz.getF();j++) {
+				for (int k=0;k<instanz.getF();k++) {
+					for (int l=0;l<instanz.getT();l++) {
+					
+					revenue+=(instanz.getUnitSellingPrice()[i][j][l]*instanz.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l]);
+				}
+			}
+		}
+		}
+		
+		//Net present value
+		Number label30 = new Number(1, 9, instanz.getResult_netPresentValue());
+		sheet.addCell(label30);
+		
+		
 
 		// Primary
 		for (int i = 0; i < instanz.getF(); i++) {

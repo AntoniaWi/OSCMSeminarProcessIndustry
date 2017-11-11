@@ -1107,6 +1107,8 @@ public class LocationPlanningModel extends IloCplex {
 		BufferedWriter out = new BufferedWriter(fstream);
 
 		out.write("objective value=" + getObjValue() + "\n");
+		instanz.setResult_netPresentValue(getObjValue());
+		
 		out.write("variable values\n");
 
 		out.write("\n Decision\n");
