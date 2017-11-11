@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 3;
+	public static int user = 2;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
@@ -522,6 +522,34 @@ public class ReadAndWrite {
 		 * NumberCell cell32 = (NumberCell) cell31; double cell33 = cell32.getValue();
 		 * instanz.setRemainingTimeofClinicalTrials((int) cell33);
 		 */
+		
+		// read constructionTimePrimary
+		Cell cell34 = sheet.getCell(1, 21);
+		NumberCell cell35 = (NumberCell) cell34;
+		double cell36 = cell35.getValue();
+		int cell37= (int) cell36;
+		instanz.setMonthsToBuildPrimaryFacilities_location(cell37);
+		
+		// read constructionTimeSecondary
+		Cell cell38 = sheet.getCell(1, 22);
+		NumberCell cell39 = (NumberCell) cell38;
+		double cell40 = cell39.getValue();
+		int cell41 = (int) cell40;
+		instanz.setMonthsToBuildSecondaryFacilities_location(cell41);
+		
+		//read constructionCostPrimary
+		Cell cell42 = sheet.getCell(1, 23);
+		NumberCell cell43 = (NumberCell) cell42;
+		double cell44 = cell43.getValue();
+		int cell45 = (int) cell44;
+		instanz.setConstructionCostPrimaryFacility_location(cell45);
+		
+		//read constructionCostSecondary
+		Cell cell46 = sheet.getCell(1, 23);
+		NumberCell cell47 = (NumberCell) cell46;
+		double cell48 = cell47.getValue();
+		int cell49 = (int) cell48;
+		instanz.setConstructionCostSecondaryFacility_location(cell49);
 
 	}
 
@@ -1466,6 +1494,37 @@ public class ReadAndWrite {
 		}
 	}
 
+	
+	/**
+	 * 
+	 * @param instance
+	 * @param tab
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws WriteException
+	 */
+	public static void writeSolutionDecisionPlanningModel(Data instance, WritableSheet tab) throws BiffException, IOException, WriteException {
+
+		File file;
+		WritableWorkbook writableWorkbook;
+		Workbook workbook;
+		choosePaths();
+
+		file = new File(pathR);
+
+		workbook = Workbook.getWorkbook(file);
+		writableWorkbook = Workbook.createWorkbook(file, workbook);
+
+
+		
+	}
+	
+	
+	public static void writeSolutionBothModels (Data instance, )
+	
+	
+	
+	
 	/**
 	 * Should go into ReadAndWrite-Class later
 	 * 
