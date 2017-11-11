@@ -1506,11 +1506,11 @@ public class ReadAndWrite {
 		for (int m = 0; m < instanz.getF(); m++) {
 			for (int l = 0; l < instanz.getT(); l++) {
 				customDuties += (instanz.getResult_grossIncome()[m][l]);
-				customDuties += productionCost;
-				customDuties -= revenue;
+				
 			}
 		}
-
+		customDuties += productionCost;
+		customDuties -= revenue;
 		Number label10 = new Number(1, 24, -customDuties);
 		sheet.addCell(label10);
 
