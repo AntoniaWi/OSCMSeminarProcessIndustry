@@ -283,13 +283,13 @@ public class LocationPlanningModel extends IloCplex {
 		for (int i = 0; i < this.datainstanz.getT(); i++) {
 			//double discountTerm = -1 / Math.pow(1 + datainstanz.getParameter_discountFactor_location(), (i + 1));
 			double discountTerm=1;
-			for (int j = 0; j < this.datainstanz.getF(); j++) {
-				if (datainstanz.getIF()[j]) {
+			//for (int j = 0; j < this.datainstanz.getF(); j++) {
+				//if (datainstanz.getIF()[j]) {
 
 					expr.addTerm(discountTerm, this.capitalExpenditure[i]);
 
-				}
-			}
+				//}
+			//}
 		}
 
 		// System.out.println(expr);
