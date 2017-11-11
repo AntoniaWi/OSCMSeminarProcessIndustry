@@ -1505,9 +1505,9 @@ public class ReadAndWrite {
 
 		for (int m = 0; m < instanz.getF(); m++) {
 			for (int l = 0; l < instanz.getT(); l++) {
-				customDuties += (instanz.getResult_grossIncome()[m][l]);
-				customDuties += productionCost;
-				customDuties -= revenue;
+				customDuties -= (instanz.getResult_grossIncome()[m][l]);
+				customDuties -= productionCost;
+				customDuties += revenue;
 			}
 		}
 
