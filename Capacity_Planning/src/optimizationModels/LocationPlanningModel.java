@@ -885,7 +885,7 @@ public class LocationPlanningModel extends IloCplex {
 								for (int l = 0; l < this.datainstanz.getI(); l++) {
 									if (this.datainstanz.getIM()[m][k] && k == l) {
 										// System.out.println("Check gleiches Material: "+(k+1)+" und "+(l+1)+" ?");
-										this.grossIncomeConstraint.addTerm(this.datainstanz.getUnitSellingPrice()[k][j],
+										this.grossIncomeConstraint.addTerm(this.datainstanz.getUnitSellingPrice()[k][j][i],
 												this.shippedMaterialUnitsFacilityToCustomer[k][j][m][i]);
 
 									}

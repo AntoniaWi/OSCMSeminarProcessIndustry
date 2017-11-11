@@ -730,10 +730,64 @@ public class ReadAndWrite {
 	}
 	// ____________________________________________________________________________________________
 
-	// Sheet 9.1: D_ict
+	// Sheet 9.1: D_ict and P_ift
 
 	// ____________________________________________________________________________________________
 	public static void createAndWriteDict(Data instanz) throws BiffException, IOException, WriteException {
+		
+	
+
+			File file;
+			Workbook workbook;
+			choosePaths();
+			file = new File(path);
+
+			workbook = Workbook.getWorkbook(file);
+			Sheet sheet2 = workbook.getSheet("Pif_M");
+			Sheet sheet3 = workbook.getSheet("Pif_R");
+
+			// read P[i][f][t]
+
+			double[][][] P = new double[instanz.getI()][instanz.getF()][instanz.getT()];
+
+			for (int i = 0; i < instanz.getI(); i++) {
+				for (int j = 0; j < instanz.getF(); j++) {
+					for (int k = 0; k < instanz.getT(); k++) {
+//Pift Monopoly
+					Cell cell1 = sheet2.getCell(i + 1, j + 1);
+					NumberCell cell2 = (NumberCell) cell1;
+					double cell3 = cell2.getValue();
+					//Pift Regular Market
+					Cell cell4 = sheet3.getCell(i + 1, j + 1);
+					NumberCell cell5 = (NumberCell) cell4;
+					double cell6 = cell5.getValue();
+
+					
+					
+					if ( k < instanz.getRemainingTimeofClinicalTrials()) {
+						P[i][j][k] = 0;
+
+					} else if (k < (instanz.getRemainingTimeofClinicalTrials() + instanz.getTimeM())) {
+						P[i][j][k] = cell3;
+
+					} else if ( k <= instanz.getT()) {
+						P[i][j][k] = cell6;
+
+					}
+
+					
+
+				}
+
+			}
+			}
+			instanz.setUnitSellingPrice(P);
+		
+	
+		
+		
+		
+		
 		File file2;
 		Workbook workbook2;
 		choosePaths();
@@ -870,7 +924,7 @@ public class ReadAndWrite {
 
 		// read P[i][f]
 
-		double[][] P = new double[instanz.getI()][instanz.getF()];
+	/*	double[][] P = new double[instanz.getI()][instanz.getF()];
 
 		for (int i = 0; i < instanz.getI(); i++) {
 			for (int j = 0; j < instanz.getF(); j++) {
@@ -884,7 +938,7 @@ public class ReadAndWrite {
 			}
 
 		}
-		instanz.setUnitSellingPrice(P);
+		instanz.setUnitSellingPrice(P);*/
 	}
 
 	// Sheet 12: CIF1sf
