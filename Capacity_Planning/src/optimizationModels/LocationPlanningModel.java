@@ -112,7 +112,8 @@ public class LocationPlanningModel extends IloCplex {
 		
 		this.datainstanz = datainstanz;
 		
-
+		int tmp_remainingTime = (this.datainstanz.getParameter_planningHorizon() - this.datainstanz.getCountPeriods())*12;
+		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime+12);
 		datainstanz.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
 
 		ReadAndWrite.writeTransferParameter(datainstanz);
@@ -164,8 +165,7 @@ public class LocationPlanningModel extends IloCplex {
 	 */
 	public void run () throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 		
-		int tmp_remainingTime = (this.datainstanz.getParameter_planningHorizon() - this.datainstanz.getCountPeriods())*12;
-		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime+1);
+		
 		
 		this.build();
 		this.solve();
@@ -337,12 +337,21 @@ public class LocationPlanningModel extends IloCplex {
 	private void addConstraintNumberOfSecondaryFacilities() throws IloException {
 
 		this.numberOfSecondaryFacilities.clear();
+		IloLinearNumExpr helper = linearNumExpr();
 
 		for (int i = 0; i < this.datainstanz.getF(); i++) {
 			if (datainstanz.getIF()[i] && datainstanz.getSIF()[i]) {
 				this.numberOfSecondaryFacilities.addTerm(1,
 						this.constructionStartSecondaryFacility[i][this.datainstanz.getMonthsToBuildPrimaryFacilities_location() - this.datainstanz.getMonthsToBuildSecondaryFacilities_location()]);
+			
+						
 			}
+			
+			
+			
+			
+			
+			
 		}
 		
 		addGe(this.numberOfSecondaryFacilities, 1);
