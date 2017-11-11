@@ -80,16 +80,16 @@ public class Data {
 	private int initialCapacity; 										// Q0
 	private int monthsToBuildPrimaryFacilities_location;					// s_p_0 - in whole years
 	private int monthsToBuildSecondaryFacilities_location;				// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
-	private double constructionCostPrimaryFacility_location;				// c_p
+	private double constructionCostPrimaryFacility_location;			// c_p
 	private double constructionCostSecondaryFacility_location;
 	
 	//Help parameter for demand
-	private double [] demandM; 											// demandM[f]
-	private double [] demandR; 											// demand[f]
+	private double [] demandM; 										// demandM[f]
+	private double [] demandR; 										// demand[f]
 	private int timeM;
 	private int timeR;
 	
-	//Result arrays
+	//Result Arrays
 	private double[][][][] result_shippedMaterialUnitsFacilityToCustomer; // F_ifct
 	private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
 	private double[][][] result_depreciationChargePrimaryFacility; 		// NDC_p_ftaut
@@ -106,6 +106,8 @@ public class Data {
 	private double[][] result_constructionStartPrimaryFacility; 			// y_ft
 	private double[][] result_constructionStartSecondaryFacility; 		// z_ft	
 
+	private double result_netPresentValue;
+	
 	
 	/**
 	 * 
@@ -1424,6 +1426,21 @@ public class Data {
 		this.successOfClinicalTrials = successOfClinicalTrials;
 	}
 
+	
+	/**
+	 * @return the result_netPresentValue
+	 */
+	public double getResult_netPresentValue() {
+		return result_netPresentValue;
+	}
+
+
+	/**
+	 * @param result_netPresentValue the result_netPresentValue to set
+	 */
+	public void setResult_netPresentValue(double result_netPresentValue) {
+		this.result_netPresentValue = result_netPresentValue;
+	}
 
 	/**
 	 * Increments period count by one
