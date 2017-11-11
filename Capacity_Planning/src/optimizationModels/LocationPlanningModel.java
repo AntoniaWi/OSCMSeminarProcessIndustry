@@ -1127,7 +1127,7 @@ public class LocationPlanningModel extends IloCplex {
 					yft[j][k] = (int) getValue(this.constructionStartPrimaryFacility[j][k]);
 					zft[j][k] = 0;
 					//if (getValue(this.constructionStartPrimaryFacility[j][k]) == 1) {
-						out.write(" Primary Facility " + (j + 1) + " is build in " + (k + 1) + ". y = "
+						out.write(" Primary Facility " + (j + 1) + " is/not build in " + (k + 1) + ". y = "
 								+ getValue(this.constructionStartPrimaryFacility[j][k]) + "\n");
 
 					//}
@@ -1136,7 +1136,7 @@ public class LocationPlanningModel extends IloCplex {
 					yft[j][k] = 0;
 					//if (getValue(this.constructionStartSecondaryFacility[j][k]) == 1) {
 
-						out.write(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
+						out.write(" Secondary Facility " + (j + 1) + " i/not build in " + (k + 1) + ". z = "
 								+ getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
 						
 					//}
