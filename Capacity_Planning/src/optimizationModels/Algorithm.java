@@ -78,6 +78,7 @@ public class Algorithm {
 			
 			String tab = "Run "+(i+1);
 			ReadAndWrite.writeSolutionLocationModel(dataInstances[i], tab);
+			ReadAndWrite.writeSolutionDecisionPlanningModel(dataInstances[i], tab);
 			
 			
 			// TODO: write results in output Excel
