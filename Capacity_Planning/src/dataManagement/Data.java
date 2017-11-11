@@ -70,7 +70,7 @@ public class Data {
 		private double[][] importDuty; // importDuty[s][f] ID_isf
 		private int projectLife;// projectLife[t] L_f
 		private double[] variableProductionCosts;// MC_f
-		private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
+		private double[][][] unitSellingPrice;// unitSellingPrice[i][f][t] P_ift
 		private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
 		private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
 		private double[][] supply;// supply[i][s] S_is
@@ -219,7 +219,7 @@ public class Data {
 		ReadAndWrite.readMassbalance(this);
 		ReadAndWrite.readDataF(this);
 		ReadAndWrite.readSis(this);
-		ReadAndWrite.readPif(this);
+		//ReadAndWrite.readPif(this);
 		ReadAndWrite.readIDsf(this);
 		ReadAndWrite.readCIFsf(this);
 		ReadAndWrite.readDictBasics(this);
@@ -706,7 +706,7 @@ public class Data {
 	/**
 	 * @return the unitSellingPrice
 	 */
-	public double[][] getUnitSellingPrice() {
+	public double[][][] getUnitSellingPrice() {
 		return unitSellingPrice;
 	}
 
@@ -714,7 +714,7 @@ public class Data {
 	/**
 	 * @param unitSellingPrice the unitSellingPrice to set
 	 */
-	public void setUnitSellingPrice(double[][] unitSellingPrice) {
+	public void setUnitSellingPrice(double[][][] unitSellingPrice) {
 		this.unitSellingPrice = unitSellingPrice;
 	}
 

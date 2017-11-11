@@ -304,7 +304,7 @@ public class LocationPlanningModel extends IloCplex {
 
 		objective = addMaximize();
 		objective.setExpr(expr);
-		System.out.println(objective);
+		
 
 	}
 
@@ -327,7 +327,7 @@ public class LocationPlanningModel extends IloCplex {
 
 			}
 		}
-		System.out.println(this.numberOfPrimaryFacilities);
+		
 		addEq(this.numberOfPrimaryFacilities, 1);
 
 	}
@@ -342,7 +342,7 @@ public class LocationPlanningModel extends IloCplex {
 						this.constructionStartSecondaryFacility[i][this.datainstanz.getParameter_monthsToBuildPrimaryFacilities()- this.datainstanz.getParameter_monthsToBuildSecondaryFacilities()]);
 			}
 		}
-		//addEq(this.numberOfSecondaryFacilities, 2);
+		
 		addGe(this.numberOfSecondaryFacilities, 1);
 	}
 
@@ -885,7 +885,7 @@ public class LocationPlanningModel extends IloCplex {
 								for (int l = 0; l < this.datainstanz.getI(); l++) {
 									if (this.datainstanz.getIM()[m][k] && k == l) {
 										// System.out.println("Check gleiches Material: "+(k+1)+" und "+(l+1)+" ?");
-										this.grossIncomeConstraint.addTerm(this.datainstanz.getUnitSellingPrice()[k][j],
+										this.grossIncomeConstraint.addTerm(this.datainstanz.getUnitSellingPrice()[k][j][i],
 												this.shippedMaterialUnitsFacilityToCustomer[k][j][m][i]);
 
 									}
@@ -1126,22 +1126,20 @@ public class LocationPlanningModel extends IloCplex {
 				if (this.datainstanz.getIF()[j] && datainstanz.getPIF()[j]) {
 					yft[j][k] = (int) getValue(this.constructionStartPrimaryFacility[j][k]);
 					zft[j][k] = 0;
-					if (getValue(this.constructionStartPrimaryFacility[j][k]) == 1) {
-						out.write(" Primary Facility " + (j + 1) + " is build in " + (k + 1) + ". y = "
+					//if (getValue(this.constructionStartPrimaryFacility[j][k]) == 1) {
+						out.write(" Primary Facility " + (j + 1) + " is/not build in " + (k + 1) + ". y = "
 								+ getValue(this.constructionStartPrimaryFacility[j][k]) + "\n");
 
-					}
+					//}
 				} else if (datainstanz.getIF()[j] && datainstanz.getSIF()[j]) {
 					zft[j][k] = getValue(this.constructionStartSecondaryFacility[j][k]);
 					yft[j][k] = 0;
-					if (getValue(this.constructionStartSecondaryFacility[j][k]) == 1) {
+					//if (getValue(this.constructionStartSecondaryFacility[j][k]) == 1) {
 
-						out.write(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
+						out.write(" Secondary Facility " + (j + 1) + " i/not build in " + (k + 1) + ". z = "
 								+ getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
-						System.out.println(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
-								+ getValue(this.constructionStartSecondaryFacility[j][k]) + " ");
-						System.out.println(zft[j][k]);
-					}
+						
+					//}
 
 				} else {
 					zft[j][k] = 0;

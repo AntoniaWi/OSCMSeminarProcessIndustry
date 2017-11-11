@@ -493,8 +493,8 @@ public class ReadAndWrite {
 		NumberCell cell29 = (NumberCell) cell28;
 		double cell30 = cell29.getValue();
 		instanz.setTimeR((int) cell30);
-		
-		//read monthlyDiscountFactor
+
+		// read monthlyDiscountFactor
 		Cell cell31 = sheet.getCell(1, 15);
 		NumberCell cell32 = (NumberCell) cell31;
 		double cell33 = cell32.getValue();
@@ -526,8 +526,6 @@ public class ReadAndWrite {
 		writableWorkbook = Workbook.createWorkbook(file, workbook);
 
 		WritableSheet sheet = writableWorkbook.getSheet("Const.");
-
-		
 
 		// remaining Time
 
@@ -730,10 +728,53 @@ public class ReadAndWrite {
 	}
 	// ____________________________________________________________________________________________
 
-	// Sheet 9.1: D_ict
+	// Sheet 9.1: D_ict and P_ift
 
 	// ____________________________________________________________________________________________
 	public static void createAndWriteDict(Data instanz) throws BiffException, IOException, WriteException {
+
+		File file;
+		Workbook workbook;
+		choosePaths();
+		file = new File(path);
+
+		workbook = Workbook.getWorkbook(file);
+		Sheet sheet2 = workbook.getSheet("Pif_M");
+		Sheet sheet3 = workbook.getSheet("Pif_R");
+
+		// read P[i][f][t]
+
+		double[][][] P = new double[instanz.getI()][instanz.getF()][instanz.getT()];
+
+		for (int i = 0; i < instanz.getI(); i++) {
+			for (int j = 0; j < instanz.getF(); j++) {
+				for (int k = 0; k < instanz.getT(); k++) {
+					// Pift Monopoly
+					Cell cell1 = sheet2.getCell(i + 1, j + 1);
+					NumberCell cell2 = (NumberCell) cell1;
+					double cell3 = cell2.getValue();
+					// Pift Regular Market
+					Cell cell4 = sheet3.getCell(i + 1, j + 1);
+					NumberCell cell5 = (NumberCell) cell4;
+					double cell6 = cell5.getValue();
+
+					if (k < instanz.getRemainingTimeofClinicalTrials()) {
+						P[i][j][k] = 0;
+
+					} else if (k < (instanz.getRemainingTimeofClinicalTrials() + instanz.getTimeM())) {
+						P[i][j][k] = cell3;
+
+					} else if (k <= instanz.getT()) {
+						P[i][j][k] = cell6;
+
+					}
+
+				}
+
+			}
+		}
+		instanz.setUnitSellingPrice(P);
+
 		File file2;
 		Workbook workbook2;
 		choosePaths();
@@ -741,7 +782,7 @@ public class ReadAndWrite {
 
 		workbook2 = Workbook.getWorkbook(file2);
 		Sheet sheet = workbook2.getSheet("Const.");
-		
+
 		// read budget
 		Cell cell4 = sheet.getCell(1, 2);
 		NumberCell cell5 = (NumberCell) cell4;
@@ -754,7 +795,6 @@ public class ReadAndWrite {
 		}
 		instanz.setCapitalBudget(budget);
 
-		
 		File file1;
 		WritableWorkbook writableWorkbook;
 		Workbook workbook1;
@@ -765,7 +805,6 @@ public class ReadAndWrite {
 		writableWorkbook = Workbook.createWorkbook(file1, workbook1);
 
 		WritableSheet sheet0 = writableWorkbook.getSheet("Dict");
-		
 
 		// headings
 
@@ -810,13 +849,11 @@ public class ReadAndWrite {
 			}
 		}
 		instanz.setDemand(Dict);
-		
+
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook1.close();
 
-		
-		
 	}
 	// ____________________________________________________________________________________________
 
@@ -870,21 +907,21 @@ public class ReadAndWrite {
 
 		// read P[i][f]
 
-		double[][] P = new double[instanz.getI()][instanz.getF()];
-
-		for (int i = 0; i < instanz.getI(); i++) {
-			for (int j = 0; j < instanz.getF(); j++) {
-
-				Cell cell1 = sheet.getCell(i + 1, j + 1);
-				NumberCell cell2 = (NumberCell) cell1;
-				double cell3 = cell2.getValue();
-
-				P[i][j] = cell3;
-
-			}
-
-		}
-		instanz.setUnitSellingPrice(P);
+		/*
+		 * double[][] P = new double[instanz.getI()][instanz.getF()];
+		 * 
+		 * for (int i = 0; i < instanz.getI(); i++) { for (int j = 0; j <
+		 * instanz.getF(); j++) {
+		 * 
+		 * Cell cell1 = sheet.getCell(i + 1, j + 1); NumberCell cell2 = (NumberCell)
+		 * cell1; double cell3 = cell2.getValue();
+		 * 
+		 * P[i][j] = cell3;
+		 * 
+		 * }
+		 * 
+		 * } instanz.setUnitSellingPrice(P);
+		 */
 	}
 
 	// Sheet 12: CIF1sf
