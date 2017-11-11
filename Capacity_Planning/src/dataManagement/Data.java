@@ -79,6 +79,10 @@ public class Data {
 		private int API; //
 		private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
 		private int initialCapacity; // Q0
+		private int monthsToBuildPrimaryFacilities_location;				// s_p_0 - in whole years
+		private int monthsToBuildSecondaryFacilities_location;			// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
+		private double constructionCostPrimaryFacility_location;			// c_p
+		private double constructionCostSecondaryFacility_location;
 		
     
 		//Help parameter for demand
@@ -1438,6 +1442,70 @@ public class Data {
 
 
 	/**
+	 * @return the monthsToBuildPrimaryFacilities_location
+	 */
+	public int getMonthsToBuildPrimaryFacilities_location() {
+		return monthsToBuildPrimaryFacilities_location;
+	}
+
+
+	/**
+	 * @param monthsToBuildPrimaryFacilities_location the monthsToBuildPrimaryFacilities_location to set
+	 */
+	public void setMonthsToBuildPrimaryFacilities_location(int monthsToBuildPrimaryFacilities_location) {
+		this.monthsToBuildPrimaryFacilities_location = monthsToBuildPrimaryFacilities_location;
+	}
+
+
+	/**
+	 * @return the monthsToBuildSecondaryFacilities_location
+	 */
+	public int getMonthsToBuildSecondaryFacilities_location() {
+		return monthsToBuildSecondaryFacilities_location;
+	}
+
+
+	/**
+	 * @param monthsToBuildSecondaryFacilities_location the monthsToBuildSecondaryFacilities_location to set
+	 */
+	public void setMonthsToBuildSecondaryFacilities_location(int monthsToBuildSecondaryFacilities_location) {
+		this.monthsToBuildSecondaryFacilities_location = monthsToBuildSecondaryFacilities_location;
+	}
+
+
+	/**
+	 * @return the constructionCostPrimaryFacility_location
+	 */
+	public double getConstructionCostPrimaryFacility_location() {
+		return constructionCostPrimaryFacility_location;
+	}
+
+
+	/**
+	 * @param constructionCostPrimaryFacility_location the constructionCostPrimaryFacility_location to set
+	 */
+	public void setConstructionCostPrimaryFacility_location(double constructionCostPrimaryFacility_location) {
+		this.constructionCostPrimaryFacility_location = constructionCostPrimaryFacility_location;
+	}
+
+
+	/**
+	 * @return the constructionCostSecondaryFacility_location
+	 */
+	public double getConstructionCostSecondaryFacility_location() {
+		return constructionCostSecondaryFacility_location;
+	}
+
+
+	/**
+	 * @param constructionCostSecondaryFacility_location the constructionCostSecondaryFacility_location to set
+	 */
+	public void setConstructionCostSecondaryFacility_location(double constructionCostSecondaryFacility_location) {
+		this.constructionCostSecondaryFacility_location = constructionCostSecondaryFacility_location;
+	}
+
+
+	/**
 	 * Increments period count by one
 	 */
 	public void incrementCountPeriods() {
@@ -1528,7 +1596,7 @@ public class Data {
 		
 		double setUpCost = 0;
 		
-		for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
+		for (int i = 1; i < this.investmentDecisionPrimaryFacility.length; i++) {
 			
 			int setUp = Math.max(this.investmentDecisionPrimaryFacility[i] - this.investmentDecisionPrimaryFacility[i-1], 0);
 			
