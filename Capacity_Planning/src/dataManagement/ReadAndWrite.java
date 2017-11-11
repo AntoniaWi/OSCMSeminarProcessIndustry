@@ -1403,14 +1403,20 @@ public class ReadAndWrite {
 					sheet.addCell(label5);	
 					
 					
-					//GrossIncome
+					//Assumed GrossIncome 
 					double grossincome=0;
+				
 					for (int l=0;l<instanz.getT();l++) {
-						grossincome += instanz.getResult_grossIncome()[i][l];
+						grossincome += instanz.getResult_grossIncome()[i][l];			
 					}
 					
 					Number label6 = new Number(4, 13, grossincome);
 					sheet.addCell(label6);	
+					
+					//Construction costs
+					Number label7 = new Number(1, 20, instanz.getResult_capitalExpenditure()[j]);
+					sheet.addCell(label7);	
+					
 					
 					
 				}
@@ -1421,6 +1427,7 @@ public class ReadAndWrite {
 		
 		//Secondaries
 		int counter=0;
+		double constructionCosts=0;
 		for (int i = 0; i < instanz.getF(); i++) {
 			for (int j = 0; j < instanz.getT(); j++) {
 				if (instanz.getResult_constructionStartSecondaryFacility()[i][j]==1) {
@@ -1451,14 +1458,43 @@ public class ReadAndWrite {
 					Number label6 = new Number(4, 13+counter, grossincome);
 					sheet.addCell(label6);	
 					
-					
+					//Construction costs
+					constructionCosts+=instanz.getResult_capitalExpenditure()[j];
+				
 					
 					counter++;
 				}
 			}
 			
+			Number label8 = new Number(1, 21, constructionCosts);
+			sheet.addCell(label8);	
+			//Assumed Production Cost
+			
+			double productionCost=0;
+			for (int l=0;l<instanz.getT();l++) {
+				productionCost += (instanz.getVariableProductionCosts()[i]*instanz.getResult_consumedOrProducedAPI()[i][l]);
+			}
+			
+			
+			Number label7 = new Number(1, 22, productionCost);
+			sheet.addCell(label7);	
+			
+		
 
 		}
+		
+		//Assumed corporate Tax
+		double corporateTax=0;
+		
+		for (int m=0;m<instanz.getN();m++) {
+		for (int l=0;l<instanz.getT();l++) {
+			corporateTax += (instanz.getResult_taxableIncome()[m][l]*instanz.getCorporateTax()[m]);
+		}
+		}
+		
+		Number label7 = new Number(1, 23, corporateTax);
+		sheet.addCell(label7);	
+		
 		
 		// close workbook
 		writableWorkbook.write();

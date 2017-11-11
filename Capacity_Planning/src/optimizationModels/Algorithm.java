@@ -77,6 +77,7 @@ public class Algorithm {
 			printModelInformation_End(i); // TODO: rework needed
 			
 			String tab = "Run"+(i+1);
+			ReadAndWrite.writeSolutionLocationModel(dataInstance, tab);
 			
 			
 			// TODO: write results in output Excel
