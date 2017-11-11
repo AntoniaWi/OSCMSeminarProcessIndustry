@@ -304,7 +304,7 @@ public class LocationPlanningModel extends IloCplex {
 
 		objective = addMaximize();
 		objective.setExpr(expr);
-		System.out.println(objective);
+		
 
 	}
 
@@ -327,7 +327,7 @@ public class LocationPlanningModel extends IloCplex {
 
 			}
 		}
-		System.out.println(this.numberOfPrimaryFacilities);
+		
 		addEq(this.numberOfPrimaryFacilities, 1);
 
 	}
