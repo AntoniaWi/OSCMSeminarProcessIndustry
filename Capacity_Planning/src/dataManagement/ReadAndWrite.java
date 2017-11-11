@@ -1379,6 +1379,11 @@ public class ReadAndWrite {
 
 						revenue += (instanz.getUnitSellingPrice()[i][j][l]
 								* instanz.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l]);
+						if (instanz.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l] > 0) {
+							System.out.println("UnitSellingPrice " + instanz.getUnitSellingPrice()[i][j][l]
+									+ " for shipping material " + (i + 1) + " from facility " + (j + 1)
+									+ " to customer " + k + " in period " + (l + 1));
+						}
 					}
 				}
 			}
@@ -1506,7 +1511,7 @@ public class ReadAndWrite {
 		for (int m = 0; m < instanz.getF(); m++) {
 			for (int l = 0; l < instanz.getT(); l++) {
 				customDuties += (instanz.getResult_grossIncome()[m][l]);
-				
+
 			}
 		}
 		customDuties += productionCost;
