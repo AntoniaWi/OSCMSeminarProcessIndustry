@@ -164,7 +164,7 @@ public class LocationPlanningModel extends IloCplex {
 	 */
 	public void run () throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 		
-		int tmp_remainingTime = (this.datainstanz.getParameter_planningHorizon() - this.datainstanz.getCountPeriods());
+		int tmp_remainingTime = (this.datainstanz.getParameter_planningHorizon() - this.datainstanz.getCountPeriods())*12;
 		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime+1);
 		
 		this.build();

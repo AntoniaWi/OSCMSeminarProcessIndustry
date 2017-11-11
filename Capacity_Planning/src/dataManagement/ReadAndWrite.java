@@ -460,14 +460,14 @@ public class ReadAndWrite {
 		instanz.setProjectLife((int) cell3);
 
 		// read numberFacilities F
-		Cell cell7 = sheet.getCell(1, 6);
+		Cell cell7 = sheet.getCell(1, 8);
 
 		NumberCell cell8 = (NumberCell) cell7;
 		double cell9 = cell8.getValue();
 		instanz.setF((int) cell9);
 
 		// read numberMaterials I
-		Cell cell10 = sheet.getCell(1, 7);
+		Cell cell10 = sheet.getCell(1, 9);
 		NumberCell cell11 = (NumberCell) cell10;
 		double cell12 = cell11.getValue();
 		instanz.setI((int) cell12);
@@ -475,12 +475,12 @@ public class ReadAndWrite {
 		// read numberMonths T
 
 		/*
-		 * Cell cell13 = sheet.getCell(1, 8); NumberCell cell14 = (NumberCell) cell13;
+		 * Cell cell13 = sheet.getCell(1, 10); NumberCell cell14 = (NumberCell) cell13;
 		 * double cell15 = cell14.getValue(); instanz.setT((int) cell15);
 		 */
 
 		// read numberOfNations N
-		Cell cell16 = sheet.getCell(1, 9);
+		Cell cell16 = sheet.getCell(1, 11);
 		NumberCell cell17 = (NumberCell) cell16;
 		double cell18 = cell17.getValue();
 		instanz.setN((int) cell18);
@@ -500,19 +500,19 @@ public class ReadAndWrite {
 		instanz.setAPI((int) cell24);
 
 		// read timeMonopoly
-		Cell cell25 = sheet.getCell(1, 11);
+		Cell cell25 = sheet.getCell(1, 14);
 		NumberCell cell26 = (NumberCell) cell25;
 		double cell27 = cell26.getValue();
 		instanz.setTimeM((int) cell27);
 
 		// read timeRegularMarket
-		Cell cell28 = sheet.getCell(1, 12);
+		Cell cell28 = sheet.getCell(1, 15);
 		NumberCell cell29 = (NumberCell) cell28;
 		double cell30 = cell29.getValue();
 		instanz.setTimeR((int) cell30);
 
 		// read monthlyDiscountFactor
-		Cell cell31 = sheet.getCell(1, 15);
+		Cell cell31 = sheet.getCell(1, 5);
 		NumberCell cell32 = (NumberCell) cell31;
 		double cell33 = cell32.getValue();
 		instanz.setParameter_discountFactor_location(cell33);
@@ -524,28 +524,28 @@ public class ReadAndWrite {
 		 */
 		
 		// read constructionTimePrimary
-		Cell cell34 = sheet.getCell(1, 21);
+		Cell cell34 = sheet.getCell(1, 19);
 		NumberCell cell35 = (NumberCell) cell34;
 		double cell36 = cell35.getValue();
 		int cell37= (int) cell36;
 		instanz.setMonthsToBuildPrimaryFacilities_location(cell37);
 		
 		// read constructionTimeSecondary
-		Cell cell38 = sheet.getCell(1, 22);
+		Cell cell38 = sheet.getCell(1, 20);
 		NumberCell cell39 = (NumberCell) cell38;
 		double cell40 = cell39.getValue();
 		int cell41 = (int) cell40;
 		instanz.setMonthsToBuildSecondaryFacilities_location(cell41);
 		
 		//read constructionCostPrimary
-		Cell cell42 = sheet.getCell(1, 23);
+		Cell cell42 = sheet.getCell(1, 21);
 		NumberCell cell43 = (NumberCell) cell42;
 		double cell44 = cell43.getValue();
 		int cell45 = (int) cell44;
 		instanz.setConstructionCostPrimaryFacility_location(cell45);
 		
 		//read constructionCostSecondary
-		Cell cell46 = sheet.getCell(1, 23);
+		Cell cell46 = sheet.getCell(1, 22);
 		NumberCell cell47 = (NumberCell) cell46;
 		double cell48 = cell47.getValue();
 		int cell49 = (int) cell48;
@@ -574,11 +574,11 @@ public class ReadAndWrite {
 
 		// remaining Time
 
-		Number label3 = new Number(1, 13, instanz.getRemainingTimeofClinicalTrials());
+		Number label3 = new Number(1, 16, instanz.getRemainingTimeofClinicalTrials());
 		sheet.addCell(label3);
 
 		// planning horizon T
-		Number label4 = new Number(1, 8, instanz.getT());
+		Number label4 = new Number(1, 10, instanz.getT());
 		sheet.addCell(label4);
 
 		// close workbook

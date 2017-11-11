@@ -24,7 +24,7 @@ public class Algorithm {
 	
 	//----------   Cannot be modified   ------------------------------------------------------------------------------//
 	
-	public static Data[] dataInstances;
+	public static Data[] dataInstances = new Data[numberOfTestRuns];
 	
 	public static DecisionReviewModel[] decisionReviewModels = new DecisionReviewModel[numberOfTestRuns];
 	public static LocationPlanningModel[] locationPlanningModels = new LocationPlanningModel[numberOfTestRuns];
