@@ -30,23 +30,33 @@ public class ReadAndWrite {
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
 	public static String pathExcelAntoniaR = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Result.xls";
-
+	public static String pathExcelAntoniaOutput = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Computational_Study.xls";
+	
 	// Paths Sarah #2
 	public static String pathExcelSarah = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\CaseDataBasic.xls";
 	public static String pathExcelSarahR = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\Result.xls";
+	public static String pathExcelSarahOutput = "C:\\Users\\Sarah\\Documents\\GitHub\\OSCMSeminarProcessIndustry\\Capacity_Planning\\lib\\Computational_Study.xls";
 
+	
 	// Paths Ramona #3
-	public static String pathExcelRamona = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls"; // TODO:
+	public static String pathExcelRamona = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls"; 
+	public static String pathExcelRamonaR = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Result.xls"; 
+	public static String pathExcelRamonaOutput = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Computational_Study.xls"; // TODO:
 
+
+	
 	// Paths Antonia Windows #4
 	public static String pathExcelAntonia1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";//
 	public static String pathExcelAntoniaR1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Result.xls";
+	public static String pathExcelAntoniaOutput1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Computational_Study.xls";
 
+	
 	// Pfad
 	// eingeben
 
 	public static String path = "";
 	public static String pathR = "";
+	public static String pathOutput = "";
 
 	public static void choosePaths() {
 
@@ -54,21 +64,28 @@ public class ReadAndWrite {
 
 			path = pathExcelAntonia;
 			pathR = pathExcelAntoniaR;
+			pathOutput = pathExcelAntoniaOutput;
 		}
 
 		else if (user == 2) {
 
 			path = pathExcelSarah;
 			pathR = pathExcelSarahR;
+			pathOutput = pathExcelSarahOutput;
+			
 		}
 
 		else if (user == 3) {
 
 			path = pathExcelRamona;
+			pathR = pathExcelRamonaR;
+			pathOutput = pathExcelRamonaOutput;
+			
 		} else if (user == 4) {
 
 			path = pathExcelAntonia1;
 			pathR = pathExcelAntoniaR1;
+			pathOutput = pathExcelAntoniaOutput1;
 		}
 
 	}
@@ -1021,6 +1038,296 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 	public static void writeSolution(Data instanz) throws BiffException, IOException, WriteException {
+
+		File file;
+		WritableWorkbook writableWorkbook;
+		Workbook workbook;
+		choosePaths();
+
+		file = new File(pathR);
+
+		workbook = Workbook.getWorkbook(file);
+		writableWorkbook = Workbook.createWorkbook(file, workbook);
+
+		WritableSheet sheet = writableWorkbook.getSheet("yft");
+		WritableSheet sheet1 = writableWorkbook.getSheet("zft");
+		WritableSheet sheet2 = writableWorkbook.getSheet("TInt");
+		WritableSheet sheet3 = writableWorkbook.getSheet("GIft");
+		WritableSheet sheet4 = writableWorkbook.getSheet("CEt");
+		WritableSheet sheet5 = writableWorkbook.getSheet("Qft");
+		WritableSheet sheet6 = writableWorkbook.getSheet("delta_qft");
+		WritableSheet sheet7 = writableWorkbook.getSheet("Xft");
+
+		// clear sheets
+		int rows = sheet.getRows();
+		int r = 0;
+
+		while (r <= rows) {
+
+			sheet.removeRow(0);
+			r++;
+		}
+		int rows1 = sheet1.getRows();
+		int r1 = 0;
+
+		while (r1 <= rows1) {
+
+			sheet1.removeRow(0);
+			r1++;
+		}
+		int rows2 = sheet2.getRows();
+		int r2 = 0;
+
+		while (r2 <= rows2) {
+
+			sheet2.removeRow(0);
+			r2++;
+		}
+		int rows3 = sheet3.getRows();
+		int r3 = 0;
+
+		while (r3 <= rows3) {
+
+			sheet3.removeRow(0);
+			r3++;
+		}
+		int rows4 = sheet4.getRows();
+		int r4 = 0;
+
+		while (r4 <= rows4) {
+
+			sheet4.removeRow(0);
+			r4++;
+		}
+
+		int rows5 = sheet5.getRows();
+		int r5 = 0;
+		while (r5 <= rows5) {
+
+			sheet5.removeRow(0);
+			r5++;
+		}
+
+		int rows6 = sheet6.getRows();
+		int r6 = 0;
+		while (r6 <= rows6) {
+
+			sheet6.removeRow(0);
+			r6++;
+		}
+		int rows7 = sheet7.getRows();
+		int r7 = 0;
+		while (r7 <= rows7) {
+
+			sheet7.removeRow(0);
+			r7++;
+		}
+
+		// yft
+		// Headings
+		Label label4 = new Label(0, 0, "f/t");
+		sheet.addCell(label4);
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label3 = new Number(0, i + 1, i + 1);
+			sheet.addCell(label3);
+
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 0, i + 1);
+			sheet.addCell(label3);
+
+		}
+		// Results
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+				if (instanz.getIF()[i] && instanz.getPIF()[i]) {
+
+					Number label3 = new Number(j + 1, i + 1,
+							instanz.getResult_constructionStartPrimaryFacility()[i][j]);
+					sheet.addCell(label3);
+				} else {
+					Number label3 = new Number(j + 1, i + 1, 0);
+					sheet.addCell(label3);
+
+				}
+
+			}
+		}
+
+		// zft
+		// Headings
+		Label label5 = new Label(0, 0, "f/t");
+		sheet1.addCell(label5);
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label3 = new Number(0, i + 1, i + 1);
+			sheet1.addCell(label3);
+
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 0, i + 1);
+			sheet1.addCell(label3);
+
+		}
+
+		// Result
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+				if (instanz.getIF()[i] && instanz.getSIF()[i]) {
+
+					Number label3 = new Number(j + 1, i + 1,
+							instanz.getResult_constructionStartSecondaryFacility()[i][j]);
+					sheet1.addCell(label3);
+				} else {
+					Number label3 = new Number(j + 1, i + 1, 0);
+					sheet1.addCell(label3);
+
+				}
+
+			}
+		}
+
+		// TInt
+
+		// Headings
+		Label label6 = new Label(0, 0, "n/t");
+		sheet2.addCell(label6);
+
+		for (int i = 0; i < instanz.getN(); i++) {
+			Number label3 = new Number(0, i + 1, i + 1);
+			sheet2.addCell(label3);
+
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 0, i + 1);
+			sheet2.addCell(label3);
+
+		}
+		// Result
+		for (int i = 0; i < instanz.getN(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+
+				Number label3 = new Number(j + 1, i + 1, instanz.getResult_taxableIncome()[i][j]);
+				sheet2.addCell(label3);
+
+			}
+		}
+
+		// GIft
+
+		// Headings
+		Label label7 = new Label(0, 0, "f/t");
+		sheet3.addCell(label7);
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label3 = new Number(0, i + 1, i + 1);
+			sheet3.addCell(label3);
+
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 0, i + 1);
+			sheet3.addCell(label3);
+
+		}
+
+		// Result
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+				if (instanz.getIF()[i]) {
+					Number label3 = new Number(j + 1, i + 1, instanz.getResult_grossIncome()[i][j]);
+					sheet3.addCell(label3);
+
+				} else {
+					Number label3 = new Number(j + 1, i + 1, 0);
+					sheet3.addCell(label3);
+				}
+
+			}
+		}
+
+		// CEt
+
+		// Headings
+		Label label8 = new Label(0, 0, "t");
+		sheet4.addCell(label8);
+
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label90 = new Number(i + 1, 0, i + 1);
+			sheet4.addCell(label90);
+
+		}
+
+		// Result
+
+		for (int j = 0; j < instanz.getT(); j++) {
+
+			Number label3 = new Number(j + 1, 1, instanz.getResult_capitalExpenditure()[j]);
+			sheet4.addCell(label3);
+
+		}
+
+		// Qft, delta_qft, Xft
+
+		// Headings
+		Label label9 = new Label(0, 0, "f/t");
+		sheet5.addCell(label9);
+		Label label80 = new Label(0, 0, "f/t");
+		sheet6.addCell(label80);
+		Label label800 = new Label(0, 0, "f/t");
+		sheet7.addCell(label800);
+
+		for (int i = 0; i < instanz.getF(); i++) {
+			Number label90 = new Number(0, i + 1, i + 1);
+			sheet5.addCell(label90);
+			Number label900 = new Number(0, i + 1, i + 1);
+			sheet6.addCell(label900);
+			Number label9000 = new Number(0, i + 1, i + 1);
+			sheet7.addCell(label9000);
+
+		}
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label90 = new Number(i + 1, 0, i + 1);
+			sheet5.addCell(label90);
+			Number label900 = new Number(i + 1, 0, i + 1);
+			sheet6.addCell(label900);
+			Number label9000 = new Number(i + 1, 0, i + 1);
+			sheet7.addCell(label9000);
+
+		}
+
+		// Result
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+
+				Number label3 = new Number(j + 1, i + 1, instanz.getResult_availableProductionCapacity()[i][j]);
+				sheet5.addCell(label3);
+
+				Number label30 = new Number(j + 1, i + 1, instanz.getResult_deltaCapacityExpansion()[i][j]);
+				sheet6.addCell(label30);
+
+				Number label300 = new Number(j + 1, i + 1, instanz.getResult_consumedOrProducedAPI()[i][j]);
+				sheet7.addCell(label300);
+
+			}
+		}
+
+		// close workbook
+		writableWorkbook.write();
+		writableWorkbook.close();
+		workbook.close();
+
+	}
+	
+	// ____________________________________________________________________________________________
+
+	// Create Result:
+	// Step 1: Transfer decision variable values into result arrays of data
+	// instance in the location planning model
+	// Step 2: Write these result arrays into Excel Sheet (2003 compatible)
+
+	// ____________________________________________________________________________________________
+	public static void writeSolutionLocationModel(Data instanz) throws BiffException, IOException, WriteException {
 
 		File file;
 		WritableWorkbook writableWorkbook;
