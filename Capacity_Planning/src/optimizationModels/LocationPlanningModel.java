@@ -1124,22 +1124,22 @@ public class LocationPlanningModel extends IloCplex {
 			for (int k = 0; k < this.datainstanz.getT(); k++) {
 
 				if (this.datainstanz.getIF()[j] && datainstanz.getPIF()[j]) {
-					yft[j][k] = (int) getValue(this.constructionStartPrimaryFacility[j][k]);
+					yft[j][k] = (int) (this.getValue(this.constructionStartPrimaryFacility[j][k])+0.1);
 					zft[j][k] = 0;
-					//if (getValue(this.constructionStartPrimaryFacility[j][k]) == 1) {
-						out.write(" Primary Facility " + (j + 1) + " is/not build in " + (k + 1) + ". y = "
-								+ getValue(this.constructionStartPrimaryFacility[j][k]) + "\n");
+					if (getValue(this.constructionStartPrimaryFacility[j][k])>0) {
+						out.write(" Primary Facility " + (j + 1) + " is build in " + (k + 1) + ". y = "
+								+ yft[j][k] + "\n");
 
-					//}
+					}
 				} else if (datainstanz.getIF()[j] && datainstanz.getSIF()[j]) {
-					zft[j][k] = getValue(this.constructionStartSecondaryFacility[j][k]);
+					zft[j][k] = (int) (this.getValue(this.constructionStartSecondaryFacility[j][k])+0.1);
 					yft[j][k] = 0;
-					//if (getValue(this.constructionStartSecondaryFacility[j][k]) == 1) {
+					if (getValue(this.constructionStartSecondaryFacility[j][k]) > 0) {
 
-						out.write(" Secondary Facility " + (j + 1) + " i/not build in " + (k + 1) + ". z = "
-								+ getValue(this.constructionStartSecondaryFacility[j][k]) + "\n");
+						out.write(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
+								+ zft[j][k] + "\n");
 						
-					//}
+					}
 
 				} else {
 					zft[j][k] = 0;
