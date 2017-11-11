@@ -1212,7 +1212,8 @@ public class LocationPlanningModel extends IloCplex {
 		instanz.setResult_consumedOrProducedAPI(Xft);
 
 		// F_ifct and F_isft
-
+		double [][][][] Fifct= new double [instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
+		double [][][][] Fisft= new double [instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
 		for (int i = 0; i < instanz.getI(); i++) {
 			for (int j = 0; j < instanz.getF(); j++) {
 				for (int k = 0; k < instanz.getF(); k++) {
@@ -1224,13 +1225,11 @@ public class LocationPlanningModel extends IloCplex {
 									out.write("Material " + (i + 1) + " is shipped from facility " + (j + 1)
 											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
 											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
+									Fifct[i][j][k][l]=getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]);
+									
 								} else {
 
-									/*
-									 * out.write("Material " + (i + 1) + " is NOT shipped from facility " + (j + 1)
-									 * + " to customer " + (k + 1) + " in period " + (l + 1) + " ." +
-									 * getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
-									 */
+									Fifct[i][j][k][l]=0;
 
 								}
 
@@ -1240,7 +1239,18 @@ public class LocationPlanningModel extends IloCplex {
 									out.write("Material " + (i + 1) + " is shipped from supplier " + (k + 1)
 											+ " to facility " + (j + 1) + " in period " + (l + 1) + " ."
 											+ getValue(this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]) + "\n");
+									
+									Fisft[i][k][j][l]=getValue(this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]);
 								}
+								
+								else {
+									Fisft[i][k][j][l]=0;
+								}
+							}
+							
+							else {
+								Fisft[i][k][j][l]=0;
+								Fifct[i][j][k][l]=0;
 							}
 
 						}
@@ -1248,6 +1258,9 @@ public class LocationPlanningModel extends IloCplex {
 				}
 			}
 		}
+		
+		instanz.setResult_shippedMaterialUnitsFacilityToCustomer(Fifct);
+		instanz.setResult_shippedMaterialUnitsSupplierToFacility(Fisft);
 
 		//
 		out.close();
