@@ -1587,34 +1587,34 @@ public class ReadAndWrite {
 		
 		// Test results (B44 - F44)
 		
-		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
+		for (int i = 0; i < dataInstance.getParameter_planningHorizon(); i++) {
 			
-			number = new Number(column+i, row+14, dataInstance.getTestResults()[i]);
+			number = new Number(column+i, row+14, dataInstance.getTestResults()[i+1]);
 			sheet.addCell(number);
 		}
 		
 		// Test probabilities (B45 - F54)
 		
-		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
+		for (int i = 0; i < dataInstance.getParameter_planningHorizon(); i++) {
 			
-			number = new Number(column+i, row+15, dataInstance.getTestProbability()[i]);
+			number = new Number(column+i, row+15, dataInstance.getTestProbability()[i+1]);
 			sheet.addCell(number);
 		}
 		
 		// Investment decisions in period t (B49 - F49 -> B53 - F53)
 		
-		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
+		for (int i = 0; i < dataInstance.getParameter_planningHorizon(); i++) {
 			
-			for (int j = 1; j <= dataInstance.getParameter_planningHorizon(); j++) {
+			for (int j = 0; j < dataInstance.getParameter_planningHorizon(); j++) {
 				
-				number = new Number(column+j, row+19+i, dataInstance.getInvestmentStrategies()[i][j]);
+				number = new Number(column+j, row+19+i, dataInstance.getInvestmentStrategies()[i+1][j+1]);
 				sheet.addCell(number);
 			}
 		}
 		
 		// Final investment decisions in period t (B55 - F55)
 		
-		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
+		for (int i = 0; i < dataInstance.getParameter_planningHorizon(); i++) {
 			
 			number = new Number(column+i, row+25, dataInstance.getInvestmentDecisionPrimaryFacility()[i]);
 			sheet.addCell(number);
