@@ -44,6 +44,7 @@ public class Data {
 	private double totalPenaltyCost_primary;
 	private double totalExpansionCost_primary;
 	
+	private boolean successOfClinicalTrials;
 	
 	private int countPeriods;										// t
 	
@@ -300,6 +301,8 @@ public class Data {
 		this.totalSetUpCost_primary = 0;
 		this.totalPenaltyCost_primary = 0;
 		this.totalExpansionCost_primary = 0; 
+		
+		this.successOfClinicalTrials = false;
 	
 		}
 
@@ -1506,6 +1509,22 @@ public class Data {
 
 
 	/**
+	 * @return the clinicalTrialOutcome
+	 */
+	public boolean isSuccessOfClinicalTrials() {
+		return successOfClinicalTrials;
+	}
+
+
+	/**
+	 * @param clinicalTrialOutcome the clinicalTrialOutcome to set
+	 */
+	public void setSuccessOfClinicalTrials(boolean successOfClinicalTrials) {
+		this.successOfClinicalTrials = successOfClinicalTrials;
+	}
+
+
+	/**
 	 * Increments period count by one
 	 */
 	public void incrementCountPeriods() {
@@ -1554,6 +1573,18 @@ public class Data {
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @param period
+	 */
+	public void updateClinicalTrialOutcome () {
+		
+		if (countSuccessfulTests[this.getParameter_planningHorizon()] >= this.parameter_thresholdSuccessfulTests) {
+			
+			this.successOfClinicalTrials = true;
+		}
+	}
 	
 	
 	/**

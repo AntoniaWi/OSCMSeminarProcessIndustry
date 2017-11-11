@@ -119,6 +119,7 @@ public class Algorithm {
 		dataInstances[testRun].incrementCountPeriods();
 		updateFormerKnowledge(testRun);
 		dataInstances[testRun].calculateTotalExpansionCost();
+		dataInstances[testRun].updateClinicalTrialOutcome();
 	}
 	
 	
