@@ -1385,6 +1385,9 @@ public class ReadAndWrite {
 			}
 		}
 		}
+		Number label40 = new Number(1, 8, revenue);
+		sheet.addCell(label40);
+		
 		
 		//Net present value
 		Number label30 = new Number(1, 9, instanz.getResult_netPresentValue());
