@@ -24,7 +24,7 @@ public class Algorithm {
 	
 	//----------   Cannot be modified   ------------------------------------------------------------------------------//
 	
-	public static Data[] dataInstances;
+	public static Data[] dataInstances = new Data[numberOfTestRuns];
 	
 	public static DecisionReviewModel[] decisionReviewModels = new DecisionReviewModel[numberOfTestRuns];
 	public static LocationPlanningModel[] locationPlanningModels = new LocationPlanningModel[numberOfTestRuns];
@@ -77,6 +77,7 @@ public class Algorithm {
 			printModelInformation_End(i); // TODO: rework needed
 			
 			String tab = "Run"+(i+1);
+			ReadAndWrite.writeSolutionLocationModel(dataInstance, tab);
 			
 			
 			// TODO: write results in output Excel

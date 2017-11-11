@@ -1627,7 +1627,7 @@ public class Data {
 		
 		double setUpCost = 0;
 		
-		for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
+		for (int i = 1; i < this.investmentDecisionPrimaryFacility.length; i++) {
 			
 			int setUp = Math.max(this.investmentDecisionPrimaryFacility[i] - this.investmentDecisionPrimaryFacility[i-1], 0);
 			

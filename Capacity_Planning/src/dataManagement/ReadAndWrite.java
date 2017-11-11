@@ -460,14 +460,14 @@ public class ReadAndWrite {
 		instanz.setProjectLife((int) cell3);
 
 		// read numberFacilities F
-		Cell cell7 = sheet.getCell(1, 6);
+		Cell cell7 = sheet.getCell(1, 8);
 
 		NumberCell cell8 = (NumberCell) cell7;
 		double cell9 = cell8.getValue();
 		instanz.setF((int) cell9);
 
 		// read numberMaterials I
-		Cell cell10 = sheet.getCell(1, 7);
+		Cell cell10 = sheet.getCell(1, 9);
 		NumberCell cell11 = (NumberCell) cell10;
 		double cell12 = cell11.getValue();
 		instanz.setI((int) cell12);
@@ -475,12 +475,12 @@ public class ReadAndWrite {
 		// read numberMonths T
 
 		/*
-		 * Cell cell13 = sheet.getCell(1, 8); NumberCell cell14 = (NumberCell) cell13;
+		 * Cell cell13 = sheet.getCell(1, 10); NumberCell cell14 = (NumberCell) cell13;
 		 * double cell15 = cell14.getValue(); instanz.setT((int) cell15);
 		 */
 
 		// read numberOfNations N
-		Cell cell16 = sheet.getCell(1, 9);
+		Cell cell16 = sheet.getCell(1, 11);
 		NumberCell cell17 = (NumberCell) cell16;
 		double cell18 = cell17.getValue();
 		instanz.setN((int) cell18);
@@ -500,19 +500,19 @@ public class ReadAndWrite {
 		instanz.setAPI((int) cell24);
 
 		// read timeMonopoly
-		Cell cell25 = sheet.getCell(1, 11);
+		Cell cell25 = sheet.getCell(1, 14);
 		NumberCell cell26 = (NumberCell) cell25;
 		double cell27 = cell26.getValue();
 		instanz.setTimeM((int) cell27);
 
 		// read timeRegularMarket
-		Cell cell28 = sheet.getCell(1, 12);
+		Cell cell28 = sheet.getCell(1, 15);
 		NumberCell cell29 = (NumberCell) cell28;
 		double cell30 = cell29.getValue();
 		instanz.setTimeR((int) cell30);
 
 		// read monthlyDiscountFactor
-		Cell cell31 = sheet.getCell(1, 15);
+		Cell cell31 = sheet.getCell(1, 5);
 		NumberCell cell32 = (NumberCell) cell31;
 		double cell33 = cell32.getValue();
 		instanz.setParameter_discountFactor_location(cell33);
@@ -524,28 +524,28 @@ public class ReadAndWrite {
 		 */
 		
 		// read constructionTimePrimary
-		Cell cell34 = sheet.getCell(1, 21);
+		Cell cell34 = sheet.getCell(1, 19);
 		NumberCell cell35 = (NumberCell) cell34;
 		double cell36 = cell35.getValue();
 		int cell37= (int) cell36;
 		instanz.setMonthsToBuildPrimaryFacilities_location(cell37);
 		
 		// read constructionTimeSecondary
-		Cell cell38 = sheet.getCell(1, 22);
+		Cell cell38 = sheet.getCell(1, 20);
 		NumberCell cell39 = (NumberCell) cell38;
 		double cell40 = cell39.getValue();
 		int cell41 = (int) cell40;
 		instanz.setMonthsToBuildSecondaryFacilities_location(cell41);
 		
 		//read constructionCostPrimary
-		Cell cell42 = sheet.getCell(1, 23);
+		Cell cell42 = sheet.getCell(1, 21);
 		NumberCell cell43 = (NumberCell) cell42;
 		double cell44 = cell43.getValue();
 		int cell45 = (int) cell44;
 		instanz.setConstructionCostPrimaryFacility_location(cell45);
 		
 		//read constructionCostSecondary
-		Cell cell46 = sheet.getCell(1, 23);
+		Cell cell46 = sheet.getCell(1, 22);
 		NumberCell cell47 = (NumberCell) cell46;
 		double cell48 = cell47.getValue();
 		int cell49 = (int) cell48;
@@ -574,11 +574,11 @@ public class ReadAndWrite {
 
 		// remaining Time
 
-		Number label3 = new Number(1, 13, instanz.getRemainingTimeofClinicalTrials());
+		Number label3 = new Number(1, 16, instanz.getRemainingTimeofClinicalTrials());
 		sheet.addCell(label3);
 
 		// planning horizon T
-		Number label4 = new Number(1, 8, instanz.getT());
+		Number label4 = new Number(1, 10, instanz.getT());
 		sheet.addCell(label4);
 
 		// close workbook
@@ -1355,280 +1355,142 @@ public class ReadAndWrite {
 	// Step 2: Write these result arrays into Excel Sheet (2003 compatible)
 
 	// ____________________________________________________________________________________________
-	public static void writeSolutionLocationModel(Data instanz) throws BiffException, IOException, WriteException {
+	public static void writeSolutionLocationModel(Data instanz, String tab) throws BiffException, IOException, WriteException {
 
 		File file;
 		WritableWorkbook writableWorkbook;
 		Workbook workbook;
 		choosePaths();
 
-		file = new File(pathR);
+		file = new File(pathOutput);
 
 		workbook = Workbook.getWorkbook(file);
 		writableWorkbook = Workbook.createWorkbook(file, workbook);
 
-		WritableSheet sheet = writableWorkbook.getSheet("yft");
-		WritableSheet sheet1 = writableWorkbook.getSheet("zft");
-		WritableSheet sheet2 = writableWorkbook.getSheet("TInt");
-		WritableSheet sheet3 = writableWorkbook.getSheet("GIft");
-		WritableSheet sheet4 = writableWorkbook.getSheet("CEt");
-		WritableSheet sheet5 = writableWorkbook.getSheet("Qft");
-		WritableSheet sheet6 = writableWorkbook.getSheet("delta_qft");
-		WritableSheet sheet7 = writableWorkbook.getSheet("Xft");
-
-		// clear sheets
-		int rows = sheet.getRows();
-		int r = 0;
-
-		while (r <= rows) {
-
-			sheet.removeRow(0);
-			r++;
-		}
-		int rows1 = sheet1.getRows();
-		int r1 = 0;
-
-		while (r1 <= rows1) {
-
-			sheet1.removeRow(0);
-			r1++;
-		}
-		int rows2 = sheet2.getRows();
-		int r2 = 0;
-
-		while (r2 <= rows2) {
-
-			sheet2.removeRow(0);
-			r2++;
-		}
-		int rows3 = sheet3.getRows();
-		int r3 = 0;
-
-		while (r3 <= rows3) {
-
-			sheet3.removeRow(0);
-			r3++;
-		}
-		int rows4 = sheet4.getRows();
-		int r4 = 0;
-
-		while (r4 <= rows4) {
-
-			sheet4.removeRow(0);
-			r4++;
-		}
-
-		int rows5 = sheet5.getRows();
-		int r5 = 0;
-		while (r5 <= rows5) {
-
-			sheet5.removeRow(0);
-			r5++;
-		}
-
-		int rows6 = sheet6.getRows();
-		int r6 = 0;
-		while (r6 <= rows6) {
-
-			sheet6.removeRow(0);
-			r6++;
-		}
-		int rows7 = sheet7.getRows();
-		int r7 = 0;
-		while (r7 <= rows7) {
-
-			sheet7.removeRow(0);
-			r7++;
-		}
-
-		// yft
-		// Headings
-		Label label4 = new Label(0, 0, "f/t");
-		sheet.addCell(label4);
-
-		for (int i = 0; i < instanz.getF(); i++) {
-			Number label3 = new Number(0, i + 1, i + 1);
-			sheet.addCell(label3);
-
-		}
-		for (int i = 0; i < instanz.getT(); i++) {
-			Number label3 = new Number(i + 1, 0, i + 1);
-			sheet.addCell(label3);
-
-		}
-		// Results
-		for (int i = 0; i < instanz.getF(); i++) {
-			for (int j = 0; j < instanz.getT(); j++) {
-				if (instanz.getIF()[i] && instanz.getPIF()[i]) {
-
-					Number label3 = new Number(j + 1, i + 1,
-							instanz.getResult_constructionStartPrimaryFacility()[i][j]);
-					sheet.addCell(label3);
-				} else {
-					Number label3 = new Number(j + 1, i + 1, 0);
-					sheet.addCell(label3);
-
-				}
-
-			}
-		}
-
-		// zft
-		// Headings
-		Label label5 = new Label(0, 0, "f/t");
-		sheet1.addCell(label5);
-
-		for (int i = 0; i < instanz.getF(); i++) {
-			Number label3 = new Number(0, i + 1, i + 1);
-			sheet1.addCell(label3);
-
-		}
-		for (int i = 0; i < instanz.getT(); i++) {
-			Number label3 = new Number(i + 1, 0, i + 1);
-			sheet1.addCell(label3);
-
-		}
-
-		// Result
-		for (int i = 0; i < instanz.getF(); i++) {
-			for (int j = 0; j < instanz.getT(); j++) {
-				if (instanz.getIF()[i] && instanz.getSIF()[i]) {
-
-					Number label3 = new Number(j + 1, i + 1,
-							instanz.getResult_constructionStartSecondaryFacility()[i][j]);
-					sheet1.addCell(label3);
-				} else {
-					Number label3 = new Number(j + 1, i + 1, 0);
-					sheet1.addCell(label3);
-
-				}
-
-			}
-		}
-
-		// TInt
-
-		// Headings
-		Label label6 = new Label(0, 0, "n/t");
-		sheet2.addCell(label6);
-
-		for (int i = 0; i < instanz.getN(); i++) {
-			Number label3 = new Number(0, i + 1, i + 1);
-			sheet2.addCell(label3);
-
-		}
-		for (int i = 0; i < instanz.getT(); i++) {
-			Number label3 = new Number(i + 1, 0, i + 1);
-			sheet2.addCell(label3);
-
-		}
-		// Result
-		for (int i = 0; i < instanz.getN(); i++) {
-			for (int j = 0; j < instanz.getT(); j++) {
-
-				Number label3 = new Number(j + 1, i + 1, instanz.getResult_taxableIncome()[i][j]);
-				sheet2.addCell(label3);
-
-			}
-		}
-
-		// GIft
-
-		// Headings
-		Label label7 = new Label(0, 0, "f/t");
-		sheet3.addCell(label7);
-
-		for (int i = 0; i < instanz.getF(); i++) {
-			Number label3 = new Number(0, i + 1, i + 1);
-			sheet3.addCell(label3);
-
-		}
-		for (int i = 0; i < instanz.getT(); i++) {
-			Number label3 = new Number(i + 1, 0, i + 1);
-			sheet3.addCell(label3);
-
-		}
-
-		// Result
-		for (int i = 0; i < instanz.getF(); i++) {
-			for (int j = 0; j < instanz.getT(); j++) {
-				if (instanz.getIF()[i]) {
-					Number label3 = new Number(j + 1, i + 1, instanz.getResult_grossIncome()[i][j]);
-					sheet3.addCell(label3);
-
-				} else {
-					Number label3 = new Number(j + 1, i + 1, 0);
-					sheet3.addCell(label3);
-				}
-
-			}
-		}
-
-		// CEt
-
-		// Headings
-		Label label8 = new Label(0, 0, "t");
-		sheet4.addCell(label8);
-
-		for (int i = 0; i < instanz.getT(); i++) {
-			Number label90 = new Number(i + 1, 0, i + 1);
-			sheet4.addCell(label90);
-
-		}
-
-		// Result
-
-		for (int j = 0; j < instanz.getT(); j++) {
-
-			Number label3 = new Number(j + 1, 1, instanz.getResult_capitalExpenditure()[j]);
-			sheet4.addCell(label3);
-
-		}
-
-		// Qft, delta_qft, Xft
-
-		// Headings
-		Label label9 = new Label(0, 0, "f/t");
-		sheet5.addCell(label9);
-		Label label80 = new Label(0, 0, "f/t");
-		sheet6.addCell(label80);
-		Label label800 = new Label(0, 0, "f/t");
-		sheet7.addCell(label800);
-
-		for (int i = 0; i < instanz.getF(); i++) {
-			Number label90 = new Number(0, i + 1, i + 1);
-			sheet5.addCell(label90);
-			Number label900 = new Number(0, i + 1, i + 1);
-			sheet6.addCell(label900);
-			Number label9000 = new Number(0, i + 1, i + 1);
-			sheet7.addCell(label9000);
-
-		}
-		for (int i = 0; i < instanz.getT(); i++) {
-			Number label90 = new Number(i + 1, 0, i + 1);
-			sheet5.addCell(label90);
-			Number label900 = new Number(i + 1, 0, i + 1);
-			sheet6.addCell(label900);
-			Number label9000 = new Number(i + 1, 0, i + 1);
-			sheet7.addCell(label9000);
-
-		}
-
-		// Result
+		WritableSheet sheet = writableWorkbook.getSheet(tab);
+		
+		// Time horizon
+		Number label3 = new Number(1, 5, instanz.getT());
+		sheet.addCell(label3);
+		
+		// Revenue TODO:
+		
+		// Primary
 		for (int i = 0; i < instanz.getF(); i++) {
 			for (int j = 0; j < instanz.getT(); j++) {
 
-				Number label3 = new Number(j + 1, i + 1, instanz.getResult_availableProductionCapacity()[i][j]);
-				sheet5.addCell(label3);
+				if (instanz.getResult_constructionStartPrimaryFacility()[i][j]==1) {
+					Number label4 = new Number(1, 13, i+1);
+					sheet.addCell(label4);
+					
+					//Nation
+					int nation = -1;
+					for (int k=0;k<instanz.getN();k++) {
+						if(instanz.getFn()[i][k]) {
+							nation=(k+1);
+							Number label5 = new Number(2, 13, nation);
+							sheet.addCell(label5);
+						}
+					}
+					//Capacity
+					Number label5 = new Number(3, 13, instanz.getResult_availableProductionCapacity()[i][instanz.getT()-1]);
+					sheet.addCell(label5);	
+					
+					
+					//Assumed GrossIncome 
+					double grossincome=0;
+				
+					for (int l=0;l<instanz.getT();l++) {
+						grossincome += instanz.getResult_grossIncome()[i][l];			
+					}
+					
+					Number label6 = new Number(4, 13, grossincome);
+					sheet.addCell(label6);	
+					
+					//Construction costs
+					Number label7 = new Number(1, 20, instanz.getResult_capitalExpenditure()[j]);
+					sheet.addCell(label7);	
+					
+					
+					
+				}}}
+				
 
-				Number label30 = new Number(j + 1, i + 1, instanz.getResult_deltaCapacityExpansion()[i][j]);
-				sheet6.addCell(label30);
 
-				Number label300 = new Number(j + 1, i + 1, instanz.getResult_consumedOrProducedAPI()[i][j]);
-				sheet7.addCell(label300);
+		
+		//Secondaries
+		int counter=0;
+		double constructionCosts=0;
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int j = 0; j < instanz.getT(); j++) {
+				if (instanz.getResult_constructionStartSecondaryFacility()[i][j]==1) {
+					Number label4 = new Number(1, 15+counter, i+1);
+					sheet.addCell(label4);
+					
+					//Nation
+					int nation = -1;
+					for (int k=0;k<instanz.getN();k++) {
+						if(instanz.getFn()[i][k]) {
+							nation=(k+1);
+							Number label5 = new Number(2, 13+counter, nation);
+							sheet.addCell(label5);
+						}
+					}
+					
+					//Capacity
+					Number label5 = new Number(3, 13+counter, instanz.getResult_availableProductionCapacity()[i][instanz.getT()-1]);
+					sheet.addCell(label5);	
+					
+					
+					//GrossIncome
+					double grossincome=0;
+					for (int l=0;l<instanz.getT();l++) {
+						grossincome += instanz.getResult_grossIncome()[i][l];
+					}
+					
+					Number label6 = new Number(4, 13+counter, grossincome);
+					sheet.addCell(label6);	
+					
+					//Construction costs
+					constructionCosts+=instanz.getResult_capitalExpenditure()[j];
+				
+					
+					counter++;
 
+				}}
+			
+			Number label8 = new Number(1, 21, constructionCosts);
+			sheet.addCell(label8);	
+			//Assumed Production Cost
+			
+			double productionCost=0;
+			for (int l=0;l<instanz.getT();l++) {
+				productionCost += (instanz.getVariableProductionCosts()[i]*instanz.getResult_consumedOrProducedAPI()[i][l]);
 			}
+			
+			
+			Number label7 = new Number(1, 22, productionCost);
+			sheet.addCell(label7);	
+			
+		
+
 		}
+		
+		//Assumed corporate Tax
+		double corporateTax=0;
+		
+		for (int m=0;m<instanz.getN();m++) {
+		for (int l=0;l<instanz.getT();l++) {
+			corporateTax += (instanz.getResult_taxableIncome()[m][l]*instanz.getCorporateTax()[m]);
+		}
+		}
+		
+		Number label9 = new Number(1, 23, corporateTax);
+		sheet.addCell(label9);	
+		
+		
+
+		
 
 		// close workbook
 		writableWorkbook.write();
