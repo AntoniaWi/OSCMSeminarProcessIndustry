@@ -1373,7 +1373,7 @@ public class ReadAndWrite {
 		Number label3 = new Number(1, 5, instanz.getT());
 		sheet.addCell(label3);
 		
-		// Revenue TODO:
+		// Revenue 
 		double revenue=0;
 		for  (int i=0;i<instanz.getI();i++) {
 			for (int j=0;j<instanz.getF();j++) {
@@ -1427,6 +1427,8 @@ public class ReadAndWrite {
 					Number label6 = new Number(4, 13, grossincome);
 					sheet.addCell(label6);	
 					
+					
+					
 					//Construction costs
 					Number label7 = new Number(1, 20, instanz.getResult_capitalExpenditure()[j]);
 					sheet.addCell(label7);	
@@ -1472,15 +1474,17 @@ public class ReadAndWrite {
 					sheet.addCell(label6);	
 					
 					//Construction costs
+					if (counter==0) {
 					constructionCosts+=instanz.getResult_capitalExpenditure()[j];
-				
+					Number label8 = new Number(1, 21, constructionCosts);
+					sheet.addCell(label8);	
+					}
 					
 					counter++;
 
 				}}
 			
-			Number label8 = new Number(1, 21, constructionCosts);
-			sheet.addCell(label8);	
+		
 			//Assumed Production Cost
 			
 			double productionCost=0;
