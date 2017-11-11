@@ -1532,7 +1532,7 @@ public class ReadAndWrite {
 		Workbook workbook;
 		choosePaths();
 
-		file = new File(pathR);
+		file = new File(pathOutput);
 
 		workbook = Workbook.getWorkbook(file);
 		writableWorkbook = Workbook.createWorkbook(file, workbook);
@@ -1542,10 +1542,84 @@ public class ReadAndWrite {
 		int column = 1;
 		int row = 29;
 
-		// Planning horizon
+		Number number;
+		Label label;
+		
+		// Planning horizon (B30)
+		
+		number = new Number(column, row, dataInstance.getParameter_planningHorizon());
+		sheet.addCell(number);
+		
+		// Total construction cost primary facility (B33)
+		
+		number = new Number(column, row+3, dataInstance.getTotalConstructionCost_primary());
+		sheet.addCell(number);
+		
+		// Total setup cost primary facility (B34)
+		
+		number = new Number(column, row+4, dataInstance.getTotalSetUpCost_primary());
+		sheet.addCell(number);
 
-		Number tmp = new Number(column, row, dataInstance.getParameter_planningHorizon());
-		sheet.addCell(tmp);
+		// Total penalty cost primary facility (B35)
+		
+		number = new Number(column, row+5, dataInstance.getTotalPenaltyCost_primary());
+		sheet.addCell(number);
+		
+		// Total expansion cost primary facility (B36)
+		
+		number = new Number(column, row+6, dataInstance.getTotalExpansionCost_primary());
+		sheet.addCell(number);
+		
+		// Positive outcome (B39)
+		
+		label = new Label(column, row+9, Boolean.toString(dataInstance.isSuccessOfClinicalTrials()));
+		sheet.addCell(label);
+		
+		// Preliminary knowledge about successful test results (B40)
+		
+		number = new Number(column, row+10, dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests());
+		sheet.addCell(number);
+		
+		// Preliminary knowledge about failed test results (B41)
+		
+		number = new Number(column, row+11, dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests());
+		sheet.addCell(number);
+		
+		// Test results (B44 - F44)
+		
+		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
+			
+			number = new Number(column+i, row+14, dataInstance.getTestResults()[i]);
+			sheet.addCell(number);
+		}
+		
+		// Test probabilities (B45 - F54)
+		
+		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
+			
+			number = new Number(column+i, row+15, dataInstance.getTestProbability()[i]);
+			sheet.addCell(number);
+		}
+		
+		// Investment decisions in period t (B49 - F49 -> B53 - F53)
+		
+		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
+			
+			for (int j = 1; j <= dataInstance.getParameter_planningHorizon(); j++) {
+				
+				number = new Number(column+j, row+19+i, dataInstance.getInvestmentStrategies()[i][j]);
+				sheet.addCell(number);
+			}
+		}
+		
+		// Final investment decisions in period t (B55 - F55)
+		
+		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
+			
+			number = new Number(column+i, row+25, dataInstance.getInvestmentDecisionPrimaryFacility()[i]);
+			sheet.addCell(number);
+		}
+		
 
 		// close workbook
 		writableWorkbook.write();
