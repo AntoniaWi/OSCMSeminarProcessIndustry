@@ -164,8 +164,9 @@ public class LocationPlanningModel extends IloCplex {
 	 */
 	public void run () throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 		
-		// TODO: ReadAndWrite.createAndWriteDict(this); darf erst nach Timing Model call aufgerufen werden
-
+		int tmp_remainingTime = (this.datainstanz.getParameter_planningHorizon() - this.datainstanz.getCountPeriods());
+		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime+1);
+		
 		this.build();
 		this.solve();
 		this.writeSolution(new int[] { 1, 2, 3 }, datainstanz);

@@ -8,23 +8,6 @@ import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-import ilog.concert.*;
-import ilog.cplex.*;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-
-import dataManagement.Data;
-import dataManagement.ReadAndWrite;
-import jxl.read.biff.BiffException;
-import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 public class Algorithm {
 	
 	public static Data dataInstance;
@@ -66,15 +49,8 @@ public class Algorithm {
 		
 		timingModel.run();
 		
-		// TODO:
-		
 		if (dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()] == 1 && firstInvestment == true ) {
-			
-			int tmp_remainingTime = (dataInstance.getParameter_planningHorizon() - dataInstance.getCountPeriods());
-			dataInstance.setRemainingTimeofClinicalTrials(tmp_remainingTime+1);
-			
-			
-			
+
 			locationPlanningModel = new LocationPlanningModel(dataInstance);
 			locationPlanningModel.run();
 			firstInvestment = false;
@@ -87,7 +63,7 @@ public class Algorithm {
 	
 	
 	/**
-	 * 
+	 * Sets period to T+1 and updates knowledge about former successful and failed test results
 	 */
 	public static void endOfModel () {
 		
@@ -97,8 +73,9 @@ public class Algorithm {
 		
 	}
 	
+	
 	/**
-	 * 
+	 * Updates knowledge about former successful and failed test results
 	 */
 	public static void updateFormerKnowledge () {
 		
@@ -111,7 +88,7 @@ public class Algorithm {
 	
 	
 	/**
-	 * 
+	 * Creates a new test result based on the former knowledge about successful and failed test results
 	 */
 	public static void newTestResult () {
 		
@@ -132,7 +109,7 @@ public class Algorithm {
 	
 	
 	/**
-	 * 
+	 * Prints out the model information at the start of one run
 	 */
 	public static void printModelInformation_Start () {
 		
@@ -164,7 +141,7 @@ public class Algorithm {
 	
 	
 	/**
-	 * 
+	 * Prints out the period information in the end of one period
 	 */
 	public static void printModelInformation_Period () {
 		
@@ -206,7 +183,7 @@ public class Algorithm {
 	
 	
 	/**
-	 * 
+	 * Prints out the model information in the end of one run
 	 */
 	public static void printModelInformation_End () {
 		
