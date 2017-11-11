@@ -1,100 +1,82 @@
 package helper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import dataManagement.ReadAndWrite;
 
+
+/**
+ * Provides permutation function for the generation of all possible strategies in period t 
+ * @author RamonaZauner
+ *
+ */
 public class Permuter {
 
 	
 	/**
-	 * 
-	 * @param args
+	 * Creates an array list with all permutations (no duplicates) of an array
+	 * @param array on which the permutation is executed
+	 * @param list in which permutations are saved
 	 */
-	public static void main(String[] args) {
+	public static void permute(int[] array, ArrayList<int[]> list) {
 		
-		ArrayList<int[]> list = new ArrayList<int[]>();
-		
-		permute(new int[] { 1,0,0,0,0 }, list);
-		
-		for (int i = 0; i < list.size(); i++) {
-			
-			ReadAndWrite.printArraySimple(list.get(i));
-		}
-		
-		
-		System.out.println("\n\nR\n\n");
-		
+		permuteHelper(array, 0, list);
 		deleteRedundancy(list);
-		
-		for (int i = 0; i < list.size(); i++) {
-			
-			ReadAndWrite.printArraySimple(list.get(i));
-		}
-	
 	}
 
 	
 	/**
-	 * 
-	 * @param arr
+	 * Creates an array list of all permutations of an array
+	 * @param array for permutations
+	 * @param index parameter for recursion
 	 */
-	public static void permute(int[] arr, ArrayList<int[]> list) {
+	private static void permuteHelper(int[] array, int index, ArrayList<int[]> list) {
 		
-		permuteHelper(arr, 0, list);
-		deleteRedundancy(list);
+		// Return new array with permutation
 		
-	}
-
-	
-	/**
-	 * 
-	 * @param arr
-	 * @param index
-	 */
-	private static void permuteHelper(int[] arr, int index, ArrayList<int[]> list) {
+		if (index >= array.length - 1) {
 		
-		if (index >= arr.length - 1) {
-		
-			int [] tmp = new int [arr.length];
+			int [] tmp = new int [array.length];
 			
-			for (int i = 0; i < arr.length - 1; i++) {
-				tmp[i] = arr[i];
+			for (int i = 0; i < array.length - 1; i++) {
+				tmp[i] = array[i];
 			}
 			
-			if (arr.length > 0)
-				tmp[tmp.length - 1] = arr[arr.length - 1];
+			if (array.length > 0)
+				tmp[tmp.length - 1] = array[array.length - 1];
 			
 			list.add(tmp);
 			
 			return;
 		}
 
-		for (int i = index; i < arr.length; i++) { // For each index in the sub array arr[index...end]
+		// Recursive swapping
+		
+		for (int i = index; i < array.length; i++) { 
 
-			// Swap the elements at indices index and i
-			int t = arr[index];
-			arr[index] = arr[i];
-			arr[i] = t;
+			// Swap elements at position index and i
+			int t = array[index];
+			array[index] = array[i];
+			array[i] = t;
 
-			// Recurse on the sub array arr[index+1...end]
-			permuteHelper(arr, index + 1, list);
+			// Recursion on sub-array
+			permuteHelper(array, index + 1, list);
 
-			// Swap the elements back
-			t = arr[index];
-			arr[index] = arr[i];
-			arr[i] = t;
+			// Undo swapping
+			t = array[index];
+			array[index] = array[i];
+			array[i] = t;
 		}
 	}
 	
 	
 	/**
-	 * 
+	 * Deletes identical permutations (duplicates) from the list
 	 * @param list
 	 */
-	public static void deleteRedundancy (ArrayList<int[]> list) {
+	private static void deleteRedundancy (ArrayList<int[]> list) {
 		
 		int length = list.get(0).length;
+		
+		// List of permutations that should be deleted
 		
 		ArrayList<int[]> remove = new ArrayList<int[]>();
 		
@@ -118,6 +100,8 @@ public class Permuter {
 					}
 				}	
 			
+				// If all entries are the same, the arrays are identical and the found array should be removed
+				
 				if (count == length) {
 				
 					remove.add(array_search);
@@ -125,29 +109,8 @@ public class Permuter {
 			
 				search_index++;
 			}
-			
 		}
 		
 		list.removeAll(remove);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

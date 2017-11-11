@@ -140,13 +140,13 @@ public class ReadAndWrite {
 
 		NumberCell cell8 = (NumberCell) cell7;
 		double cell9 = cell8.getValue();
-		instanz.setParameter_monthsToBuildPrimaryFacilities((int) cell9);
+		instanz.setParameter_periodsToBuildPrimaryFacilities((int) cell9);
 
 		Cell cell10 = sheet.getCell(1, 3);
 
 		NumberCell cell11 = (NumberCell) cell10;
 		double cell12 = cell11.getValue();
-		instanz.setParameter_monthsToBuildSecondaryFacilities((int) cell12);
+		instanz.setParameter_periodsToBuildSecondaryFacilities((int) cell12);
 
 		// Construction costs cp and cs
 

@@ -2,6 +2,7 @@ package optimizationModels;
 
 import java.io.IOException;
 import dataManagement.*;
+import helper.StdRandom;
 import ilog.concert.IloException;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
@@ -9,7 +10,7 @@ import jxl.write.biff.RowsExceededException;
 
 
 /**
- * Runs the whole algorithm with Timing and Location Planning Model
+ * Runs the whole algorithm with the Decision Review and Location Planning Model
  * @author RamonaZauner
  *
  */
@@ -81,7 +82,7 @@ public class Algorithm {
 			ReadAndWrite.writeSolutionDecisionPlanningModel(dataInstances[i], tab);
 			
 			
-			// TODO: write results in output Excel
+			
 		}
 	}
 	
@@ -170,8 +171,8 @@ public class Algorithm {
 		System.out.println("Planning horizon (T): " + dataInstances[testRun].getParameter_planningHorizon());
 		System.out.println("Discount factor (alpha): " + dataInstances[testRun].getParameter_discountFactor());
 		
-		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstances[testRun].getParameter_monthsToBuildPrimaryFacilities());
-		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstances[testRun].getParameter_monthsToBuildSecondaryFacilities());
+		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstances[testRun].getParameter_periodsToBuildPrimaryFacilities());
+		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstances[testRun].getParameter_periodsToBuildSecondaryFacilities());
 		
 		System.out.println("Construction cost of a primary facility (c_p): " + dataInstances[testRun].getParameter_constructionCostPrimaryFacility());
 		System.out.println("Construction cost of a secondary facility (c_s): " + dataInstances[testRun].getParameter_constructionCostSecondaryFacility());

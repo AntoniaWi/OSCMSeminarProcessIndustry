@@ -8,202 +8,104 @@ public class Data {
 	
 	// Timing Model
 	
-	private int parameter_planningHorizon;  							// T
+	private int parameter_planningHorizon;  								// T
 	
-	private double parameter_discountFactor_timing;							// alpha
-	private double parameter_discountFactor_location;							// alpha
+	private double parameter_discountFactor_timing;						// alpha
+	private double parameter_discountFactor_location;						// alpha
 	
-	private int parameter_monthsToBuildPrimaryFacilities;				// s_p_0 - in whole years
-	private int parameter_monthsToBuildSecondaryFacilities;			// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
+	private int parameter_periodsToBuildPrimaryFacilities;				// s_p_0 - in whole years
+	private int parameter_periodsToBuildSecondaryFacilities;				// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
 	
-	private double parameter_constructionCostPrimaryFacility;			// c_p
+	private double parameter_constructionCostPrimaryFacility;				// c_p
 	private double parameter_constructionCostSecondaryFacility;			// c_s
 	
 	private double parameter_setupCostPrimaryFacility;					// K_p
 	private double parameter_setupCostSecondaryFacility;					// K_s
 	
-	private int parameter_penaltyCost;								// Phi(s_t) = Phi*s_t
+	private int parameter_penaltyCost;									// Phi(s_t) = Phi*s_t
 	
-	private int parameter_preliminaryKnowledgeAboutSuccessfulTests;	// Gamma_0
-	private int parameter_preliminaryKnowledgeAboutFailedTests;		// Zeta_0
-	private int parameter_thresholdSuccessfulTests;					// Gamma_c
+	private int parameter_preliminaryKnowledgeAboutSuccessfulTests;		// Gamma_0
+	private int parameter_preliminaryKnowledgeAboutFailedTests;			// Zeta_0
+	private int parameter_thresholdSuccessfulTests;						// Gamma_c
 	
-	private int [] testResults;										// Delta_t
-	private int [] countSuccessfulTests;								// Gamma_t
-	private int [] countFailedTests;									// Zeta_t
-	private int [] remainingYearsToBuildPrimaryFacility;				// s_p_t
-	private double [] testProbability;								// p
-	private int remainingTimeofClinicalTrials;						//delta_t
+	private int [] testResults;											// Delta_t
+	private int [] countSuccessfulTests;									// Gamma_t
+	private int [] countFailedTests;										// Zeta_t
+	private int [] remainingYearsToBuildPrimaryFacility;					// s_p_t
+	private double [] testProbability;									// p
+	private int remainingTimeofClinicalTrials;							//delta_t
 	
-	private int [] investmentDecisionPrimaryFacility;					// a_p_t
-	private int investmentDecisionSecondaryFacility;					// a_s_T+1 - secondary facility is built in period T+1 if clinical trails are successful
+	private int [] investmentDecisionPrimaryFacility;						// a_p_t
+	private int investmentDecisionSecondaryFacility;						// a_s_T+1 - secondary facility is built in period T+1 if clinical trails are successful
 	private int[][] investmentStrategies;
+	
+	private int countPeriods;											// t
 	
 	private double totalConstructionCost_primary;
 	private double totalSetUpCost_primary;
 	private double totalPenaltyCost_primary;
 	private double totalExpansionCost_primary;
-	
 	private boolean successOfClinicalTrials;
 	
-	private int countPeriods;										// t
-	
-								
 	//Location Planning Model
 
 	// Sets
-		private boolean[] IF; // IF[f] internal facilities
-		private boolean[] EF; // EF[f] external facilities
-		private boolean[][] OM; // OM[f][i] outgoing material
-		private boolean[][] IM; // IM[f][i]incoming material
-		private boolean[][] Fn; // Fn[f][n] nations
-		private boolean[] PIF; // PIF[f]
-		private boolean[] SIF; // SIF[f]
+	private boolean[] IF; 												// IF[f] internal facilities
+	private boolean[] EF; 												// EF[f] external facilities
+	private boolean[][] OM; 												// OM[f][i] outgoing material
+	private boolean[][] IM; 												// IM[f][i]incoming material		
+	private boolean[][] Fn; 												// Fn[f][n] nations
+	private boolean[] PIF; 												// PIF[f]
+	private boolean[] SIF; 												// SIF[f]
 
 	// Parameter
-		private int I; // number of material types
-		private int F; // number of all facilities
-		private int T; // number of months in planning horizon
-		private int N; // number of nations
-		private double[] capitalBudget;// capitalBudget[t] CB_t
-		private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f] CIF_isf
-		private double[][][] demand;// demand[i][c][t] D_ict
-		private double[][] importDuty; // importDuty[s][f] ID_isf
-		private int projectLife;// projectLife[t] L_f
-		private double[] variableProductionCosts;// MC_f
-		private double[][][] unitSellingPrice;// unitSellingPrice[i][f][t] P_ift
-		private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
-		private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
-		private double[][] supply;// supply[i][s] S_is
-		private double[] corporateTax;// corporateTax[n]TR_n
-		private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
-		private int API; //
-		private double[][] materialCoefficient; // materialCoeeficient[i][f] sigma_if
-		private int initialCapacity; // Q0
-		private int monthsToBuildPrimaryFacilities_location;				// s_p_0 - in whole years
-		private int monthsToBuildSecondaryFacilities_location;			// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
-		private double constructionCostPrimaryFacility_location;			// c_p
-		private double constructionCostSecondaryFacility_location;
-		
-    
-		//Help parameter for demand
-		private double [] demandM; //demandM[f]
-		private double [] demandR; //demand[f]
-		private int timeM;
-		private int timeR;
-		
-		//Result Arrays
-		private double[][][][] result_shippedMaterialUnitsFacilityToCustomer; // F_ifct
-		private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
-		private double[][][] result_depreciationChargePrimaryFacility; // NDC_p_ftaut
-		private double[][][] result_depreciationChargeSecondaryFacility; // NDC_s_ftaut
-		private double[][] result_availableProductionCapacity; // Q_ft
-		private double[][] result_taxableIncome; // TI_nt
-		private double[][][] result_consumedOrProducedMaterial; // x_ift
-		private double[][] result_consumedOrProducedAPI; // X_ft
-		private double[] result_capitalExpenditure; // CE_t
-		private double[][] result_grossIncome; // GI_ft
-		private double[][] result_deltaCapacityExpansion; // delta_q_ft
-		private double[][] result_capacityExpansionAmount; // q_ft
-
-		private double[][] result_constructionStartPrimaryFacility; // y_ft
-		private double[][] result_constructionStartSecondaryFacility; // z_ft
-
-	/**
-	 * 
-	 */
-	public Data () {
-
-		this.parameter_planningHorizon = 3;
-		
-		this.parameter_discountFactor_timing = 1.0;
-		
-		this.parameter_monthsToBuildPrimaryFacilities = 3;
-		this.parameter_monthsToBuildSecondaryFacilities = 3;
-		
-		this.parameter_constructionCostPrimaryFacility = 1000;
-		this.parameter_constructionCostSecondaryFacility = 25;
-		
-		this.parameter_setupCostPrimaryFacility = 100;
-		this.parameter_setupCostSecondaryFacility = 2;
-		
-		this.parameter_penaltyCost = 10000;
-		
-		this.parameter_preliminaryKnowledgeAboutSuccessfulTests = 1;
-		this.parameter_preliminaryKnowledgeAboutFailedTests = 1;
-		this.parameter_thresholdSuccessfulTests = 2;
-		
-		// Currently no test results are available
-		
-		this.testResults = new int [this.parameter_planningHorizon + 1];	
-		
-		for (int i = 0; i < this.testResults.length; i++) {	
-			this.testResults[i] = -1;
-		}
-		
-		// Currently no knowledge available except from preliminary knowledge
-		
-		this.countSuccessfulTests = new int [this.parameter_planningHorizon + 1];
-		this.countSuccessfulTests[0] = this.parameter_preliminaryKnowledgeAboutSuccessfulTests;
+	private int I; 														// number of material types
+	private int F; 														// number of all facilities
+	private int T; 														// number of months in planning horizon
+	private int N; 														// number of nations
+	private double[] capitalBudget;										// capitalBudget[t] CB_t
+	private double[][][] costInsuranceFreight; 							// costInsuranceFreight[i][s][f] CIF_isf
+	private double[][][] demand;											// demand[i][c][t] D_ict
+	private double[][] importDuty; 										// importDuty[s][f] ID_isf
+	private int projectLife;												// projectLife[t] L_f
+	private double[] variableProductionCosts;							// MC_f
+	private double[][][] unitSellingPrice;								// unitSellingPrice[i][f][t] P_ift
+	private double[] lowerLimitExpansionSize;							// lowerLimitExpansionSize[f] g_L_f
+	private double[] upperLimitCapacity;									// upperLimitCapacity[f] Q_U_f
+	private double[][] supply;											// supply[i][s] S_is
+	private double[] corporateTax;										// corporateTax[n]TR_n
+	private double[] lowerLimitProductionAPI;							// lowerLimitProductionAPI[f] X_L_f
+	private int API; //
+	private double[][] materialCoefficient; 								// materialCoeeficient[i][f] sigma_if
+	private int initialCapacity; 										// Q0
+	private int monthsToBuildPrimaryFacilities_location;					// s_p_0 - in whole years
+	private int monthsToBuildSecondaryFacilities_location;				// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
+	private double constructionCostPrimaryFacility_location;				// c_p
+	private double constructionCostSecondaryFacility_location;
 	
-		for (int i = 1; i < this.countSuccessfulTests.length; i++) {	
-			this.countSuccessfulTests[i] = -1;
-		}
-		
-		// Currently no knowledge available except from preliminary knowledge
-		
-		this.countFailedTests = new int [this.parameter_planningHorizon + 1];
-		this.countFailedTests[0] = this.parameter_preliminaryKnowledgeAboutFailedTests;
-		
-		for (int i = 1; i < this.countFailedTests.length; i++) {	
-			this.countFailedTests[i] = -1;
-		}		
-		
-		// Currently only available for period 0
-		
-		this.remainingYearsToBuildPrimaryFacility = new int [this.parameter_planningHorizon + 2];
-		this.remainingYearsToBuildPrimaryFacility[0] = this.parameter_monthsToBuildPrimaryFacilities;
-		
-		for (int i = 1; i < this.remainingYearsToBuildPrimaryFacility.length; i++) {	
-			this.remainingYearsToBuildPrimaryFacility[i] = -1;
-		}	
-		
-		// Currently no investment decision about primary facility made
-		
-		this.investmentDecisionPrimaryFacility = new int [this.parameter_planningHorizon + 1];
-		this.investmentDecisionPrimaryFacility[0] = 0;
-		for (int i = 1; i < this.investmentDecisionPrimaryFacility.length; i++) {
-			this.investmentDecisionPrimaryFacility[i] = -1;
-		}
-		
-		// Currently no test probability is calculated
-		
-		this.testProbability = new double [this.parameter_planningHorizon + 1];
-		for (int i = 0; i < this.testProbability.length; i++) {
-			this.testProbability[i] = -1;
-		}
-		
-		// Currently no investment decision about secondary facility made
-		
-		this.investmentDecisionSecondaryFacility = -1;
-		
-		// Initiate strategy list to see how strategy updates influence the overall decision making, period 0 does not have any strategy
-		
-		this.investmentStrategies = new int [this.parameter_planningHorizon + 1][this.parameter_planningHorizon + 1];
-		
-		for (int i = 0; i < this.parameter_planningHorizon; i++) {
-			
-			this.investmentStrategies[0][i] = -1;
-		}
-		
-		
-		// Start in period t = 0
-		
-		this.countPeriods = 0;
-		
-				
-	}
+	//Help parameter for demand
+	private double [] demandM; 											// demandM[f]
+	private double [] demandR; 											// demand[f]
+	private int timeM;
+	private int timeR;
 	
+	//Result arrays
+	private double[][][][] result_shippedMaterialUnitsFacilityToCustomer; // F_ifct
+	private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
+	private double[][][] result_depreciationChargePrimaryFacility; 		// NDC_p_ftaut
+	private double[][][] result_depreciationChargeSecondaryFacility; 		// NDC_s_ftaut
+	private double[][] result_availableProductionCapacity; 				// Q_ft
+	private double[][] result_taxableIncome; 							// TI_nt
+	private double[][][] result_consumedOrProducedMaterial; 				// x_ift
+	private double[][] result_consumedOrProducedAPI; 						// X_ft
+	private double[] result_capitalExpenditure; 							// CE_t
+	private double[][] result_grossIncome; 								// GI_ft
+	private double[][] result_deltaCapacityExpansion; 					// delta_q_ft
+	private double[][] result_capacityExpansionAmount; 					// q_ft
+
+	private double[][] result_constructionStartPrimaryFacility; 			// y_ft
+	private double[][] result_constructionStartSecondaryFacility; 		// z_ft	
+
 	
 	/**
 	 * 
@@ -258,7 +160,7 @@ public class Data {
 		// Currently only available for period 0
 		
 		this.remainingYearsToBuildPrimaryFacility = new int [this.parameter_planningHorizon + 2];
-		this.remainingYearsToBuildPrimaryFacility[0] = this.parameter_monthsToBuildPrimaryFacilities;
+		this.remainingYearsToBuildPrimaryFacility[0] = this.parameter_periodsToBuildPrimaryFacilities;
 		
 		for (int i = 1; i < this.remainingYearsToBuildPrimaryFacility.length; i++) {	
 			this.remainingYearsToBuildPrimaryFacility[i] = -1;
@@ -291,7 +193,6 @@ public class Data {
 			
 			this.investmentStrategies[0][i] = -1;
 		}
-		
 		
 		// Start in period t = 0
 		
@@ -342,32 +243,32 @@ public class Data {
 	/**
 	 * @return the parameter_monthsToBuildPrimaryFacilities
 	 */
-	public int getParameter_monthsToBuildPrimaryFacilities() {
-		return parameter_monthsToBuildPrimaryFacilities;
+	public int getParameter_periodsToBuildPrimaryFacilities() {
+		return parameter_periodsToBuildPrimaryFacilities;
 	}
 
 
 	/**
 	 * @param parameter_monthsToBuildPrimaryFacilities the parameter_yearsToBuildPrimaryFacilities to set
 	 */
-	public void setParameter_monthsToBuildPrimaryFacilities(int parameter_monthsToBuildPrimaryFacilities) {
-		this.parameter_monthsToBuildPrimaryFacilities = parameter_monthsToBuildPrimaryFacilities;
+	public void setParameter_periodsToBuildPrimaryFacilities(int parameter_monthsToBuildPrimaryFacilities) {
+		this.parameter_periodsToBuildPrimaryFacilities = parameter_monthsToBuildPrimaryFacilities;
 	}
 
 
 	/**
 	 * @return the parameter_monthsToBuildSecondaryFacilities
 	 */
-	public int getParameter_monthsToBuildSecondaryFacilities() {
-		return parameter_monthsToBuildSecondaryFacilities;
+	public int getParameter_periodsToBuildSecondaryFacilities() {
+		return parameter_periodsToBuildSecondaryFacilities;
 	}
 
 
 	/**
 	 * @param parameter_monthsToBuildSecondaryFacilities the parameter_yearsToBuildSecondaryFacilities to set
 	 */
-	public void setParameter_monthsToBuildSecondaryFacilities(int parameter_monthsToBuildSecondaryFacilities) {
-		this.parameter_monthsToBuildSecondaryFacilities = parameter_monthsToBuildSecondaryFacilities;
+	public void setParameter_periodsToBuildSecondaryFacilities(int parameter_monthsToBuildSecondaryFacilities) {
+		this.parameter_periodsToBuildSecondaryFacilities = parameter_monthsToBuildSecondaryFacilities;
 	}
 
 
@@ -1655,7 +1556,7 @@ public class Data {
 			}
 		}
 		
-		int remainingPeriodsToBuild = this.parameter_monthsToBuildPrimaryFacilities - countInvestments;
+		int remainingPeriodsToBuild = this.parameter_periodsToBuildPrimaryFacilities - countInvestments;
 		penaltyCost = this.parameter_penaltyCost * remainingPeriodsToBuild;
 		
 		this.totalPenaltyCost_primary = penaltyCost;
@@ -1698,7 +1599,7 @@ public class Data {
 			index++;
 		}
 		
-		this.remainingYearsToBuildPrimaryFacility[period] = this.parameter_monthsToBuildPrimaryFacilities - count;
+		this.remainingYearsToBuildPrimaryFacility[period] = this.parameter_periodsToBuildPrimaryFacilities - count;
 	}
 	
 	

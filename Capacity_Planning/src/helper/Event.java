@@ -1,12 +1,18 @@
 package helper;
 
+
+/**
+ * Implements a node in the scenario tree with probability, test result, cost and all other relevant values
+ * @author RamonaZauner
+ *
+ */
 public class Event {
 	
 	private int period;
 	private int index;
 	
-	private boolean finalEvent;
 	private boolean firstEvent;
+	private boolean finalEvent;
 	
 	private double finalCost;
 	private double expectedCost;
@@ -33,7 +39,7 @@ public class Event {
 
 	
 	/**
-	 * 
+	 * Default constructor to initialize an event with -1 and null values
 	 */
 	public Event () {
 		
@@ -65,7 +71,6 @@ public class Event {
 		this.strategy = null;
 		this.a_T = -1;
 		this.s_T = -1;
-		
 	}
 
 	
@@ -99,23 +104,7 @@ public class Event {
 	public void setIndex(int index) {
 		this.index = index;
 	}
-
-
-	/**
-	 * @return the finalEvent
-	 */
-	public boolean isFinalEvent() {
-		return finalEvent;
-	}
-
-
-	/**
-	 * @param finalEvent the finalEvent to set
-	 */
-	public void setFinalEvent(boolean finalEvent) {
-		this.finalEvent = finalEvent;
-	}
-
+	
 
 	/**
 	 * @return the firstEvent
@@ -130,6 +119,21 @@ public class Event {
 	 */
 	public void setFirstEvent(boolean firstEvent) {
 		this.firstEvent = firstEvent;
+	}
+	
+	/**
+	 * @return the finalEvent
+	 */
+	public boolean isFinalEvent() {
+		return finalEvent;
+	}
+
+
+	/**
+	 * @param finalEvent the finalEvent to set
+	 */
+	public void setFinalEvent(boolean finalEvent) {
+		this.finalEvent = finalEvent;
 	}
 
 
@@ -356,7 +360,7 @@ public class Event {
 		this.previousEvent = previousEvent;
 	}
 
-	
+
 	/**
 	 * @return the strategy
 	 */
@@ -404,9 +408,9 @@ public class Event {
 		this.s_T = s_T;
 	}
 
-	
+
 	/**
-	 * 
+	 * Adds a certain strategy to an event for cost calculation
 	 * @param strategy
 	 */
 	public void addStrategy (int [] strategy, int periodsToBuild) {
@@ -414,13 +418,13 @@ public class Event {
 		this.strategy = strategy;
 		this.a_T = strategy[strategy.length-1];
 		this.s_T = periodsToBuild - countTrueValuesInArray(strategy);
-		
 	}
 	
 	
 	/**
-	 * 
-	 * @return
+	 * Calculates cost that occur in a period
+	 * @param c construction cost
+	 * @param K setup cost
 	 */
 	private void calculatePeriodCost (double c, double K) {
 		
@@ -429,7 +433,7 @@ public class Event {
 	
 	
 	/**
-	 * 
+	 * Calculates expected cost with regards to the total cost of the children of the event
 	 */
 	private void calculateExpectedCost () {
 		
@@ -439,8 +443,8 @@ public class Event {
 	
 	
 	/**
-	 * 
-	 * @param alpha
+	 * Adds a discount factor to the expected cost and calculates discounted expected cost
+	 * @param alpha yearly discount factor
 	 */
 	private void calculateDiscountedExpectedCost (double alpha) {
 		
@@ -449,11 +453,11 @@ public class Event {
 	
 	
 	/**
-	 * 
-	 * @param c
-	 * @param K
-	 * @param phi
-	 * @param gamma_c
+	 * Calculates final cost (only relevant for final events) depending on the threshold gamma_c
+	 * @param c construction cost
+	 * @param K setup cost
+	 * @param phi penalty cost
+	 * @param gamma_c treshold for positive clinical trial outcome regarding all successful test results 
 	 */
 	private void calculateFinalCost (double c, double K, double phi, int gamma_c) {
 			
@@ -470,8 +474,12 @@ public class Event {
 	
 	
 	/**
-	 * 
-	 * @param period
+	 * Calculates total cost and thereby differentiates between final and not final events
+	 * @param c construction cost
+	 * @param K setup cost
+	 * @param phi penalty cost
+	 * @param gamma_c treshold for positive clinical trial outcome regarding all successful test results
+	 * @param alpha yearly discount factor
 	 */
 	public void calculateTotalCost (double c, double K, double phi, int gamma_c, double alpha) {
 		
@@ -493,7 +501,7 @@ public class Event {
 	
 	
 	/**
-	 * 
+	 * Deletes cost calculation from event for further cost calculation
 	 */
 	public void deleteCostCalculation () {
 		
@@ -506,12 +514,11 @@ public class Event {
 		this.strategy = null;
 		this.a_T = -1;
 		this.s_T = -1;
-		
 	}
 	
 	
 	/**
-	 * 
+	 * Count values equal to 1 in an array
 	 * @param array
 	 * @return
 	 */
@@ -525,13 +532,12 @@ public class Event {
 				count++;
 			}
 		}
-		
 		return count;
 	}
 	
 	
 	/**
-	 * 
+	 * Transforms all information about an event to a string
 	 */
 	public String toString () {
 		
@@ -539,65 +545,65 @@ public class Event {
 		
 		string += "\n\n**********      EVENT      **********\n\n";
 		
+		string += "Period: " + this.period + "\n";
+		string += "Index: " + this.index + "\n";
+		
+		if (this.firstEvent) {
+			string += "First event: " + this.firstEvent + "\n";
+		}
+		
+		if (this.finalEvent) {
+			string += "Final event: " + this.finalEvent + "\n";
+		}
+		
 		if (this.previousEvent != null) {
-			
 			string += "Previous Event - period: " + this.previousEvent.period + ", index: " + this.previousEvent.index + "\n";
 		}
 		
-		else {
-			
-			string += "Previous Event: null\n";
+		if (this.probability > -1) {
+			string += "Probability: " + this.probability + "\n";
 		}
 		
-		string += "First event: " + this.firstEvent + "\n";
-		string += "Final event: " + this.finalEvent + "\n";
-		string += "Period: " + this.period + "\n";
-		string += "Index: " + this.index + "\n";
-		string += "Probability: " + this.probability + "\n";
-		string += "Test result: " + this.testResult + "\n";
-		string += "Gamma: " + this.countSuccessfulTestResults + "\n";
-		string += "Zeta: " + this.countFailedTestResults + "\n";
-		string += "Next probability (success): " + this.nextProbabilitySuccessful_left + "\n";
-		string += "Next probability (fail): " + this.nextProbabilityFailed_right + "\n";
+		if (this.testResult > -1) {
+			string += "Test result: " + this.testResult + "\n";
+		}
 		
-		string += "Period cost: " + this.periodCost + "\n";;
-		string += "Expected cost: " + this.expectedCost + "\n";
-		string += "Discounted expected cost: " + this.discountedExpectedCost + "\n";
-		string += "Final cost: " + this.finalCost + "\n";
-		string += "Total cost: " + this.totalCost + "\n";
+		if (this.countSuccessfulTestResults > -1) {
+			string += "Gamma: " + this.countSuccessfulTestResults + "\n";
+		}
+		
+		if (this.countFailedTestResults > -1) {
+			string += "Zeta: " + this.countFailedTestResults + "\n";
+		}
+		
+		if (this.nextProbabilitySuccessful_left  > -1) {
+			string += "Next probability (success): " + this.nextProbabilitySuccessful_left + "\n";
+		}
+		
+		if (this.nextProbabilityFailed_right > -1) {
+			string += "Next probability (fail): " + this.nextProbabilityFailed_right + "\n";
+		}
+		
+		if (this.periodCost > -1) {
+			string += "Period cost: " + this.periodCost + "\n";
+		}
+		
+		if (this.expectedCost > -1) {
+			string += "Expected cost: " + this.expectedCost + "\n";
+		}
+		
+		if (this.discountedExpectedCost > -1) {
+			string += "Discounted expected cost: " + this.discountedExpectedCost + "\n";
+		}
+		
+		if (this.finalCost > -1) {
+			string += "Final cost: " + this.finalCost + "\n";
+		}
+		
+		if (this.totalCost > -1) {
+			string += "Total cost: " + this.totalCost + "\n";
+		}
 				
 		return string;
-	}
-	
-
-
-	
+	}		
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

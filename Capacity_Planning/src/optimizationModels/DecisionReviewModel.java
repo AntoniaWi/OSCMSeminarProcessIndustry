@@ -14,37 +14,41 @@ import helper.*;
 public class DecisionReviewModel {
 	
 	
-	/**
-	 * Data instance that contains all information 
-	 */
 	private Data dataInstance;
 	
 	
 	/**
 	 * Creates a timing model with a data instance 
-	 * @param dataInstance containing all information
+	 * @param dataInstance containing all relevant information
 	 */
-	public DecisionReviewModel (Data dataInstance) {
-		
+	public DecisionReviewModel (Data dataInstance) {	
 		this.dataInstance = dataInstance;
 	}
 	
 	
 	/**
-	 * Runs the timing model with regards to its data instance; thereby it generates all strategies, creates a scenario tree, and searches the strategy with minimum cost
+	 * Runs the decision review model with regards to its data instance and its period t: 
+	 * generates a scenario tree, creates all possible strategies, calculate cost, and choose cost minimizing strategy.
 	 */
 	public void run () {
 				
+		// Generate scenario tree
+		
 		ArrayList<ArrayList<Event>> scenarioTree = generateScenarioTree();
+		
+		// Generate all possible strategies 
 		
 		ArrayList<int[]> strategies = generateAllPossibleStrategies();
 		
+		// Calculate cost with regards to the scenario tree
+		
 		ArrayList<Double> cost = calculateV(scenarioTree, strategies);
+		
+		// Set the new investment decision
 		
 		this.setNewInvesmentDecision(cost, strategies);
 	}
 	
-	// TODO
 
 	/**
 	 * Generates a scenario tree of instances of the class Event for period t
@@ -216,7 +220,7 @@ public class DecisionReviewModel {
 		// Get all relevant parameters
 		
 		int doneInvestments = DecisionReviewModel.countTrueValuesInArray(this.dataInstance.getInvestmentDecisionPrimaryFacility());
-		int remainingPossibleInvestment = this.dataInstance.getParameter_monthsToBuildPrimaryFacilities() - doneInvestments;
+		int remainingPossibleInvestment = this.dataInstance.getParameter_periodsToBuildPrimaryFacilities() - doneInvestments;
 		int remainingPeriods = (this.dataInstance.getParameter_planningHorizon() - this.dataInstance.getCountPeriods()) + 1;
 		int max_length = Math.min(remainingPeriods, remainingPossibleInvestment);
 		
@@ -326,7 +330,7 @@ public class DecisionReviewModel {
 				
 				for (int k = 0; k < scenarioTree.get(j).size(); k++) {
 					
-					scenarioTree.get(j).get(k).addStrategy(strategies.get(i), dataInstance.getParameter_monthsToBuildPrimaryFacilities());
+					scenarioTree.get(j).get(k).addStrategy(strategies.get(i), dataInstance.getParameter_periodsToBuildPrimaryFacilities());
 					scenarioTree.get(j).get(k).calculateTotalCost(c, K, phi, gamma_c, alpha);
 				}	
 			}
