@@ -1474,18 +1474,19 @@ public class ReadAndWrite {
 				}
 			}
 
-			// Assumed Production Cost
+		}
 
-			double productionCost = 0;
+		// Assumed Production Cost
+
+		double productionCost = 0;
+		for (int i = 0; i < instanz.getF(); i++) {
 			for (int l = 0; l < instanz.getT(); l++) {
 				productionCost += (instanz.getVariableProductionCosts()[i]
 						* instanz.getResult_consumedOrProducedAPI()[i][l]);
 			}
-
-			Number label7 = new Number(1, 22, productionCost);
-			sheet.addCell(label7);
-
 		}
+		Number label7 = new Number(1, 22, productionCost);
+		sheet.addCell(label7);
 
 		// Assumed corporate Tax
 		double corporateTax = 0;
@@ -1498,6 +1499,20 @@ public class ReadAndWrite {
 
 		Number label9 = new Number(1, 23, corporateTax);
 		sheet.addCell(label9);
+
+		// Custom Duties
+		double customDuties = 0;
+
+		for (int m = 0; m < instanz.getF(); m++) {
+			for (int l = 0; l < instanz.getT(); l++) {
+				customDuties += (instanz.getResult_grossIncome()[m][l]);
+				customDuties += productionCost;
+				customDuties -= revenue;
+			}
+		}
+
+		Number label10 = new Number(1, 24, customDuties);
+		sheet.addCell(label10);
 
 		// close workbook
 		writableWorkbook.write();
