@@ -268,9 +268,8 @@ public class LocationPlanningModel extends IloCplex {
 		IloLinearNumExpr expr = linearNumExpr();
 
 		for (int i = 0; i < this.datainstanz.getT(); i++) {
-			//double discountTerm = 1 / Math.pow((1 + this.datainstanz.getParameter_discountFactor_location()), (i + 1));
-			double discountTerm=1;
-			for (int j = 0; j < this.datainstanz.getF(); j++) {
+			double discountTerm = 1 / Math.pow((1 + this.datainstanz.getParameter_discountFactor_location()), (i + 1));
+				for (int j = 0; j < this.datainstanz.getF(); j++) {
 				if (datainstanz.getIF()[j]) {
 					expr.addTerm(discountTerm, this.grossIncome[j][i]);
 
@@ -281,8 +280,7 @@ public class LocationPlanningModel extends IloCplex {
 		// System.out.println(expr);
 
 		for (int i = 0; i < this.datainstanz.getT(); i++) {
-			//double discountTerm = -1 / Math.pow(1 + datainstanz.getParameter_discountFactor_location(), (i + 1));
-			double discountTerm=1;
+			double discountTerm = -1 / Math.pow(1 + datainstanz.getParameter_discountFactor_location(), (i + 1));
 			//for (int j = 0; j < this.datainstanz.getF(); j++) {
 				//if (datainstanz.getIF()[j]) {
 
@@ -294,8 +292,7 @@ public class LocationPlanningModel extends IloCplex {
 
 		// System.out.println(expr);
 		for (int i = 0; i < this.datainstanz.getT(); i++) {
-			//double discountTerm = 1 / Math.pow(1 + datainstanz.getParameter_discountFactor_location(), (i + 1));
-			double discountTerm=1;
+			double discountTerm = 1 / Math.pow(1 + datainstanz.getParameter_discountFactor_location(), (i + 1));
 			for (int k = 0; k < this.datainstanz.getN(); k++) {
 
 				double taxHelp = discountTerm * datainstanz.getCorporateTax()[k];
