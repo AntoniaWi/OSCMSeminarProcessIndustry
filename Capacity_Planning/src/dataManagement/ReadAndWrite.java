@@ -1444,13 +1444,13 @@ public class ReadAndWrite {
 					for (int k = 0; k < instanz.getN(); k++) {
 						if (instanz.getFn()[i][k]) {
 							nation = (k + 1);
-							Number label5 = new Number(2, 13 + counter, nation);
+							Number label5 = new Number(2, 15 + counter, nation);
 							sheet.addCell(label5);
 						}
 					}
 
 					// Capacity
-					Number label5 = new Number(3, 13 + counter,
+					Number label5 = new Number(3, 15 + counter,
 							instanz.getResult_availableProductionCapacity()[i][instanz.getT() - 1]);
 					sheet.addCell(label5);
 
@@ -1460,7 +1460,7 @@ public class ReadAndWrite {
 						grossincome += instanz.getResult_grossIncome()[i][l];
 					}
 
-					Number label6 = new Number(4, 13 + counter, grossincome);
+					Number label6 = new Number(4, 15 + counter, grossincome);
 					sheet.addCell(label6);
 
 					// Construction costs
