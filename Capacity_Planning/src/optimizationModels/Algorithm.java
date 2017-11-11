@@ -16,12 +16,23 @@ import jxl.write.biff.RowsExceededException;
 
 public class Algorithm {
 	
-	public static Data dataInstance;
-	public static DecisionReviewModel timingModel;
-	public static LocationPlanningModel locationPlanningModel;
-	public static boolean firstInvestment = true;
+	//----------   Can be modified   ------------------------------------------------------------------------------//
 	
 	public static int numberOfTestRuns = 1;
+	
+	//---------------------------------------------------------------------------------------------------------------//
+	
+	//----------   Cannot be modified   ------------------------------------------------------------------------------//
+	
+	public static Data[] dataInstances;
+	
+	public static DecisionReviewModel[] decisionReviewModels = new DecisionReviewModel[numberOfTestRuns];
+	public static LocationPlanningModel[] locationPlanningModels = new LocationPlanningModel[numberOfTestRuns];
+	
+	public static boolean[] firstInvestment = new boolean[numberOfTestRuns];
+	
+	//---------------------------------------------------------------------------------------------------------------//
+	
 	
 	/**
 	 * Let the algorithm run
@@ -35,27 +46,35 @@ public class Algorithm {
 	 */
 	public static void main (String [] args) throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 		
-		int index = 1; 
+		// Initialize firstInvestment array
 		
-		while (index <= numberOfTestRuns) {
+		for (int i = 0; i < firstInvestment.length; i++) {
+			firstInvestment[i] = true;
+		}
+		
+		// Start test runs
+		
+		for (int i = 0; i < numberOfTestRuns; i++) {
 			
-			dataInstance = new Data (1); 
+			Data dataInstance = new Data (1); 
+			dataInstances[i] = dataInstance;
 			
-			timingModel = new DecisionReviewModel(dataInstance);
+			DecisionReviewModel decisionReviewModel = new DecisionReviewModel(dataInstances[i]);
+			decisionReviewModels[i] = decisionReviewModel;
 			
-			printModelInformation_Start();
+			printModelInformation_Start(i); // TODO: rework needed
 			
 			int period = 1;
 			
 			while (period <= dataInstance.getParameter_planningHorizon()) {
 				
-				nextPeriod();
+				nextPeriod(i);
 				period++;
 			}
 			
-			endOfModel();
+			endOfModel(i);
 			
-			printModelInformation_End();
+			printModelInformation_End(i); // TODO: rework needed
 			
 			// TODO: write results in output Excel
 		}
@@ -65,47 +84,49 @@ public class Algorithm {
 	/**
 	 * Creates next period, updates former knowledge, calls the Timing Model and if needed the Location Planning Model
 	 */
-	public static void nextPeriod () throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
+	public static void nextPeriod (int testRun) throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 		
-		dataInstance.incrementCountPeriods();
+		dataInstances[testRun].incrementCountPeriods();
 		
-		updateFormerKnowledge();
+		updateFormerKnowledge(testRun);
 		
-		timingModel.run();
+		decisionReviewModels[testRun].run();
 		
-		if (dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()] == 1 && firstInvestment == true ) {
+		if (dataInstances[testRun].getInvestmentDecisionPrimaryFacility()[dataInstances[testRun].getCountPeriods()] == 1 && firstInvestment[testRun] == true ) {
 
-			locationPlanningModel = new LocationPlanningModel(dataInstance);
-			locationPlanningModel.run();
-			firstInvestment = false;
+			LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[testRun]);
+			locationPlanningModels[testRun] = locationPlanningModel;
+			
+			locationPlanningModels[testRun].run();
+			firstInvestment[testRun] = false;
 		}
 		
-		newTestResult();
+		newTestResult(testRun);
 		
-		printModelInformation_Period();
+		printModelInformation_Period(testRun); // TODO: rework needed
 	}
 	
 	
 	/**
 	 * Sets period to T+1, updates knowledge about former successful and failed test results, and calculates final expansion cost
 	 */
-	public static void endOfModel () {
+	public static void endOfModel (int testRun) {
 		
-		dataInstance.incrementCountPeriods();
-		updateFormerKnowledge();
-		dataInstance.calculateTotalExpansionCost();
+		dataInstances[testRun].incrementCountPeriods();
+		updateFormerKnowledge(testRun);
+		dataInstances[testRun].calculateTotalExpansionCost();
 	}
 	
 	
 	/**
 	 * Updates knowledge about former successful and failed test results
 	 */
-	public static void updateFormerKnowledge () {
+	public static void updateFormerKnowledge (int testRun) {
 		
-		if (dataInstance.getCountPeriods() > 1) {
+		if (dataInstances[testRun].getCountPeriods() > 1) {
 			
-			dataInstance.updateCountSuccessfulTests(dataInstance.getCountPeriods());
-			dataInstance.updateCountFailedTests(dataInstance.getCountPeriods());
+			dataInstances[testRun].updateCountSuccessfulTests(dataInstances[testRun].getCountPeriods());
+			dataInstances[testRun].updateCountFailedTests(dataInstances[testRun].getCountPeriods());
 		}
 	}
 	
@@ -113,20 +134,20 @@ public class Algorithm {
 	/**
 	 * Creates a new test result based on the former knowledge about successful and failed test results
 	 */
-	public static void newTestResult () {
+	public static void newTestResult (int testRun) {
 		
-		double p = dataInstance.calculateTestProbability();
+		double p = dataInstances[testRun].calculateTestProbability();
 		
 		boolean newTestResult = StdRandom.bernoulli(p); 
 		
 		if (newTestResult == true) {
 			
-			dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 1;
+			dataInstances[testRun].getTestResults()[dataInstances[testRun].getCountPeriods() ] = 1;
 		}
 		
 		else {
 			
-			dataInstance.getTestResults()[dataInstance.getCountPeriods() ] = 0;
+			dataInstances[testRun].getTestResults()[dataInstances[testRun].getCountPeriods() ] = 0;
 		}	
 	}
 	
@@ -134,28 +155,28 @@ public class Algorithm {
 	/**
 	 * Prints out the model information at the start of one run
 	 */
-	public static void printModelInformation_Start () {
+	public static void printModelInformation_Start (int testRun) {
 		
 		System.out.println("Timing Model starts with following parameters:");
 		
 		System.out.println("");
 		
-		System.out.println("Planning horizon (T): " + dataInstance.getParameter_planningHorizon());
-		System.out.println("Discount factor (alpha): " + dataInstance.getParameter_discountFactor());
+		System.out.println("Planning horizon (T): " + dataInstances[testRun].getParameter_planningHorizon());
+		System.out.println("Discount factor (alpha): " + dataInstances[testRun].getParameter_discountFactor());
 		
-		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstance.getParameter_monthsToBuildPrimaryFacilities());
-		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstance.getParameter_monthsToBuildSecondaryFacilities());
+		System.out.println("Number of periods (year) to build a primary facility (s_p_0): " + dataInstances[testRun].getParameter_monthsToBuildPrimaryFacilities());
+		System.out.println("Number of periods (year) to build a secondary facility (s_s_0): " + dataInstances[testRun].getParameter_monthsToBuildSecondaryFacilities());
 		
-		System.out.println("Construction cost of a primary facility (c_p): " + dataInstance.getParameter_constructionCostPrimaryFacility());
-		System.out.println("Construction cost of a secondary facility (c_s): " + dataInstance.getParameter_constructionCostSecondaryFacility());
+		System.out.println("Construction cost of a primary facility (c_p): " + dataInstances[testRun].getParameter_constructionCostPrimaryFacility());
+		System.out.println("Construction cost of a secondary facility (c_s): " + dataInstances[testRun].getParameter_constructionCostSecondaryFacility());
 		
-		System.out.println("Setup cost for a primary facility (K_p): " + dataInstance.getParameter_setupCostPrimaryFacility());
-		System.out.println("Setup cost for a secondary facility (K_s): " + dataInstance.getParameter_setupCostSecondaryFacility());
+		System.out.println("Setup cost for a primary facility (K_p): " + dataInstances[testRun].getParameter_setupCostPrimaryFacility());
+		System.out.println("Setup cost for a secondary facility (K_s): " + dataInstances[testRun].getParameter_setupCostSecondaryFacility());
 		
-		System.out.println("Penalty cost (Phi): " + dataInstance.getParameter_penaltyCost());
+		System.out.println("Penalty cost (Phi): " + dataInstances[testRun].getParameter_penaltyCost());
 		
-		System.out.println("Preliminary knowledge of successful tests (gamma): " + dataInstance.getParameter_preliminaryKnowledgeAboutSuccessfulTests());
-		System.out.println("Preliminary knowledge of failed tests (zeta): " + dataInstance.getParameter_preliminaryKnowledgeAboutFailedTests());
+		System.out.println("Preliminary knowledge of successful tests (gamma): " + dataInstances[testRun].getParameter_preliminaryKnowledgeAboutSuccessfulTests());
+		System.out.println("Preliminary knowledge of failed tests (zeta): " + dataInstances[testRun].getParameter_preliminaryKnowledgeAboutFailedTests());
 
 		System.out.println("");
 		
@@ -166,7 +187,7 @@ public class Algorithm {
 	/**
 	 * Prints out the period information in the end of one period
 	 */
-	public static void printModelInformation_Period () {
+	public static void printModelInformation_Period (int testRun) {
 		
 		System.out.println("");
 		
@@ -174,7 +195,7 @@ public class Algorithm {
 		
 		System.out.println("");
 		
-		System.out.println("Period # " + dataInstance.getCountPeriods() );
+		System.out.println("Period # " + dataInstances[testRun].getCountPeriods() );
 		
 		System.out.println("");
 		
@@ -182,8 +203,8 @@ public class Algorithm {
 		
 		System.out.println("");
 		
-		System.out.println("  - Gamma_" + (dataInstance.getCountPeriods() - 1) + " = " + dataInstance.getCountSuccessfulTests()[dataInstance.getCountPeriods() -1]);
-		System.out.println("  - Zeta_" + (dataInstance.getCountPeriods() - 1) + " = " + dataInstance.getCountFailedTests()[dataInstance.getCountPeriods() -1]);
+		System.out.println("  - Gamma_" + (dataInstances[testRun].getCountPeriods() - 1) + " = " + dataInstances[testRun].getCountSuccessfulTests()[dataInstances[testRun].getCountPeriods() -1]);
+		System.out.println("  - Zeta_" + (dataInstances[testRun].getCountPeriods() - 1) + " = " + dataInstances[testRun].getCountFailedTests()[dataInstances[testRun].getCountPeriods() -1]);
 		
 		System.out.println("");
 		
@@ -191,7 +212,7 @@ public class Algorithm {
 		
 		System.out.println("");
 		
-		System.out.println("  - Investment (yes or no): " + dataInstance.getInvestmentDecisionPrimaryFacility()[dataInstance.getCountPeriods()]);
+		System.out.println("  - Investment (yes or no): " + dataInstances[testRun].getInvestmentDecisionPrimaryFacility()[dataInstances[testRun].getCountPeriods()]);
 		System.out.println("  - Location: " + "empty" );
 		
 		System.out.println("");
@@ -200,15 +221,15 @@ public class Algorithm {
 		
 		System.out.println("");
 		
-		System.out.println("  - Probability p = " + dataInstance.getTestProbability()[dataInstance.getCountPeriods()]);		
-		System.out.println("  - New test result: " + dataInstance.getTestResults()[dataInstance.getCountPeriods() ]);
+		System.out.println("  - Probability p = " + dataInstances[testRun].getTestProbability()[dataInstances[testRun].getCountPeriods()]);		
+		System.out.println("  - New test result: " + dataInstances[testRun].getTestResults()[dataInstances[testRun].getCountPeriods() ]);
 	}
 	
 	
 	/**
 	 * Prints out the model information in the end of one run
 	 */
-	public static void printModelInformation_End () {
+	public static void printModelInformation_End (int testRun) {
 		
 		System.out.println("");
 		
@@ -216,17 +237,17 @@ public class Algorithm {
 		
 		System.out.println("\nEnd of experiment run:");
 		
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountSuccessfulTests(), "Successful Tests (gamma)");
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getCountFailedTests(), "Failed Tests (zeta)");
-		ReadAndWrite.printArrayWithPeriodsDouble(dataInstance.getTestProbability(), "Test Probability (p)");
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstances[testRun].getCountSuccessfulTests(), "Successful Tests (gamma)");
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstances[testRun].getCountFailedTests(), "Failed Tests (zeta)");
+		ReadAndWrite.printArrayWithPeriodsDouble(dataInstances[testRun].getTestProbability(), "Test Probability (p)");
 		
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getTestResults(), "Test Results (delta)");
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstances[testRun].getTestResults(), "Test Results (delta)");
 		
-		ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getInvestmentDecisionPrimaryFacility(), "Investment decision (a)");
+		ReadAndWrite.printArrayWithPeriodsInt(dataInstances[testRun].getInvestmentDecisionPrimaryFacility(), "Investment decision (a)");
 		
-		for (int i = 1; i < dataInstance.getInvestmentStrategies().length; i++) {
+		for (int i = 1; i < dataInstances[testRun].getInvestmentStrategies().length; i++) {
 			
-			ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getInvestmentStrategies()[i],"Investment strategy in period " + i + ":");
+			ReadAndWrite.printArrayWithPeriodsInt(dataInstances[testRun].getInvestmentStrategies()[i],"Investment strategy in period " + i + ":");
 		}
 	}
 }
