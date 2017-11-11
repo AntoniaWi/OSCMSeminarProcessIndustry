@@ -810,7 +810,7 @@ public class LocationPlanningModel extends IloCplex {
 							this.constructionStartSecondaryFacility[j][i]);
 
 					double variableCostSF = this.datainstanz.getMonthsToBuildSecondaryFacilities_location()
-							* this.datainstanz.getParameter_constructionCostSecondaryFacility();
+							* this.datainstanz.getConstructionCostSecondaryFacility_location();
 					this.capitalExpenditureConstraint.addTerm(variableCostSF,
 							this.constructionStartSecondaryFacility[j][i]);
 				}

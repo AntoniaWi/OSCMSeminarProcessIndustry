@@ -66,7 +66,7 @@ public class Algorithm {
 			
 			int period = 1;
 			
-			while (period <= dataInstance.getParameter_planningHorizon()) {
+			while (period <= dataInstances[i].getParameter_planningHorizon()) {
 				
 				nextPeriod(i);
 				period++;
@@ -76,8 +76,8 @@ public class Algorithm {
 			
 			printModelInformation_End(i); // TODO: rework needed
 			
-			String tab = "Run"+(i+1);
-			ReadAndWrite.writeSolutionLocationModel(dataInstance, tab);
+			String tab = "Run "+(i+1);
+			ReadAndWrite.writeSolutionLocationModel(dataInstances[i], tab);
 			
 			
 			// TODO: write results in output Excel
