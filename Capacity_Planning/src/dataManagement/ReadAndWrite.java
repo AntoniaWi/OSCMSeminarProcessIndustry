@@ -1636,6 +1636,37 @@ public class ReadAndWrite {
 		}
 	}
 
+	
+	/**
+	 * 
+	 * @param instance
+	 * @param tab
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws WriteException
+	 */
+	public static void writeSolutionDecisionPlanningModel(Data instance, WritableSheet tab) throws BiffException, IOException, WriteException {
+
+		File file;
+		WritableWorkbook writableWorkbook;
+		Workbook workbook;
+		choosePaths();
+
+		file = new File(pathR);
+
+		workbook = Workbook.getWorkbook(file);
+		writableWorkbook = Workbook.createWorkbook(file, workbook);
+
+
+		
+	}
+	
+	
+	public static void writeSolutionBothModels (Data instance, )
+	
+	
+	
+	
 	/**
 	 * Should go into ReadAndWrite-Class later
 	 * 
