@@ -1,45 +1,69 @@
 package optimizationModels;
 
 import java.io.IOException;
-
 import dataManagement.*;
 import ilog.concert.IloException;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
+
+/**
+ * Runs the whole algorithm with Timing and Location Planning Model
+ * @author RamonaZauner
+ *
+ */
+
 public class Algorithm {
 	
 	public static Data dataInstance;
-	public static TimingModel timingModel;
+	public static DecisionReviewModel timingModel;
 	public static LocationPlanningModel locationPlanningModel;
 	public static boolean firstInvestment = true;
 	
+	public static int numberOfTestRuns = 1;
+	
+	/**
+	 * Let the algorithm run
+	 * @param args
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws WriteException
+	 * @throws IloException
+	 * @throws BiffException
+	 * @throws RowsExceededException
+	 */
 	public static void main (String [] args) throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 		
-		dataInstance = new Data (1); 
+		int index = 1; 
 		
-		timingModel = new TimingModel(dataInstance);
-		
-		printModelInformation_Start();
-		
-		int period = 1;
-		
-		while (period <= dataInstance.getParameter_planningHorizon()) {
+		while (index <= numberOfTestRuns) {
 			
-			nextPeriod();
-			period++;
+			dataInstance = new Data (1); 
 			
+			timingModel = new DecisionReviewModel(dataInstance);
+			
+			printModelInformation_Start();
+			
+			int period = 1;
+			
+			while (period <= dataInstance.getParameter_planningHorizon()) {
+				
+				nextPeriod();
+				period++;
+			}
+			
+			endOfModel();
+			
+			printModelInformation_End();
+			
+			// TODO: write results in output Excel
 		}
-		
-		endOfModel();
-		
-		printModelInformation_End();
 	}
 	
 
 	/**
-	 * 
+	 * Creates next period, updates former knowledge, calls the Timing Model and if needed the Location Planning Model
 	 */
 	public static void nextPeriod () throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 		
@@ -63,14 +87,13 @@ public class Algorithm {
 	
 	
 	/**
-	 * Sets period to T+1 and updates knowledge about former successful and failed test results
+	 * Sets period to T+1, updates knowledge about former successful and failed test results, and calculates final expansion cost
 	 */
 	public static void endOfModel () {
 		
 		dataInstance.incrementCountPeriods();
-		
 		updateFormerKnowledge();
-		
+		dataInstance.calculateTotalExpansionCost();
 	}
 	
 	
@@ -206,5 +229,4 @@ public class Algorithm {
 			ReadAndWrite.printArrayWithPeriodsInt(dataInstance.getInvestmentStrategies()[i],"Investment strategy in period " + i + ":");
 		}
 	}
-
 }

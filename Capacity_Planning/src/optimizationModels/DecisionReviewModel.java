@@ -11,7 +11,7 @@ import helper.*;
  *
  */
 
-public class TimingModel {
+public class DecisionReviewModel {
 	
 	
 	/**
@@ -24,7 +24,7 @@ public class TimingModel {
 	 * Creates a timing model with a data instance 
 	 * @param dataInstance containing all information
 	 */
-	public TimingModel (Data dataInstance) {
+	public DecisionReviewModel (Data dataInstance) {
 		
 		this.dataInstance = dataInstance;
 	}
@@ -44,20 +44,19 @@ public class TimingModel {
 		this.setNewInvesmentDecision(cost, strategies);
 	}
 	
+	// TODO
 
 	/**
-	 * Generates a scenario tree for period t
-	 * @param period
-	 * @return a scenario tree with instances of the class Event
+	 * Generates a scenario tree of instances of the class Event for period t
+	 * @return scenario tree of instances of the class Event
 	 */
 	private ArrayList<ArrayList<Event>> generateScenarioTree () {
 		
 		ArrayList<ArrayList<Event>> scenarioTree = new ArrayList<ArrayList<Event>>();
 		
-		// Create an ArrayList for each period t element of {t,...,T} which is added to the scenario tree
-		// Attention: index goes from t-1 to T-1
+		int count = 0; // period counter to set the indices right
 		
-		int count = 0;
+		// Creates the scenario tree with its events and thereby sets the first attributes: period, index, firstEvent, finalEvent, testResult
 		
 		for (int t = dataInstance.getCountPeriods(); t <= this.dataInstance.getParameter_planningHorizon()+1; t++) {
 			
@@ -66,16 +65,14 @@ public class TimingModel {
 			
 			int numberOfEvents = (int) Math.pow(2.0, count);
 			
-			// For each period the events are created and put into the ArrayList period_t
-			
 			for (int index = 0; index < numberOfEvents; index++) {
 				
 				Event tmp_event = new Event ();
 				
 				tmp_event.setPeriod(t);
 				tmp_event.setIndex(index);
-				
-				// Is it a final event for which cost can be calculated?
+			
+				// Final event?
 				
 				if (t == this.dataInstance.getParameter_planningHorizon()+1) {
 					tmp_event.setFinalEvent(true);
@@ -84,13 +81,14 @@ public class TimingModel {
 					tmp_event.setFinalEvent(false);
 				}
 				
-				// Is it a first event for which no test result is calculated?
+				// First event?
 				
 				if (t == dataInstance.getCountPeriods()) {
 					tmp_event.setFirstEvent(true);
 					tmp_event.setTestResult(this.dataInstance.getTestResults()[dataInstance.getCountPeriods()-1]);
 				}
 				else {
+					
 					tmp_event.setFirstEvent(false);
 					
 					if ((index % 2) == 0) {
@@ -100,16 +98,12 @@ public class TimingModel {
 						tmp_event.setTestResult(0);
 					}
 				}
-				
-				// Is it the left (successful) or the right (failed) event 
-				
 				period_t.add(tmp_event);	
 			}
-			
 			count++;
 		}
 		
-		// Setting all children - final events in T do not have children, "-1" in the for-loop
+		// Sets all children, except for the last events which do not have any children
 		
 		for (int t = 0; t < scenarioTree.size()-1; t++) {
 			
@@ -124,7 +118,7 @@ public class TimingModel {
 			}
 		}
 		
-		// Setting all parents - first events in t = 0 do not have any parents
+		// Sets all parents, except for the first event which does not have any parents
 		
 		for (int t = scenarioTree.size()-1; t > 0; t--) {
 			
@@ -146,7 +140,7 @@ public class TimingModel {
 			}
 		}
 		
-		// Setting all counts and next probabilities except from final events
+		// Sets all counts and next probabilities, except for final events which do not need counts and next probabilities
 		
 		for (int t = 0; t < scenarioTree.size(); t++) {
 			
@@ -169,8 +163,8 @@ public class TimingModel {
 				int gamma = event_tmp.getCountSuccessfulTestResults();
 				int zeta = event_tmp.getCountFailedTestResults();
 				
-				double p = TimingModel.calculateTestProbability(gamma, zeta);
-				double p_counter = TimingModel.calculateTestProbability(zeta, gamma);
+				double p = DecisionReviewModel.calculateTestProbability(gamma, zeta);
+				double p_counter = DecisionReviewModel.calculateTestProbability(zeta, gamma);
 				
 				event_tmp.setNextProbabilitySuccessful_left(p);
 				event_tmp.setNextProbabilityFailed_right(p_counter);
@@ -178,7 +172,7 @@ public class TimingModel {
 			
 		}
 				
-		// Setting probability
+		// Sets the (own) probability of events
 		
 		for (int t = 0; t < scenarioTree.size(); t++) {
 			
@@ -212,20 +206,21 @@ public class TimingModel {
 	
 	
 	/**
-	 * Generates all possible strategies for period t 
-	 * @return a array list of integer arrays containing the strategy information
+	 * Generates all possible strategies for period t
+	 * @return an array list of strategies that contain holistic investment decisions (all former investment decision and all future strategies)
 	 */
 	private ArrayList<int[]> generateAllPossibleStrategies() {
 		
 		ArrayList<int[]> futureStrategies = new ArrayList<int[]> ();
 			
-		int doneInvestments = TimingModel.countTrueValuesInArray(this.dataInstance.getInvestmentDecisionPrimaryFacility());
+		// Get all relevant parameters
 		
+		int doneInvestments = DecisionReviewModel.countTrueValuesInArray(this.dataInstance.getInvestmentDecisionPrimaryFacility());
 		int remainingPossibleInvestment = this.dataInstance.getParameter_monthsToBuildPrimaryFacilities() - doneInvestments;
-		
 		int remainingPeriods = (this.dataInstance.getParameter_planningHorizon() - this.dataInstance.getCountPeriods()) + 1;
-		
 		int max_length = Math.min(remainingPeriods, remainingPossibleInvestment);
+		
+		// Create all possible future strategies
 		
 		for (int i = 0; i <= max_length; i++) {
 			
@@ -241,35 +236,45 @@ public class TimingModel {
 			}
 			
 			Permuter.permute(array_tmp, futureStrategies);
-		
 		}
 		
+		// Add all former investment decisions to all future strategies to obtain holistic strategies over the whole planning horizon
+		
 		ArrayList<int[]> strategies = this.addAllFormerInvestmentStrategies(futureStrategies);
+		
 		return strategies;
 	}
 	
 	
 	/**
-	 * Adds all former decisions to the created future strategies
-	 * @param futureStrategies
-	 * @return array list of integer arrays with holistic strategies (former and future decisions)
+	 * Add all former investment decisions to all future strategies to obtain holistic strategies over the whole planning horizon
+	 * @param futureStrategies all possible future strategies in period t
+	 * @return array list of holistic strategies over the whole planning horizon
 	 */
 	private ArrayList<int[]> addAllFormerInvestmentStrategies (ArrayList<int[]> futureStrategies) {
 		
+		// New array list
+		
 		ArrayList<int[]> strategies = new ArrayList<int[]>();
+		
+		// Create new strategy for each future strategy
 		
 		for (int i = 0; i < futureStrategies.size(); i++) {
 			
 			int [] strategy = new int [this.dataInstance.getParameter_planningHorizon()+1];
 			
-			int index_1 = 0;
-			int index_2 = 0;
+			int index_1 = 0; // index for former investment decisions and whole strategy array
+			int index_2 = 0; // index for future investment decisions
+			
+			// Add former investment decisions to the array
 			
 			while (index_1 < this.dataInstance.getCountPeriods()) {
 				
 				strategy[index_1] = this.dataInstance.getInvestmentDecisionPrimaryFacility()[index_1];	
 				index_1++;
 			}
+			
+			// Add future strategy i to the array
 			
 			while (index_1 < strategy.length) {
 				
@@ -278,8 +283,9 @@ public class TimingModel {
 				index_2++;
 			}
 			
-			strategies.add(strategy);
+			// Add created holistic strategy to strategies
 			
+			strategies.add(strategy);
 		}
 		
 		return strategies;
@@ -287,15 +293,18 @@ public class TimingModel {
 	
 
 	/**
-	 * Calculates cost 
-	 * @param period
-	 * @param scenarioTree
-	 * @param strategies
-	 * @return
+	 * Calculates total cost (period cost + expected cost) in period t for each possible strategy
+	 * @param scenarioTree related to the period t
+	 * @param strategies all strategies that are possible in period t
+	 * @return a cost array with total cost related to all strategies in period t
 	 */
 	private ArrayList<Double> calculateV (ArrayList<ArrayList<Event>> scenarioTree, ArrayList<int[]> strategies) {
 		
+		// Create new cost array
+		
 		ArrayList<Double> cost = new ArrayList<Double>();
+		
+		// Get all relevant parameters
 		
 		double c = this.dataInstance.getParameter_constructionCostPrimaryFacility();
 		double K = this.dataInstance.getParameter_setupCostPrimaryFacility();
@@ -303,13 +312,15 @@ public class TimingModel {
 		int gamma_c = this.dataInstance.getParameter_thresholdSuccessfulTests();
 		double alpha = this.dataInstance.getParameter_discountFactor();
 		
-		// Do the cost calculation for every possible strategy
+		// Cost calculation for every strategy
 		
 		for (int i = 0; i < strategies.size(); i++) {
 			
-			TimingModel.deleteCostCalculation(scenarioTree);
+			// Delete former cost calculation from all Event instances in the scenario tree
 			
-			// Calculate the final cost for all final events in the scenario tree
+			DecisionReviewModel.deleteCostCalculation(scenarioTree);
+			
+			// Cost calculation for each event in the scenario tree (bottom-up)
 			
 			for (int j = scenarioTree.size()-1; j >= 0; j--) {
 				
@@ -320,33 +331,20 @@ public class TimingModel {
 				}	
 			}
 						
+			// Add the calculated cost to the cost array
+			
 			cost.add(scenarioTree.get(0).get(0).getTotalCost());
 			
-			//ReadAndWrite.printScenarioTree(scenarioTree);
-
+			// Print scenario tree with cost related to strategy with index i in strategies
+			// ReadAndWrite.printScenarioTree(scenarioTree);
 		}
-		
 		return cost;
 	}
 	
-
-	/**
-	 * 
-	 * @param gamma
-	 * @param zeta
-	 * @return
-	 */
-	private static double calculateTestProbability (double gamma, double zeta) {
-		
-		double p = gamma / (gamma + zeta);
-		
-		return p;
-	}
-	
 	
 	/**
-	 * 
-	 * @param scenarioTree
+	 * Deletes cost calculation and all related parameter values in the scenario tree for further cost calculation
+	 * @param scenarioTree of instances of the class Event
 	 */
 	private static void deleteCostCalculation (ArrayList<ArrayList<Event>> scenarioTree) {
 		
@@ -358,12 +356,54 @@ public class TimingModel {
 			}
 		}
 	}
+		
+	
+	/**
+	 * Sets optimal investment decision for period t, calculates the remaining periods to build and saves cost minimizing strategy for later comparison
+	 * @param cost array with total cost for each strategy
+	 * @param strategies 
+	 */
+	private void setNewInvesmentDecision (ArrayList<Double> cost, ArrayList<int[]> strategies) {
+		
+		// Index of the minimum cost in the cost array
+		
+		int min_cost_index = searchForMin (cost);
+		
+		// Recent period
+		
+		int period = this.dataInstance.getCountPeriods();
+		
+		// Set investment decision for period t
+		
+		this.dataInstance.setInvestmentDecisionPrimaryFacility(period, strategies.get(min_cost_index)[period]);
+		
+		// Save optimal strategy in period t for later comparison
+		
+		this.dataInstance.addNewStrategyDecision(period, strategies.get(min_cost_index));
+		
+		// Calculate remaining periods to build primary facility
+		
+		this.dataInstance.calculateRemainingPeriodsToBuildPrimaryFacility(dataInstance.getCountPeriods() + 1);
+	}
 	
 	
 	/**
-	 * 
-	 * @param cost
-	 * @return
+	 * Returns the probability for a successful test result based on the knowledge about former test results
+	 * @param gamma knowledge about former successful test results
+	 * @param zeta knowledge about former failed test results
+	 * @return probability for a successful test result
+	 */
+	private static double calculateTestProbability (double gamma, double zeta) {
+		
+		double p = gamma / (gamma + zeta);
+		return p;
+	}
+	
+	
+	/**
+	 * Searches for the minimum cost in a cost array and returns the index
+	 * @param cost array with total cost for each strategy
+	 * @return index of minimum cost
 	 */
 	private static int searchForMin (ArrayList<Double> cost) {
 		
@@ -378,33 +418,14 @@ public class TimingModel {
 				index = i;
 			}
 		}
-		
 		return index;
 	}
 	
 	
 	/**
-	 * 
-	 * @param cost
-	 * @param strategies
-	 */
-	private void setNewInvesmentDecision (ArrayList<Double> cost, ArrayList<int[]> strategies) {
-		
-		int min_cost_index = searchForMin (cost);
-		
-		int period = this.dataInstance.getCountPeriods();
-		
-		this.dataInstance.setInvestmentDecisionPrimaryFacility(period, strategies.get(min_cost_index)[period]);
-		this.dataInstance.addNewStrategyDecision(period, strategies.get(min_cost_index));
-		
-		this.dataInstance.calculateRemainingPeriodsToBuildPrimaryFacility(dataInstance.getCountPeriods() + 1);
-	}
-	
-	
-	/**
-	 * 
+	 * Counts values equal to 1 in an integer array
 	 * @param array
-	 * @return
+	 * @return number of values equal to 1 
 	 */
 	private static int countTrueValuesInArray (int [] array) {
 		
@@ -416,7 +437,6 @@ public class TimingModel {
 				count++;
 			}
 		}
-		
 		return count;
 	}
 }
