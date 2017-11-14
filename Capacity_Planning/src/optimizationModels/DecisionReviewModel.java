@@ -431,7 +431,7 @@ public class DecisionReviewModel {
 	 * @param array
 	 * @return number of values equal to 1 
 	 */
-	private static int countTrueValuesInArray (int [] array) {
+	public static int countTrueValuesInArray (int [] array) {
 		
 		int count = 0;
 		

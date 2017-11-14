@@ -75,7 +75,12 @@ public class Algorithm {
 			
 			endOfModel(i);
 			
-			//TODO: Call Location Planning Model again, redefine remainingTimeOfClinicalTrials and fix primary facility
+			//TODO: Call Location Planning Model again, redefine remainingTimeOfClinicalTrials and fix primary facility, überschreiben?
+			int index=0;
+			LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[i], index);
+			locationPlanningModels[i] = locationPlanningModel;
+			locationPlanningModels[i].run(0);
+			
 			
 			printModelInformation_End(i); // TODO: rework needed
 			

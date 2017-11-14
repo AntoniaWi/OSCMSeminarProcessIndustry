@@ -135,6 +135,38 @@ public class LocationPlanningModel extends IloCplex {
 		this.deltaCapacityExpansion = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // delta_q_ft
 		this.capacityExpansionAmount = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // q_ft
 	}
+	
+	public LocationPlanningModel(Data datainstanz, int index) throws IloException, BiffException, WriteException, IOException {
+		
+		this.datainstanz = datainstanz;
+		
+		int count=DecisionReviewModel.countTrueValuesInArray(datainstanz.getInvestmentDecisionPrimaryFacility());
+		
+		//TODO: überprüfen mit Sarah
+		int tmp_remainingTime = count*12;
+		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime);
+		datainstanz.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
+
+		//TODO: rausschreiben überprüfen
+		//ReadAndWrite.writeTransferParameter(datainstanz);
+		//ReadAndWrite.createAndWriteDict(datainstanz);
+		
+		// Initialization of decision variables
+		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
+		this.constructionStartSecondaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
+		this.shippedMaterialUnitsFacilityToCustomer = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_ifct
+		this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
+		this.depreciationChargePrimaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()][this.datainstanz.getT()]; // NDC_p_ftaut
+		this.depreciationChargeSecondaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()][this.datainstanz.getT()]; // NDC_s_ftaut
+		this.availableProductionCapacity = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // Q_ft
+		this.taxableIncome = new IloNumVar[this.datainstanz.getN()][this.datainstanz.getT()]; // TI_nt
+		this.consumedOrProducedMaterial = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getT()]; // x_ift
+		this.consumedOrProducedAPI = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // X_ft
+		this.capitalExpenditure = new IloNumVar[this.datainstanz.getT()]; // CE_t
+		this.grossIncome = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // GI_ft
+		this.deltaCapacityExpansion = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // delta_q_ft
+		this.capacityExpansionAmount = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // q_ft
+	}
 
 	
 	
@@ -176,7 +208,18 @@ public class LocationPlanningModel extends IloCplex {
 		
 	}
 	
+public void run (int index) throws IloException, BiffException, IOException, RowsExceededException, WriteException {
+		
+		
+		
+		this.build(index);
+		this.solve();
+		//this.writeSolution(new int[] { 1, 2, 3 }, datainstanz);
+		//ReadAndWrite.writeSolution(this.datainstanz);
 	
+		
+		
+	}
 
 	public void build() throws IloException {
 		long start = System.currentTimeMillis();
@@ -227,6 +270,55 @@ public class LocationPlanningModel extends IloCplex {
 				"(WGP) complete rebuild finished, dur=" + (System.currentTimeMillis() - start) + " milli sec\n");
 	}
 
+	//TODO: for end of model, fix primary
+	public void build(int index) throws IloException {
+		long start = System.currentTimeMillis();
+
+		/* Variables */
+		addVarsX();
+
+		/* Objective */
+		addObjective();
+
+		/* Constraints */
+		// 1st constraint
+		this.addConstraintNumberOfPrimaryFacilities(); //TODO: add constraint to fix primary facility
+		this.addConstraintNumberOfSecondaryFacilities();
+		// 2nd constraint
+		this.addConstraintOneConstructionDuringPlanningHorizonPF();
+		this.addConstraintOneConstructionDuringPlanningHorizonSF();
+		// 3rd constraint
+		// this.addConstraintCapacityExpansionOnlyIfConstructionIsPlanned();
+		// 4th constraint
+		// this.addConstraintMinimumExpansion();
+		// 5th constraint
+		this.addConstraintExpansionSize();
+		// 6th constraint
+		this.addConstraintAvailableCapacity();
+		// 7th constraint
+		this.addConstraintsMassBalanceEquation();
+		// 8th constraint
+		this.addConstraintCapacityRestrictionForProduction();
+		// 9th constraint
+		//this.addConstraintLowerLimitOfProduction();
+		// 10th constraint
+		this.addConstraintSupplyAndDemand();
+		// 11th constraint
+		this.addConstraintCapitalExpenditure();
+		// 12th constraint
+		this.addConstraintBudgetConstraint();
+		// 13th constraint
+		this.addConstraintGrossIncome();
+		// 14th constraint
+		// this.addConstraintDepreciationCharge();
+		// 15th constraint
+		this.addConstraintTaxableIncome();
+
+		// String path = "./logs/model.lp"; exportModel(path);
+
+		System.out.println(
+				"(WGP) complete rebuild finished, dur=" + (System.currentTimeMillis() - start) + " milli sec\n");
+	}
 	// add Decision variables
 	private void addVarsX() throws IloException {
 		for (int i = 0; i < datainstanz.getF(); i++) {// f
