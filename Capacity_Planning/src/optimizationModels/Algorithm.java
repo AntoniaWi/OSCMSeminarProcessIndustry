@@ -75,6 +75,8 @@ public class Algorithm {
 			
 			endOfModel(i);
 			
+			//TODO: Call Location Planning Model again, redefine remainingTimeOfClinicalTrials and fix primary facility
+			
 			printModelInformation_End(i); // TODO: rework needed
 			
 			String tab = "Run "+(i+1);
