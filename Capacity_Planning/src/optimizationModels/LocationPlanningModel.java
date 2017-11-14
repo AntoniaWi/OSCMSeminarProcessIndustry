@@ -208,14 +208,12 @@ public class LocationPlanningModel extends IloCplex {
 		
 	}
 	
-public void run (int index) throws IloException, BiffException, IOException, RowsExceededException, WriteException {
+public void run (int primaryFacility) throws IloException, BiffException, IOException, RowsExceededException, WriteException {
 		
-		
-		
-		this.build(index);
+		this.build(primaryFacility);
 		this.solve();
-		//this.writeSolution(new int[] { 1, 2, 3 }, datainstanz);
-		//ReadAndWrite.writeSolution(this.datainstanz);
+		this.writeSolution(new int[] { 1, 2, 3 }, datainstanz);
+		ReadAndWrite.writeSolution(this.datainstanz);
 	
 		
 		
@@ -271,7 +269,7 @@ public void run (int index) throws IloException, BiffException, IOException, Row
 	}
 
 	//TODO: for end of model, fix primary
-	public void build(int index) throws IloException {
+	public void build(int primaryFacility) throws IloException {
 		long start = System.currentTimeMillis();
 
 		/* Variables */
@@ -282,6 +280,7 @@ public void run (int index) throws IloException, BiffException, IOException, Row
 
 		/* Constraints */
 		// 1st constraint
+		this.addConstraintFixPrimaryFacility(primaryFacility);
 		this.addConstraintNumberOfPrimaryFacilities(); //TODO: add constraint to fix primary facility
 		this.addConstraintNumberOfSecondaryFacilities();
 		// 2nd constraint
@@ -403,6 +402,17 @@ public void run (int index) throws IloException, BiffException, IOException, Row
 	}
 
 	// constraints
+	
+	/**
+	 * Fix primary facility
+	 * @throws IloException
+	 */
+	private void addConstraintFixPrimaryFacility(int f) throws IloException {
+
+		
+		addEq(this.constructionStartPrimaryFacility[f][0], 1);
+
+	}
 
 	/**
 	 * 1st constraint: choose exactly one facility as primary facility/ Choose at
@@ -425,6 +435,7 @@ public void run (int index) throws IloException, BiffException, IOException, Row
 		addEq(this.numberOfPrimaryFacilities, 1);
 
 	}
+	
 
 	private void addConstraintNumberOfSecondaryFacilities() throws IloException {
 
