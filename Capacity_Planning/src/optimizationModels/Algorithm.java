@@ -79,7 +79,7 @@ public class Algorithm {
 			if(dataInstances[i].isSuccessOfClinicalTrials()) {
 			
 			int primaryFacility=0;
-			for (int k=0;i<dataInstances[i].getF();k++) {
+			for (int k=0;k<dataInstances[i].getF();k++) {
 				for (int j=0;j<dataInstances[i].getT();j++) {
 					if (dataInstances[i].getResult_constructionStartPrimaryFacility()[k][j]==1) {
 						primaryFacility=k;

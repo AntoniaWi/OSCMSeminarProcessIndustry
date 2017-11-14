@@ -183,7 +183,7 @@ public class LocationPlanningModel extends IloCplex {
 		lpm.solve();
 		lpm.writeSolution(new int[] { 1, 2, 3 }, instanz);
 		ReadAndWrite.writeSolution(instanz);
-		// lpm.ergebnisschreibenRobust(lpm);
+		
 	}
 	
 	
@@ -212,7 +212,7 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		
 		this.build(primaryFacility);
 		this.solve();
-		this.writeSolution(new int[] { 1, 2, 3 }, datainstanz);
+		this.writeSolution(new int[] { 1, 2, 3, 4 }, datainstanz);
 		ReadAndWrite.writeSolution(this.datainstanz);
 	
 		
@@ -1338,9 +1338,10 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 							if (datainstanz.getOM()[j][i] && datainstanz.getIM()[k][i]) {
 								if (getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) > 0) {
 
-									out.write("Material " + (i + 1) + " is shipped from facility " + (j + 1)
+									/*out.write("Material " + (i + 1) + " is shipped from facility " + (j + 1)
 											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
 											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
+									*/
 									Fifct[i][j][k][l]=getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]);
 									
 								} else {
@@ -1352,10 +1353,10 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 							} else if (datainstanz.getIM()[j][i] && datainstanz.getOM()[k][i]) {
 								if (getValue(this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]) > 0) {
 
-									out.write("Material " + (i + 1) + " is shipped from supplier " + (k + 1)
+									/*out.write("Material " + (i + 1) + " is shipped from supplier " + (k + 1)
 											+ " to facility " + (j + 1) + " in period " + (l + 1) + " ."
 											+ getValue(this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]) + "\n");
-									
+									*/
 									Fisft[i][k][j][l]=getValue(this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]);
 								}
 								
