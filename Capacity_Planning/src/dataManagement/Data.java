@@ -109,6 +109,13 @@ public class Data {
 	private double result_netPresentValue;
 	
 	
+	public Data () {
+		
+		
+	}
+	
+	
+	
 	/**
 	 * 
 	 * @param x
@@ -1595,9 +1602,6 @@ public class Data {
 	}
 	
 	
-	// TODO RAMONA: create several toString Method for console output
-	
-
 	/**
 	 * 
 	 */
@@ -1643,7 +1647,276 @@ public class Data {
 		
 	}
 	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static int[] clone (int[] array) {
 		
+		int[] copy = new int[array.length];
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			copy[i] = array[i];
+		}
+		
+		return copy;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static int[][] clone (int[][] array) {
+		
+		int[][] copy = new int[array.length][array[0].length];
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			for (int j = 0; j < array[i].length; j++) {
+				
+				copy[i][j] = array[i][j];
+			}
+		}
+		return copy;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static double[] clone (double[] array) {
+		
+		double[] copy = new double[array.length];
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			copy[i] = array[i];
+		}
+		
+		return copy;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static boolean[] clone (boolean[] array) {
+		
+		boolean[] copy = new boolean[array.length];
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			copy[i] = array[i];
+		}
+		
+		return copy;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static boolean[][] clone (boolean[][] array) {
+		
+		boolean[][] copy = new boolean[array.length][array[0].length];
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			for (int j = 0; j < array[i].length; j++) {
+				
+				copy[i][j] = array[i][j];
+			}	
+		}
+		return copy;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static double[][] clone (double[][] array) {
+		
+		double[][] copy = new double[array.length][array[0].length];
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			for (int j = 0; j < array[i].length; j++) {
+				
+				copy[i][j] = array[i][j];
+			}	
+		}
+		return copy;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static double[][][] clone (double[][][] array) {
+		
+		double[][][] copy = new double[array.length][array[0].length][array[0][0].length];
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			for (int j = 0; j < array[i].length; j++) {
+				
+				for (int k = 0; k < array[i][j].length; k++) {
+					
+					copy[i][j][k] = array[i][j][k];
+				}
+			}	
+		}
+		return copy;	
+	}
+	
+	
+	/**
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private static double[][][][] clone (double[][][][] array) {
+		
+		double[][][][] copy = new double[array.length][array[0].length][array[0][0].length][array[0][0][0].length];
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			for (int j = 0; j < array[i].length; j++) {
+				
+				for (int k = 0; k < array[i][j].length; k++) {
+					
+					for (int l = 0; l < array[i][j][k].length; l++) {
+						
+						copy[i][j][k][l] = array[i][j][k][l];
+					}
+				}
+			}	
+		}
+		return copy;	
+	}
+	
+
+	/**
+	 * 
+	 */
+	public Data clone () {
+		
+		Data copy = new Data (); 
+		
+		copy.parameter_planningHorizon = this.parameter_planningHorizon;		
+		
+		copy.parameter_discountFactor_timing = this.parameter_discountFactor_timing;					
+		copy.parameter_discountFactor_location = this.parameter_discountFactor_location;
+		
+		copy.parameter_periodsToBuildPrimaryFacilities = 	this.parameter_periodsToBuildPrimaryFacilities;	
+		copy.parameter_periodsToBuildSecondaryFacilities = this.parameter_periodsToBuildSecondaryFacilities;	
+		
+		copy.parameter_constructionCostPrimaryFacility = this.parameter_constructionCostPrimaryFacility;			
+		copy.parameter_constructionCostSecondaryFacility = this.parameter_constructionCostSecondaryFacility;
+		
+		copy.parameter_setupCostPrimaryFacility = this.parameter_setupCostPrimaryFacility;			
+		copy.parameter_setupCostSecondaryFacility = this.parameter_setupCostSecondaryFacility;					
+		
+		copy.parameter_penaltyCost = this.parameter_penaltyCost;							
+		
+		copy.parameter_preliminaryKnowledgeAboutSuccessfulTests = this.parameter_preliminaryKnowledgeAboutSuccessfulTests;	
+		copy.parameter_preliminaryKnowledgeAboutFailedTests = this.parameter_preliminaryKnowledgeAboutFailedTests;		
+		copy.parameter_thresholdSuccessfulTests = this.parameter_thresholdSuccessfulTests;				
+		
+		copy.testResults = Data.clone(this.testResults);										
+		copy.countSuccessfulTests = Data.clone(this.countSuccessfulTests);						
+		copy.countFailedTests = Data.clone(this.countFailedTests);
+		copy.remainingYearsToBuildPrimaryFacility = Data.clone(this.remainingYearsToBuildPrimaryFacility);			
+		copy.testProbability = Data.clone(this.testProbability);								
+		copy.remainingTimeofClinicalTrials = this.remainingTimeofClinicalTrials;				
+		
+		copy.investmentDecisionPrimaryFacility = Data.clone(this.investmentDecisionPrimaryFacility);				
+		copy.investmentDecisionSecondaryFacility = this.investmentDecisionSecondaryFacility;						
+		copy.investmentStrategies = Data.clone(this.investmentStrategies);
+		
+		copy.countPeriods = this.countPeriods;										
+		
+		copy.totalConstructionCost_primary = this.totalConstructionCost_primary;
+		copy.totalSetUpCost_primary = this.totalSetUpCost_primary;
+		copy.totalPenaltyCost_primary = this.totalPenaltyCost_primary;
+		copy.totalExpansionCost_primary = this.totalExpansionCost_primary;
+		copy.successOfClinicalTrials = this.successOfClinicalTrials;
+		
+		copy.IF = Data.clone(this.IF);												
+		copy.EF = Data.clone(this.EF);												
+		copy.OM = Data.clone(this.OM);												
+		copy.IM = Data.clone(this.IM);													
+		copy.Fn = Data.clone(this.Fn);												
+		copy.PIF = Data.clone(this.PIF); 												
+		copy.SIF = Data.clone(this.SIF);											
+
+		copy.I = this.I;													
+		copy.F = this.F;													
+		copy.T = this.T;														
+		copy.N = this.N;													
+		copy.capitalBudget = Data.clone(this.capitalBudget);									
+		copy.costInsuranceFreight = Data.clone(this.costInsuranceFreight);							
+		copy.demand = Data.clone(this.demand);							
+		copy.importDuty = Data.clone(this.importDuty);									
+		copy.projectLife = this.projectLife;												
+		copy.variableProductionCosts = Data.clone(this.variableProductionCosts);						
+		copy.unitSellingPrice = Data.clone(this.unitSellingPrice);						
+		copy.lowerLimitExpansionSize = Data.clone(this.lowerLimitExpansionSize);						
+		copy.upperLimitCapacity = Data.clone(this.upperLimitCapacity);							
+		copy.supply = Data.clone(this.supply);									
+		copy.corporateTax = Data.clone(this.corporateTax);									
+		copy.lowerLimitProductionAPI = Data.clone(this.lowerLimitProductionAPI);							
+		copy.API = this.API;
+		copy.materialCoefficient = Data.clone(this.materialCoefficient);								
+		copy.initialCapacity = this.initialCapacity;										
+		copy.monthsToBuildPrimaryFacilities_location = this.monthsToBuildPrimaryFacilities_location;				
+		copy.monthsToBuildSecondaryFacilities_location = this.monthsToBuildSecondaryFacilities_location;				
+		copy.constructionCostPrimaryFacility_location = this.constructionCostPrimaryFacility_location;	
+		copy.constructionCostSecondaryFacility_location = this.constructionCostSecondaryFacility_location;
+		
+		copy.demandM = Data.clone(this.demandM);										
+		copy.demandR = Data.clone(this.demandR);										
+		copy.timeM = this.timeM;
+		copy.timeR = this.timeR;
+		
+		copy.result_shippedMaterialUnitsFacilityToCustomer = Data.clone(this.result_shippedMaterialUnitsFacilityToCustomer);
+		copy.result_shippedMaterialUnitsSupplierToFacility = Data.clone(this.result_shippedMaterialUnitsSupplierToFacility);
+		copy.result_depreciationChargePrimaryFacility = Data.clone(this.result_depreciationChargePrimaryFacility);
+		copy.result_depreciationChargeSecondaryFacility = Data.clone(this.result_depreciationChargeSecondaryFacility);
+		copy.result_availableProductionCapacity = Data.clone(this.result_availableProductionCapacity);				
+		copy.result_taxableIncome = Data.clone(this.result_taxableIncome);				
+		copy.result_consumedOrProducedMaterial = Data.clone(this.result_consumedOrProducedMaterial);			
+		copy.result_consumedOrProducedAPI = Data.clone(this.result_consumedOrProducedAPI); 						
+		copy.result_capitalExpenditure = Data.clone(this.result_capitalExpenditure);					
+		copy.result_grossIncome = Data.clone(this.result_grossIncome);							
+		copy.result_deltaCapacityExpansion = Data.clone(this.result_deltaCapacityExpansion);				
+		copy.result_capacityExpansionAmount = Data.clone(this.result_capacityExpansionAmount);			
+
+		copy.result_constructionStartPrimaryFacility = Data.clone(this.result_constructionStartPrimaryFacility);		
+		copy.result_constructionStartSecondaryFacility = Data.clone(this.result_constructionStartSecondaryFacility);			
+
+		copy.result_netPresentValue = this.result_netPresentValue;
+
+		return copy;
+	}
+	
+	
+	
 	
 }
 

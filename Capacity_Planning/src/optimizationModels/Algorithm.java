@@ -26,6 +26,7 @@ public class Algorithm {
 	//----------   Cannot be modified   ------------------------------------------------------------------------------//
 	
 	public static Data[] dataInstances = new Data[numberOfTestRuns];
+	public static Data[] dataInstances_copy = new Data[numberOfTestRuns];
 	
 	public static DecisionReviewModel[] decisionReviewModels = new DecisionReviewModel[numberOfTestRuns];
 	public static LocationPlanningModel[] locationPlanningModels = new LocationPlanningModel[numberOfTestRuns];
@@ -76,31 +77,42 @@ public class Algorithm {
 			endOfModel(i);
 			
 			//TODO: Call Location Planning Model again, redefine remainingTimeOfClinicalTrials and fix primary facility, überschreiben?
-			if(dataInstances[i].isSuccessOfClinicalTrials()) {
+			if (dataInstances[i].isSuccessOfClinicalTrials()) {
 			
-			int primaryFacility=0;
-			for (int k=0;k<dataInstances[i].getF();k++) {
-				for (int j=0;j<dataInstances[i].getT();j++) {
-					if (dataInstances[i].getResult_constructionStartPrimaryFacility()[k][j]==1) {
-						primaryFacility=k;
-					}
-				}	
-			}
+				int primaryFacility = 0;
 			
-			LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[i], primaryFacility);
-			locationPlanningModels[i] = locationPlanningModel;
-			locationPlanningModels[i].run(primaryFacility);
-			}
+				for (int k = 0;k < dataInstances[i].getF(); k++) {
+				
+					for (int j = 0; j < dataInstances[i].getT(); j++) {
+					
+						if (dataInstances[i].getResult_constructionStartPrimaryFacility()[k][j] == 1) {
+						
+							primaryFacility = k;
+						}
+					}	
+				}
+			
+				Data dataInstance_copy = dataInstances[i].clone();
+				dataInstances_copy[i] = dataInstance_copy;
+				
+				LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances_copy[i], primaryFacility);
+				locationPlanningModels[i] = locationPlanningModel;
+				locationPlanningModels[i].run(primaryFacility);
+				
+			} 
 			
 			printModelInformation_End(i); // TODO: rework needed
 			
 			String tab = "Run "+(i+1);
+			
+			//TODO: Welche dataInstance soll am Ende in die Excel geschrieben werden? dataInstances[i] oder dataInstances_copy[i] ?
+			
 			ReadAndWrite.writeSolutionLocationModel(dataInstances[i], tab);
 			ReadAndWrite.writeSolutionDecisionPlanningModel(dataInstances[i], tab);
-			
-			
-			
+		
 		}
+			
+
 	}
 	
 
