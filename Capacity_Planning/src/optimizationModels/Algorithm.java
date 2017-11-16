@@ -95,7 +95,7 @@ public class Algorithm {
 				Data dataInstance_copy = dataInstances[i].clone();
 				dataInstances_copy[i] = dataInstance_copy;
 				
-				LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances_copy[i], primaryFacility);
+				LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[i], primaryFacility);
 				locationPlanningModels[i] = locationPlanningModel;
 				locationPlanningModels[i].run(primaryFacility);
 				

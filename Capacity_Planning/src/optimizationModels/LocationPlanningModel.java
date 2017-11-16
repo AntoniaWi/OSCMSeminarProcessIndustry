@@ -142,14 +142,13 @@ public class LocationPlanningModel extends IloCplex {
 		
 		int count=DecisionReviewModel.countTrueValuesInArray(datainstanz.getInvestmentDecisionPrimaryFacility());
 		
-		//TODO: überprüfen mit Sarah
 		int tmp_remainingTime = count*12;
 		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime);
 		datainstanz.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
 
 		//TODO: rausschreiben überprüfen
-		//ReadAndWrite.writeTransferParameter(datainstanz);
-		//ReadAndWrite.createAndWriteDict(datainstanz);
+		ReadAndWrite.writeTransferParameter(datainstanz);
+		ReadAndWrite.createAndWriteDict(datainstanz);
 		
 		// Initialization of decision variables
 		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
@@ -1308,6 +1307,7 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		double[][] Qft = new double[instanz.getF()][instanz.getT()];
 		double[][] delta_qft = new double[instanz.getF()][instanz.getT()];
 		double[][] Xft = new double[instanz.getF()][instanz.getT()];
+		double[][] qft = new double[instanz.getF()][instanz.getT()];
 
 		for (int i = 0; i < this.datainstanz.getF(); i++) {
 			for (int j = 0; j < this.datainstanz.getT(); j++) {
@@ -1315,10 +1315,12 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 					Qft[i][j] = getValue(this.availableProductionCapacity[i][j]);
 					delta_qft[i][j] = getValue(this.deltaCapacityExpansion[i][j]);
 					Xft[i][j] = getValue(this.consumedOrProducedAPI[i][j]);
+					qft[i][j] = getValue(this.capacityExpansionAmount[i][j]);
 				} else {
 					Qft[i][j] = 0;
 					delta_qft[i][j] = 0;
 					Xft[i][j] = 0;
+					qft[i][j] = 0;
 				}
 			}
 		}
@@ -1326,6 +1328,7 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		instanz.setResult_availableProductionCapacity(Qft);
 		instanz.setResult_deltaCapacityExpansion(delta_qft);
 		instanz.setResult_consumedOrProducedAPI(Xft);
+		instanz.setResult_capacityExpansionAmount(qft);
 
 		// F_ifct and F_isft
 		double [][][][] Fifct= new double [instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
