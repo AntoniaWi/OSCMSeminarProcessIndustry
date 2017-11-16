@@ -104,23 +104,19 @@ public class Algorithm {
 						primaryFacility);
 				locationPlanningModels[i] = locationPlanningModel;
 				locationPlanningModels[i].run(primaryFacility);
-				ReadAndWrite.writeSolutionLocationModel(dataInstances[i], dataInstances_copy[i], tab);
+				ReadAndWrite.writeSolutionLocationModelPrePlanning(dataInstances_copy[i], tab);
+				ReadAndWrite.writeSolutionLocationModelFinalPlanning(dataInstances[i], tab);
 
 			}
 			
-			/*else {
-				LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[i],
-						primaryFacility);
-				locationPlanningModels[i] = locationPlanningModel;
-				locationPlanningModels[i].run(primaryFacility);//TODO:new run methode!
-			}*/
+			else {
+				if(decisionReviewModel.countTrueValuesInArray(dataInstances[i].getInvestmentDecisionPrimaryFacility())>0){
+					ReadAndWrite.writeSolutionLocationModelPrePlanning(dataInstances_copy[i], tab);
+				}
+			}
 
 			printModelInformation_End(i); // TODO: rework needed
 
-			
-
-			// TODO: Welche dataInstance soll am Ende in die Excel geschrieben werden?
-			// dataInstances[i] oder dataInstances_copy[i] ?
 
 			
 			ReadAndWrite.writeSolutionDecisionPlanningModel(dataInstances[i], tab);

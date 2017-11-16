@@ -1412,7 +1412,7 @@ else if (index==2) {
 	// Step 2: Write these result arrays into Excel Sheet (2003 compatible)
 
 	// ____________________________________________________________________________________________
-	public static void writeSolutionLocationModel(Data instanz,Data instanz_preplanning, String tab)
+	public static void writeSolutionLocationModelFinalPlanning(Data instanz, String tab)
 			throws BiffException, IOException, WriteException {
 
 		File file;
@@ -1430,9 +1430,7 @@ else if (index==2) {
 		// Time horizon
 		Number label3 = new Number(1, 5, instanz.getT());
 		sheet.addCell(label3);
-		
-		Number label100 = new Number(9, 5, instanz_preplanning.getT());
-		sheet.addCell(label100);
+	
 
 		// Revenue
 		double revenue = 0;
@@ -1451,31 +1449,13 @@ else if (index==2) {
 		}
 		Number label40 = new Number(1, 8, revenue);
 		sheet.addCell(label40);
-		// Revenue pre plannling
-		for (int i = 0; i < instanz_preplanning.getI(); i++) {
-			for (int j = 0; j < instanz_preplanning.getF(); j++) {
-				for (int k = 0; k < instanz_preplanning.getF(); k++) {
-					for (int l = 0; l < instanz_preplanning.getT(); l++) {
-
-						
-						revenue_pp += (instanz_preplanning.getUnitSellingPrice()[i][j][l]
-								* instanz_preplanning.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l]);
-						
-					}
-				}
-			}
-		}
-
-		Number label400 = new Number(9, 8, revenue_pp);
-		sheet.addCell(label400);
+		
 		
 		// Net present value
 		Number label30 = new Number(1, 9, instanz.getResult_netPresentValue());
 		sheet.addCell(label30);
 		
-		Number label300 = new Number(9, 9, instanz_preplanning.getResult_netPresentValue());
-		sheet.addCell(label300);
-
+		
 		// Primary
 		for (int i = 0; i < instanz.getF(); i++) {
 			for (int j = 0; j < instanz.getT(); j++) {
@@ -1516,45 +1496,7 @@ else if (index==2) {
 			}
 		}
 
-		// Primary Pre planning
-				for (int i = 0; i < instanz_preplanning.getF(); i++) {
-					for (int j = 0; j < instanz_preplanning.getT(); j++) {
-
-						if (instanz_preplanning.getResult_constructionStartPrimaryFacility()[i][j] == 1) {
-							Number label4 = new Number(9, 13, i + 1);
-							sheet.addCell(label4);
-
-							// Nation
-							int nation = -1;
-							for (int k = 0; k < instanz_preplanning.getN(); k++) {
-								if (instanz_preplanning.getFn()[i][k]) {
-									nation = (k + 1);
-									Number label5 = new Number(10, 13, nation);
-									sheet.addCell(label5);
-								}
-							}
-							// Capacity
-							Number label5 = new Number(11, 13,
-							instanz_preplanning.getResult_availableProductionCapacity()[i][instanz_preplanning.getT() - 1]);
-							sheet.addCell(label5);
-
-							// Assumed GrossIncome
-							double grossincome = 0;
-
-							for (int l = 0; l < instanz_preplanning.getT(); l++) {
-								grossincome += instanz_preplanning.getResult_grossIncome()[i][l];
-							}
-
-							Number label6 = new Number(12, 13, grossincome);
-							sheet.addCell(label6);
-
-							// Construction costs
-							Number label7 = new Number(9, 20, instanz_preplanning.getResult_capitalExpenditure()[j]);
-							sheet.addCell(label7);
-
-						}
-					}
-				}
+		
 				
 		// Secondaries
 		int counter = 0;
@@ -1602,6 +1544,150 @@ else if (index==2) {
 
 		}
 
+		
+		// Assumed Production Cost
+
+		double productionCost = 0;
+		for (int i = 0; i < instanz.getF(); i++) {
+			for (int l = 0; l < instanz.getT(); l++) {
+				productionCost += (instanz.getVariableProductionCosts()[i]
+						* instanz.getResult_consumedOrProducedAPI()[i][l]);
+			}
+		}
+		Number label7 = new Number(1, 22, productionCost);
+		sheet.addCell(label7);
+
+		// Assumed corporate Tax
+		double corporateTax = 0;
+
+		for (int m = 0; m < instanz.getN(); m++) {
+			for (int l = 0; l < instanz.getT(); l++) {
+				corporateTax += (instanz.getResult_taxableIncome()[m][l] * instanz.getCorporateTax()[m]);
+			}
+		}
+
+		Number label9 = new Number(1, 23, corporateTax);
+		sheet.addCell(label9);
+
+		
+		// Custom Duties
+		double customDuties = 0;
+
+		for (int m = 0; m < instanz.getF(); m++) {
+			for (int l = 0; l < instanz.getT(); l++) {
+				customDuties += (instanz.getResult_grossIncome()[m][l]);
+
+			}
+		}
+		customDuties += productionCost;
+		customDuties -= revenue;
+		Number label10 = new Number(1, 24, -customDuties);
+		sheet.addCell(label10);
+		
+
+		// close workbook
+		writableWorkbook.write();
+		writableWorkbook.close();
+		workbook.close();
+
+	}
+	
+	// ____________________________________________________________________________________________
+
+	// Create Result:
+	// Step 1: Transfer decision variable values into result arrays of data
+	// instance in the location planning model
+	// Step 2: Write these result arrays into Excel Sheet (2003 compatible)
+
+	// ____________________________________________________________________________________________
+	public static void writeSolutionLocationModelPrePlanning(Data instanz_preplanning, String tab)
+			throws BiffException, IOException, WriteException {
+
+		File file;
+		WritableWorkbook writableWorkbook;
+		Workbook workbook;
+		choosePaths();
+
+		file = new File(pathOutput);
+
+		workbook = Workbook.getWorkbook(file);
+		writableWorkbook = Workbook.createWorkbook(file, workbook);
+
+		WritableSheet sheet = writableWorkbook.getSheet(tab);
+
+		// Time horizon
+		
+		Number label100 = new Number(9, 5, instanz_preplanning.getT());
+		sheet.addCell(label100);
+
+		// Revenue pre plannling
+		
+		double revenue_pp = 0;
+	
+		for (int i = 0; i < instanz_preplanning.getI(); i++) {
+			for (int j = 0; j < instanz_preplanning.getF(); j++) {
+				for (int k = 0; k < instanz_preplanning.getF(); k++) {
+					for (int l = 0; l < instanz_preplanning.getT(); l++) {
+
+						
+						revenue_pp += (instanz_preplanning.getUnitSellingPrice()[i][j][l]
+								* instanz_preplanning.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l]);
+						
+					}
+				}
+			}
+		}
+
+		Number label400 = new Number(9, 8, revenue_pp);
+		sheet.addCell(label400);
+		
+		// Net present value
+		
+		Number label300 = new Number(9, 9, instanz_preplanning.getResult_netPresentValue());
+		sheet.addCell(label300);
+
+		// Primary Pre planning
+				for (int i = 0; i < instanz_preplanning.getF(); i++) {
+					for (int j = 0; j < instanz_preplanning.getT(); j++) {
+
+						if (instanz_preplanning.getResult_constructionStartPrimaryFacility()[i][j] == 1) {
+							Number label4 = new Number(9, 13, i + 1);
+							sheet.addCell(label4);
+
+							// Nation
+							int nation = -1;
+							for (int k = 0; k < instanz_preplanning.getN(); k++) {
+								if (instanz_preplanning.getFn()[i][k]) {
+									nation = (k + 1);
+									Number label5 = new Number(10, 13, nation);
+									sheet.addCell(label5);
+								}
+							}
+							// Capacity
+							Number label5 = new Number(11, 13,
+							instanz_preplanning.getResult_availableProductionCapacity()[i][instanz_preplanning.getT() - 1]);
+							sheet.addCell(label5);
+
+							// Assumed GrossIncome
+							double grossincome = 0;
+
+							for (int l = 0; l < instanz_preplanning.getT(); l++) {
+								grossincome += instanz_preplanning.getResult_grossIncome()[i][l];
+							}
+
+							Number label6 = new Number(12, 13, grossincome);
+							sheet.addCell(label6);
+
+							// Construction costs
+							Number label7 = new Number(9, 20, instanz_preplanning.getResult_capitalExpenditure()[j]);
+							sheet.addCell(label7);
+
+						}
+					}
+				}
+				
+		
+
 		// Secondaries pre planning
 				int counter1 = 0;
 				for (int i = 0; i < instanz_preplanning.getF(); i++) {
@@ -1647,44 +1733,7 @@ else if (index==2) {
 
 				}
 
-		// Assumed Production Cost
 
-		double productionCost = 0;
-		for (int i = 0; i < instanz.getF(); i++) {
-			for (int l = 0; l < instanz.getT(); l++) {
-				productionCost += (instanz.getVariableProductionCosts()[i]
-						* instanz.getResult_consumedOrProducedAPI()[i][l]);
-			}
-		}
-		Number label7 = new Number(1, 22, productionCost);
-		sheet.addCell(label7);
-
-		// Assumed corporate Tax
-		double corporateTax = 0;
-
-		for (int m = 0; m < instanz.getN(); m++) {
-			for (int l = 0; l < instanz.getT(); l++) {
-				corporateTax += (instanz.getResult_taxableIncome()[m][l] * instanz.getCorporateTax()[m]);
-			}
-		}
-
-		Number label9 = new Number(1, 23, corporateTax);
-		sheet.addCell(label9);
-
-		
-		// Custom Duties
-		double customDuties = 0;
-
-		for (int m = 0; m < instanz.getF(); m++) {
-			for (int l = 0; l < instanz.getT(); l++) {
-				customDuties += (instanz.getResult_grossIncome()[m][l]);
-
-			}
-		}
-		customDuties += productionCost;
-		customDuties -= revenue;
-		Number label10 = new Number(1, 24, -customDuties);
-		sheet.addCell(label10);
 		
 		// Assumed Production Cost Pre Planning
 
