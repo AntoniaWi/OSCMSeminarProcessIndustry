@@ -1449,7 +1449,9 @@ else if (index==2) {
 				}
 			}
 		}
-		
+		Number label40 = new Number(1, 8, revenue);
+		sheet.addCell(label40);
+		// Revenue pre plannling
 		for (int i = 0; i < instanz_preplanning.getI(); i++) {
 			for (int j = 0; j < instanz_preplanning.getF(); j++) {
 				for (int k = 0; k < instanz_preplanning.getF(); k++) {
@@ -1463,8 +1465,6 @@ else if (index==2) {
 				}
 			}
 		}
-		Number label40 = new Number(1, 8, revenue);
-		sheet.addCell(label40);
 
 		Number label400 = new Number(9, 8, revenue_pp);
 		sheet.addCell(label400);

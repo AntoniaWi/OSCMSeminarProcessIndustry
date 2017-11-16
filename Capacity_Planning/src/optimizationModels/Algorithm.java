@@ -95,10 +95,11 @@ public class Algorithm {
 				}
 			}
 
-			Data dataInstance_copy = dataInstances[i].clone();
-			dataInstances_copy[i] = dataInstance_copy;
+			
 
 			if (dataInstances[i].isSuccessOfClinicalTrials()) {
+				Data dataInstance_copy = dataInstances[i].clone();
+				dataInstances_copy[i] = dataInstance_copy;
 				LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[i],
 						primaryFacility);
 				locationPlanningModels[i] = locationPlanningModel;
@@ -106,12 +107,12 @@ public class Algorithm {
 
 			}
 			
-			else {
+			/*else {
 				LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[i],
 						primaryFacility);
 				locationPlanningModels[i] = locationPlanningModel;
 				locationPlanningModels[i].run(primaryFacility);//TODO:new run methode!
-			}
+			}*/
 
 			printModelInformation_End(i); // TODO: rework needed
 
