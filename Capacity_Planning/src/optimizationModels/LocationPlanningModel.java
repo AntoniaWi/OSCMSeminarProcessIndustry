@@ -20,60 +20,15 @@ import lombok.Getter;
 public class LocationPlanningModel extends IloCplex {
 
 	private Data datainstanz;
-	
-	/*// Sets
-	private boolean[] IF; // IF[f] internal facilities
-	private boolean[] EF; // EF[f] external facilities
-	private boolean[][] OM; // OM[f][i] outgoing material
-	private boolean[][] IM; // IM[f][i]incoming material
-	private boolean[][] Fn; // Fn[f][n] nations
-	private boolean[] PIF; // PIF[f]
-	private boolean[] SIF; // SIF[f]
 
-	// Parameter
-	private int I; // number of material types
-	private int F; // number of all facilities
-	private int T; // number of months in planning horizon
-	private int N; // number of nations
-	private double[] capitalBudget;// capitalBudget[t] CB_t
-	private double[][][] costInsuranceFreight; // costInsuranceFreight[i][s][f]
-												// CIF_isf
-	private double[][][] demand;// demand[i][c][t] D_ict
-	private double[][] importDuty; // importDuty[s][f] ID_sf
-	private int projectLife;// projectLife L_f
-	private double[] variableProductionCosts;// MC_f
-	private double[][] unitSellingPrice;// unitSellingPrice[i][f] P_if
-	private double[] lowerLimitExpansionSize;// lowerLimitExpansionSize[f] g_L_f
-	private double[] upperLimitCapacity;// upperLimitCapacity[f] Q_U_f
-	private double[][] supply;// supply[i][s] S_is
-	private double[] corporateTax;// corporateTax[n]TR_n
-	private double[] lowerLimitProductionAPI;// lowerLimitProductionAPI[f] X_L_f
-	private int API; //
-	private double[][] materialCoefficient; // materialCoeeficient[i][f]
-											// sigma_if
-	private int initialCapacity; // Q0
-
-	// Transfer parameter
-	private int remainingTimeOfClinicalTrials; // T*-t* delta_t*
-	private double discountfactor; // r
-	private int monthsToBuildPrimaryFacility;
-	private int monthsToBuildSecondaryFacility;
-	private double setupCostPrimaryFacility; // Kp
-	private double setupCostSecondaryFacility; // Ks
-	private double constructionCostPrimaryFacility; // cp
-	private double constructionCostSecondaryFacility; // cs*/
-
-	/* Objective */
+	//Objective 
 	private IloObjective objective;
 
-	/* Decision variables */
+	//Decision variables 
 	private IloNumVar[][][][] shippedMaterialUnitsFacilityToCustomer; // F_ifct
 	private IloNumVar[][][][] shippedMaterialUnitsSupplierToFacility; // F_isft
-	private IloNumVar[][][] depreciationChargePrimaryFacility; // NDC_p_ftaut
-	private IloNumVar[][][] depreciationChargeSecondaryFacility; // NDC_s_ftaut
 	private IloNumVar[][] availableProductionCapacity; // Q_ft
 	private IloNumVar[][] taxableIncome; // TI_nt
-	private IloNumVar[][][] consumedOrProducedMaterial; // x_ift
 	private IloNumVar[][] consumedOrProducedAPI; // X_ft
 	private IloNumVar[] capitalExpenditure; // CE_t
 	private IloNumVar[][] grossIncome; // GI_ft
@@ -83,141 +38,149 @@ public class LocationPlanningModel extends IloCplex {
 	private IloIntVar[][] constructionStartPrimaryFacility; // y_ft
 	private IloIntVar[][] constructionStartSecondaryFacility; // z_ft
 
-	/* Constraints */
+	// Constraints 
 	private IloLinearNumExpr numberOfPrimaryFacilities = linearNumExpr();
 	private IloLinearNumExpr numberOfSecondaryFacilities = linearNumExpr();
 	private IloLinearNumExpr limitationOfConstructionStartsPrimaryFacilities = linearNumExpr();
 	private IloLinearNumExpr limitationOfConstructionStartsSecondaryFacilities = linearNumExpr();
-	private IloLinearNumExpr capacityExpansionOnlyIfPlanned = linearNumExpr();
-	private IloLinearNumExpr minimumExpansion = linearNumExpr();
 	private IloLinearNumExpr expansionSize1 = linearNumExpr();
 	private IloLinearNumExpr expansionSize2 = linearNumExpr();
 	private IloLinearNumExpr availableCapacity = linearNumExpr();
 	private IloLinearNumExpr massbalanceEquation1 = linearNumExpr();
 	private IloLinearNumExpr massbalanceEquation2 = linearNumExpr();
-	private IloLinearNumExpr massbalanceEquation3 = linearNumExpr();
-	private IloLinearNumExpr capacityRestrictionForProduction = linearNumExpr();
-	private IloLinearNumExpr lowerLimitForProductionPF1 = linearNumExpr();
-	private IloLinearNumExpr lowerLimitForProductionPF2 = linearNumExpr();
-	private IloLinearNumExpr lowerLimitForProductionSF = linearNumExpr();
 	private IloLinearNumExpr demandAndSupply = linearNumExpr();
 	private IloLinearNumExpr capitalExpenditureConstraint = linearNumExpr();
 	private IloLinearNumExpr budget = linearNumExpr();
 	private IloLinearNumExpr grossIncomeConstraint = linearNumExpr();
-	private IloLinearNumExpr depreciationChargePrimaryFacilities = linearNumExpr();
-	private IloLinearNumExpr depreciationChargeSecondaryFacilities = linearNumExpr();
 	private IloLinearNumExpr taxableIncomeConstraint = linearNumExpr();
 
-	public LocationPlanningModel(Data datainstanz) throws IloException, BiffException, WriteException, IOException {
-		
-		this.datainstanz = datainstanz;
-		
-		int tmp_remainingTime = (this.datainstanz.getParameter_planningHorizon() - this.datainstanz.getCountPeriods())*12;
-		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime+12);
-		datainstanz.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
-
-		ReadAndWrite.writeTransferParameter(datainstanz,1);
-		ReadAndWrite.createAndWriteDict(datainstanz,1);
-		
-		// Initialization of decision variables
-		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
-		this.constructionStartSecondaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
-		this.shippedMaterialUnitsFacilityToCustomer = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_ifct
-		this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
-		this.depreciationChargePrimaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()][this.datainstanz.getT()]; // NDC_p_ftaut
-		this.depreciationChargeSecondaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()][this.datainstanz.getT()]; // NDC_s_ftaut
-		this.availableProductionCapacity = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // Q_ft
-		this.taxableIncome = new IloNumVar[this.datainstanz.getN()][this.datainstanz.getT()]; // TI_nt
-		this.consumedOrProducedMaterial = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getT()]; // x_ift
-		this.consumedOrProducedAPI = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // X_ft
-		this.capitalExpenditure = new IloNumVar[this.datainstanz.getT()]; // CE_t
-		this.grossIncome = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // GI_ft
-		this.deltaCapacityExpansion = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // delta_q_ft
-		this.capacityExpansionAmount = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // q_ft
-	}
-	
-	public LocationPlanningModel(Data datainstanz, int index) throws IloException, BiffException, WriteException, IOException {
-		
-		this.datainstanz = datainstanz;
-		
-		int count=DecisionReviewModel.countTrueValuesInArray(datainstanz.getInvestmentDecisionPrimaryFacility());
-		
-		int tmp_remainingTime = count*12;
-		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime);
-		datainstanz.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
-
-		//TODO: rausschreiben überprüfen
-		ReadAndWrite.writeTransferParameter(datainstanz,2);
-		ReadAndWrite.createAndWriteDict(datainstanz,2);
-		
-		// Initialization of decision variables
-		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
-		this.constructionStartSecondaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
-		this.shippedMaterialUnitsFacilityToCustomer = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_ifct
-		this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
-		this.depreciationChargePrimaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()][this.datainstanz.getT()]; // NDC_p_ftaut
-		this.depreciationChargeSecondaryFacility = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()][this.datainstanz.getT()]; // NDC_s_ftaut
-		this.availableProductionCapacity = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // Q_ft
-		this.taxableIncome = new IloNumVar[this.datainstanz.getN()][this.datainstanz.getT()]; // TI_nt
-		this.consumedOrProducedMaterial = new IloNumVar[this.datainstanz.getI()][this.datainstanz.getF()][this.datainstanz.getT()]; // x_ift
-		this.consumedOrProducedAPI = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // X_ft
-		this.capitalExpenditure = new IloNumVar[this.datainstanz.getT()]; // CE_t
-		this.grossIncome = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // GI_ft
-		this.deltaCapacityExpansion = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // delta_q_ft
-		this.capacityExpansionAmount = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // q_ft
-	}
-
-	
-	
-	// TODO: should be deleted in the end, here only for testing
-	
-	public static void main(String[] args)
-			throws IloException, BiffException, IOException, RowsExceededException, WriteException {
-		int x = 0;
-		Data instanz = new Data(x);
-
-		LocationPlanningModel lpm = new LocationPlanningModel(instanz);
-
-		lpm.build();
-		lpm.solve();
-		lpm.writeSolution(new int[] { 1, 2, 3 }, instanz);
-		ReadAndWrite.writeSolution(instanz);
-		
-	}
-	
-	
 	/**
-	 * Runs the Location Planning Model 
+	 * Constructor for Pre-Planning
+	 * 
+	 * @param datainstanz
+	 * @throws IloException
+	 * @throws BiffException
+	 * @throws WriteException
+	 * @throws IOException
+	 */
+	public LocationPlanningModel(Data datainstanz) throws IloException, BiffException, WriteException, IOException {
+
+		this.datainstanz = datainstanz;
+
+		// calculation of transfer parameter remainingTimeOfClinicalTrials and time
+		// horizon T
+		int tmp_remainingTime = (this.datainstanz.getParameter_planningHorizon() - this.datainstanz.getCountPeriods())
+				* 12;
+		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime + 12);
+		datainstanz
+				.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
+
+		ReadAndWrite.writeTransferParameter(datainstanz, 1);
+		ReadAndWrite.calculateParameters(datainstanz, 1);
+
+		// Initialization of decision variables
+		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
+		this.constructionStartSecondaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
+		this.shippedMaterialUnitsFacilityToCustomer = new IloNumVar[this.datainstanz.getI()][this.datainstanz
+				.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_ifct
+		this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz
+				.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
+		this.availableProductionCapacity = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // Q_ft
+		this.taxableIncome = new IloNumVar[this.datainstanz.getN()][this.datainstanz.getT()]; // TI_nt
+		this.consumedOrProducedAPI = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // X_ft
+		this.capitalExpenditure = new IloNumVar[this.datainstanz.getT()]; // CE_t
+		this.grossIncome = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // GI_ft
+		this.deltaCapacityExpansion = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // delta_q_ft
+		this.capacityExpansionAmount = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // q_ft
+	}
+
+	/**
+	 * Constructor for final planning
+	 * 
+	 * @param datainstanz
+	 * @param primaryFacility
+	 *            for which we decided in the pre-planning
+	 * @throws IloException
+	 * @throws BiffException
+	 * @throws WriteException
+	 * @throws IOException
+	 */
+	public LocationPlanningModel(Data datainstanz, int primaryFacility)
+			throws IloException, BiffException, WriteException, IOException {
+
+		this.datainstanz = datainstanz;
+
+		int numberOfConstructionPeriods = DecisionReviewModel
+				.countTrueValuesInArray(datainstanz.getInvestmentDecisionPrimaryFacility());
+
+		int tmp_remainingTime = numberOfConstructionPeriods * 12;
+		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime);
+		datainstanz
+				.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
+
+		ReadAndWrite.writeTransferParameter(datainstanz, 2);
+		ReadAndWrite.calculateParameters(datainstanz, 2);
+
+		// Initialization of decision variables
+		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];// y_ft
+		this.constructionStartSecondaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];// z_ft
+		this.shippedMaterialUnitsFacilityToCustomer = new IloNumVar[this.datainstanz.getI()][this.datainstanz
+				.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_ifct
+		this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz
+				.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
+		this.availableProductionCapacity = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // Q_ft
+		this.taxableIncome = new IloNumVar[this.datainstanz.getN()][this.datainstanz.getT()]; // TI_nt
+		this.consumedOrProducedAPI = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // X_ft
+		this.capitalExpenditure = new IloNumVar[this.datainstanz.getT()]; // CE_t
+		this.grossIncome = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // GI_ft
+		this.deltaCapacityExpansion = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // delta_q_ft
+		this.capacityExpansionAmount = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // q_ft
+	}
+
+	/**
+	 * Runs the Location Planning Model for the pre-planning
+	 * 
 	 * @throws IloException
 	 * @throws BiffException
 	 * @throws IOException
 	 * @throws RowsExceededException
 	 * @throws WriteException
 	 */
-	public void run () throws IloException, BiffException, IOException, RowsExceededException, WriteException {
-		
-		
-		
+	public void run() throws IloException, BiffException, IOException, RowsExceededException, WriteException {
+
 		this.build();
 		this.solve();
 		this.writeSolution(new int[] { 1, 2, 3 }, datainstanz);
-		ReadAndWrite.writeSolution(this.datainstanz);
+		ReadAndWrite.writeSolutionInResultFile(this.datainstanz);
 		// lpm.ergebnisschreibenRobust(lpm);
-		
-		
+
 	}
-	
-public void run (int primaryFacility) throws IloException, BiffException, IOException, RowsExceededException, WriteException {
-		
+
+	/**
+	 * Runs the Location Planning Model for the final planning
+	 * 
+	 * @param primaryFacility
+	 * @throws IloException
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws RowsExceededException
+	 * @throws WriteException
+	 */
+	public void run(int primaryFacility)
+			throws IloException, BiffException, IOException, RowsExceededException, WriteException {
+
 		this.build(primaryFacility);
 		this.solve();
 		this.writeSolution(new int[] { 1, 2, 3, 4 }, datainstanz);
-		ReadAndWrite.writeSolution(this.datainstanz);
-	
-		
-		
+		ReadAndWrite.writeSolutionInResultFile(this.datainstanz);
+
 	}
 
+	/**
+	 * Builds the model for the pre-planning
+	 * 
+	 * @throws IloException
+	 */
 	public void build() throws IloException {
 		long start = System.currentTimeMillis();
 
@@ -234,10 +197,6 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		// 2nd constraint
 		this.addConstraintOneConstructionDuringPlanningHorizonPF();
 		this.addConstraintOneConstructionDuringPlanningHorizonSF();
-		// 3rd constraint
-		// this.addConstraintCapacityExpansionOnlyIfConstructionIsPlanned();
-		// 4th constraint
-		// this.addConstraintMinimumExpansion();
 		// 5th constraint
 		this.addConstraintExpansionSize();
 		// 6th constraint
@@ -246,8 +205,6 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		this.addConstraintsMassBalanceEquation();
 		// 8th constraint
 		this.addConstraintCapacityRestrictionForProduction();
-		// 9th constraint
-		//this.addConstraintLowerLimitOfProduction();
 		// 10th constraint
 		this.addConstraintSupplyAndDemand();
 		// 11th constraint
@@ -256,8 +213,6 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		this.addConstraintBudgetConstraint();
 		// 13th constraint
 		this.addConstraintGrossIncome();
-		// 14th constraint
-		// this.addConstraintDepreciationCharge();
 		// 15th constraint
 		this.addConstraintTaxableIncome();
 
@@ -267,7 +222,13 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 				"(WGP) complete rebuild finished, dur=" + (System.currentTimeMillis() - start) + " milli sec\n");
 	}
 
-	//TODO: for end of model, fix primary
+	/**
+	 * Builds the model for the final planning
+	 * 
+	 * @param primaryFacility
+	 *            which is fixed for the final planning
+	 * @throws IloException
+	 */
 	public void build(int primaryFacility) throws IloException {
 		long start = System.currentTimeMillis();
 
@@ -280,15 +241,11 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		/* Constraints */
 		// 1st constraint
 		this.addConstraintFixPrimaryFacility(primaryFacility);
-		this.addConstraintNumberOfPrimaryFacilities(); //TODO: add constraint to fix primary facility
+		this.addConstraintNumberOfPrimaryFacilities();
 		this.addConstraintNumberOfSecondaryFacilities();
 		// 2nd constraint
 		this.addConstraintOneConstructionDuringPlanningHorizonPF();
 		this.addConstraintOneConstructionDuringPlanningHorizonSF();
-		// 3rd constraint
-		// this.addConstraintCapacityExpansionOnlyIfConstructionIsPlanned();
-		// 4th constraint
-		// this.addConstraintMinimumExpansion();
 		// 5th constraint
 		this.addConstraintExpansionSize();
 		// 6th constraint
@@ -297,8 +254,6 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		this.addConstraintsMassBalanceEquation();
 		// 8th constraint
 		this.addConstraintCapacityRestrictionForProduction();
-		// 9th constraint
-		//this.addConstraintLowerLimitOfProduction();
 		// 10th constraint
 		this.addConstraintSupplyAndDemand();
 		// 11th constraint
@@ -307,17 +262,18 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		this.addConstraintBudgetConstraint();
 		// 13th constraint
 		this.addConstraintGrossIncome();
-		// 14th constraint
-		// this.addConstraintDepreciationCharge();
 		// 15th constraint
 		this.addConstraintTaxableIncome();
-
-		// String path = "./logs/model.lp"; exportModel(path);
 
 		System.out.println(
 				"(WGP) complete rebuild finished, dur=" + (System.currentTimeMillis() - start) + " milli sec\n");
 	}
-	// add Decision variables
+
+	/**
+	 * Initalisation of decision variables
+	 * 
+	 * @throws IloException
+	 */
 	private void addVarsX() throws IloException {
 		for (int i = 0; i < datainstanz.getF(); i++) {// f
 			for (int k = 0; k < datainstanz.getF(); k++) {// c,s
@@ -327,18 +283,16 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 							for (int l = 0; l < datainstanz.getI(); l++) {// i
 								if (datainstanz.getIF()[i] && datainstanz.getPIF()[i]) {
 									this.constructionStartPrimaryFacility[i][j] = intVar(0, 1);
-									this.depreciationChargePrimaryFacility[i][m][j] = numVar(0, 1000000);
 
 								} else if (datainstanz.getIF()[i] && datainstanz.getSIF()[i]) {
 									this.constructionStartSecondaryFacility[i][j] = intVar(0, 1);
-									this.depreciationChargeSecondaryFacility[i][m][j] = numVar(0, 1000000);
+
 								}
 								this.capacityExpansionAmount[i][j] = numVar(0, 1000000);
 								this.shippedMaterialUnitsFacilityToCustomer[l][i][k][j] = numVar(0, 1000000);
 								this.shippedMaterialUnitsSupplierToFacility[l][k][i][j] = numVar(0, 1000000);
 								this.availableProductionCapacity[i][j] = numVar(0, 1000000);
 								this.taxableIncome[n][j] = numVar(0, 1000000000);
-								this.consumedOrProducedMaterial[l][i][j] = numVar(0, 10000000);
 								this.consumedOrProducedAPI[i][j] = numVar(0, 10000000);
 								this.capitalExpenditure[j] = numVar(0, 1000000000);
 								this.grossIncome[i][j] = numVar(0, 1000000000);
@@ -352,14 +306,18 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		}
 	}
 
-	// add Objective
+	/**
+	 * Objective function
+	 * 
+	 * @throws IloException
+	 */
 	private void addObjective() throws IloException {
 
 		IloLinearNumExpr expr = linearNumExpr();
 
 		for (int i = 0; i < this.datainstanz.getT(); i++) {
 			double discountTerm = 1 / Math.pow((1 + this.datainstanz.getParameter_discountFactor_location()), (i + 1));
-				for (int j = 0; j < this.datainstanz.getF(); j++) {
+			for (int j = 0; j < this.datainstanz.getF(); j++) {
 				if (datainstanz.getIF()[j]) {
 					expr.addTerm(discountTerm, this.grossIncome[j][i]);
 
@@ -367,22 +325,14 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 			}
 		}
 
-		// System.out.println(expr);
-
 		for (int i = 0; i < this.datainstanz.getT(); i++) {
 
 			double discountTerm = -1 / Math.pow(1 + datainstanz.getParameter_discountFactor_location(), (i + 1));
 
-			//for (int j = 0; j < this.datainstanz.getF(); j++) {
-				//if (datainstanz.getIF()[j]) {
+			expr.addTerm(discountTerm, this.capitalExpenditure[i]);
 
-					expr.addTerm(discountTerm, this.capitalExpenditure[i]);
-
-				//}
-			//}
 		}
 
-		// System.out.println(expr);
 		for (int i = 0; i < this.datainstanz.getT(); i++) {
 			double discountTerm = 1 / Math.pow(1 + datainstanz.getParameter_discountFactor_location(), (i + 1));
 			for (int k = 0; k < this.datainstanz.getN(); k++) {
@@ -392,30 +342,26 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 			}
 		}
 
-		// System.out.println(expr);
-
 		objective = addMaximize();
 		objective.setExpr(expr);
-		
 
 	}
 
-	// constraints
-	
+
+
 	/**
 	 * Fix primary facility
+	 * 
 	 * @throws IloException
 	 */
 	private void addConstraintFixPrimaryFacility(int f) throws IloException {
 
-		
 		addEq(this.constructionStartPrimaryFacility[f][0], 1);
 
 	}
 
 	/**
-	 * 1st constraint: choose exactly one facility as primary facility/ Choose at
-	 * least one facility as secondary facility
+	 * Constraint: choose exactly one facility as primary facility
 	 * 
 	 * @throws IloException
 	 */
@@ -430,39 +376,39 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 
 			}
 		}
-		
+
 		addEq(this.numberOfPrimaryFacilities, 1);
 
 	}
 	
+	/**
+	 * Constraint: choose at
+	 * least one facility as secondary facility
+	 * 
+	 * @throws IloException
+	 */
 
 	private void addConstraintNumberOfSecondaryFacilities() throws IloException {
 
 		this.numberOfSecondaryFacilities.clear();
-		IloLinearNumExpr helper = linearNumExpr();
 
 		for (int i = 0; i < this.datainstanz.getF(); i++) {
 			if (datainstanz.getIF()[i] && datainstanz.getSIF()[i]) {
 				this.numberOfSecondaryFacilities.addTerm(1,
-						this.constructionStartSecondaryFacility[i][this.datainstanz.getMonthsToBuildPrimaryFacilities_location() - this.datainstanz.getMonthsToBuildSecondaryFacilities_location()]);
-			
-						
+						this.constructionStartSecondaryFacility[i][this.datainstanz
+								.getMonthsToBuildPrimaryFacilities_location()
+								- this.datainstanz.getMonthsToBuildSecondaryFacilities_location()]);
+
 			}
-			
-			
-			
-			
-			
-			
+
 		}
-		
+
 		addGe(this.numberOfSecondaryFacilities, 1);
 	}
 
 	/**
-	 * 2nd constraint: start exactly one construction during the planning horizon
-	 * for primary facilities/ start production for secondary facilities not more
-	 * than once during the planning horizon
+	 * Constraint: start exactly one construction during the planning horizon
+	 * for primary facilities
 	 * 
 	 * @throws IloException
 	 */
@@ -482,7 +428,13 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		addLe(this.limitationOfConstructionStartsPrimaryFacilities, 1);
 
 	}
-
+	
+	/**
+	 * Constraint: start construction for secondary facilities not more
+	 * than once during the planning horizon
+	 * 
+	 * @throws IloException
+	 */
 	private void addConstraintOneConstructionDuringPlanningHorizonSF() throws IloException {
 
 		this.limitationOfConstructionStartsSecondaryFacilities.clear();
@@ -502,77 +454,10 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 
 	}
 
-	/**
-	 * 3rd constraint: capacity expansion only if expansion is planned
-	 * 
-	 * @throws IloException
-	 */
-	private void addConstraintCapacityExpansionOnlyIfConstructionIsPlanned() throws IloException {
-
-		this.capacityExpansionOnlyIfPlanned.clear();
-
-		for (int j = 0; j < this.datainstanz.getT(); j++) {
-			for (int i = 0; i < this.datainstanz.getF(); i++) {
-				this.capacityExpansionOnlyIfPlanned.clear();
-				if (this.datainstanz.getIF()[i] && this.datainstanz.getPIF()[i]) {
-
-					double freecapacity = this.datainstanz.getUpperLimitCapacity()[i] - this.datainstanz.getInitialCapacity();
-
-					this.capacityExpansionOnlyIfPlanned.addTerm(freecapacity,
-							this.constructionStartPrimaryFacility[i][j]);
-
-					addGe(this.capacityExpansionOnlyIfPlanned, this.capacityExpansionAmount[i][j]);
-				}
-
-				else if (this.datainstanz.getIF()[i] && this.datainstanz.getSIF()[i]) {
-
-					double freecapacity = this.datainstanz.getUpperLimitCapacity()[i] - this.datainstanz.getInitialCapacity();
-
-					this.capacityExpansionOnlyIfPlanned.addTerm(freecapacity,
-							this.constructionStartSecondaryFacility[i][j]);
-
-					addGe(this.capacityExpansionOnlyIfPlanned, this.capacityExpansionAmount[i][j]);
-				}
-
-			}
-
-		}
-
-	}
+	
 
 	/**
-	 * 4th constraint: minimum expansion size
-	 * 
-	 * @throws IloException
-	 */
-	private void addConstraintMinimumExpansion() throws IloException {
-
-		this.minimumExpansion.clear();
-
-		for (int j = 0; j < this.datainstanz.getT(); j++) {
-
-			for (int i = 0; i < this.datainstanz.getF(); i++) {
-				this.minimumExpansion.clear();
-				if (this.datainstanz.getIF()[i] && this.datainstanz.getPIF()[i]) {
-					this.minimumExpansion.addTerm(this.datainstanz.getLowerLimitExpansionSize()[i],
-							this.constructionStartPrimaryFacility[i][j]);
-					addLe(this.minimumExpansion, this.capacityExpansionAmount[i][j]);
-				}
-
-				else if (this.datainstanz.getIF()[i] && this.datainstanz.getSIF()[i]) {
-					this.minimumExpansion.addTerm(this.datainstanz.getLowerLimitExpansionSize()[i],
-							this.constructionStartSecondaryFacility[i][j]);
-
-					addLe(this.minimumExpansion, this.capacityExpansionAmount[i][j]);
-				}
-
-			}
-		}
-
-	}
-
-	/**
-	 * 5th constraint: a) expansion amount
+	 * Constraint: expansion amount 
 	 * 
 	 * @throws IloException
 	 */
@@ -606,9 +491,9 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 			}
 		}
 
-		/**
-		 * 5th constraint: b) expansion amount beyond minimum
-		 */
+		
+		 //expansion amount beyond minimum
+		 
 
 		for (int i = 0; i < this.datainstanz.getT(); i++) {
 			for (int j = 0; j < this.datainstanz.getF(); j++) {
@@ -617,8 +502,8 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 
 				if (this.datainstanz.getIF()[j] && datainstanz.getPIF()[j]) {
 
-					double expansionBeyondMin = this.datainstanz.getUpperLimitCapacity()[j] - this.datainstanz.getInitialCapacity()
-							- this.datainstanz.getLowerLimitExpansionSize()[j];
+					double expansionBeyondMin = this.datainstanz.getUpperLimitCapacity()[j]
+							- this.datainstanz.getInitialCapacity() - this.datainstanz.getLowerLimitExpansionSize()[j];
 					this.expansionSize2.addTerm(expansionBeyondMin, this.constructionStartPrimaryFacility[j][i]);
 
 					addGe(this.expansionSize2, this.deltaCapacityExpansion[j][i]);
@@ -626,8 +511,8 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 
 				else if (this.datainstanz.getIF()[j] && this.datainstanz.getSIF()[j]) {
 
-					double expansionBeyondMin = this.datainstanz.getUpperLimitCapacity()[j] - this.datainstanz.getInitialCapacity()
-							- this.datainstanz.getLowerLimitExpansionSize()[j];
+					double expansionBeyondMin = this.datainstanz.getUpperLimitCapacity()[j]
+							- this.datainstanz.getInitialCapacity() - this.datainstanz.getLowerLimitExpansionSize()[j];
 					this.expansionSize2.addTerm(expansionBeyondMin, this.constructionStartSecondaryFacility[j][i]);
 
 					addGe(this.expansionSize2, this.deltaCapacityExpansion[j][i]);
@@ -639,7 +524,7 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 	}
 
 	/**
-	 * 6th constraint: available capacity
+	 * Constraint: available capacity
 	 * 
 	 * @throws IloException
 	 */
@@ -657,10 +542,11 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 						this.availableCapacity.addTerm(1, this.availableProductionCapacity[i][j - 1]);
 
 						this.availableCapacity.addTerm(this.datainstanz.getLowerLimitExpansionSize()[i],
-								this.constructionStartPrimaryFacility[i][j - this.datainstanz.getMonthsToBuildPrimaryFacilities_location()]);
+								this.constructionStartPrimaryFacility[i][j
+										- this.datainstanz.getMonthsToBuildPrimaryFacilities_location()]);
 
-						this.availableCapacity.addTerm(1,
-								this.deltaCapacityExpansion[i][j - this.datainstanz.getMonthsToBuildPrimaryFacilities_location()]);
+						this.availableCapacity.addTerm(1, this.deltaCapacityExpansion[i][j
+								- this.datainstanz.getMonthsToBuildPrimaryFacilities_location()]);
 
 						addEq(this.availableCapacity, this.availableProductionCapacity[i][j]);
 					}
@@ -672,10 +558,11 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 						this.availableCapacity.addTerm(1, this.availableProductionCapacity[i][j - 1]);
 
 						this.availableCapacity.addTerm(this.datainstanz.getLowerLimitExpansionSize()[i],
-								this.constructionStartSecondaryFacility[i][j - this.datainstanz.getMonthsToBuildSecondaryFacilities_location()]);
+								this.constructionStartSecondaryFacility[i][j
+										- this.datainstanz.getMonthsToBuildSecondaryFacilities_location()]);
 
-						this.availableCapacity.addTerm(1,
-								this.deltaCapacityExpansion[i][j - this.datainstanz.getMonthsToBuildSecondaryFacilities_location()]);
+						this.availableCapacity.addTerm(1, this.deltaCapacityExpansion[i][j
+								- this.datainstanz.getMonthsToBuildSecondaryFacilities_location()]);
 
 						addEq(this.availableCapacity, this.availableProductionCapacity[i][j]);
 					}
@@ -686,88 +573,51 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 	}
 
 	/**
-	 * 7th constraint: mass-balance equation
+	 * Constraint: mass-balance equation
 	 * 
 	 * @throws IloException
 	 */
 	private void addConstraintsMassBalanceEquation() throws IloException {
 
 		// this.massbalanceEquation1.clear();
+		this.massbalanceEquation1.clear();
 		this.massbalanceEquation2.clear();
-		this.massbalanceEquation3.clear();
-
-		/*for (int i = 0; i < this.F; i++) {
-			for (int j = 0; j < this.I; j++) {
-				for (int k = 0; k < this.T; k++) {
-					for (int m = 0; m < this.F; m++) {
-						if (IF[i] && IF[m]) {
-
-							addEq(this.shippedMaterialUnitsSupplierToFacility[j][m][i][k],
-									this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
-
-						}
-					}
-				}
-			}
-		}*/
 
 		for (int i = 0; i < this.datainstanz.getF(); i++) {
 			for (int j = 0; j < this.datainstanz.getI(); j++) {
 				if (datainstanz.getIF()[i]) {
 					if (datainstanz.getOM()[i][j] || datainstanz.getIM()[i][j]) {
-					for (int k = 0; k < this.datainstanz.getT(); k++) {
-						// this.massbalanceEquation1.clear();
-						this.massbalanceEquation2.clear();
-						this.massbalanceEquation3.clear();
-						/*
-						 * massbalanceEquation1.addTerm(this.materialCoefficient[this.API - 1][i],
-						 * this.consumedOrProducedMaterial[j][i][k]);
-						 */
-						massbalanceEquation2.addTerm(this.datainstanz.getMaterialCoefficient()[j][i], this.consumedOrProducedAPI[i][k]);
+						for (int k = 0; k < this.datainstanz.getT(); k++) {
+							this.massbalanceEquation1.clear();
+							this.massbalanceEquation2.clear();
+							
+							massbalanceEquation1.addTerm(this.datainstanz.getMaterialCoefficient()[j][i],
+									this.consumedOrProducedAPI[i][k]);
 
-						// First equation
-						// addEq(this.massbalanceEquation1, this.massbalanceEquation2);
 
-						for (int m = 0; m < this.datainstanz.getF(); m++) {
-							// if (IF[m]) {
-							// for (int l = 0; l < this.I; l++) {
-
-							if (datainstanz.getOM()[m][j] && datainstanz.getIM()[i][j]) {
-								massbalanceEquation3.addTerm(this.datainstanz.getMaterialCoefficient()[this.datainstanz.getAPI() - 1][i],
-										this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
-							}
-
-							else if (datainstanz.getIM()[m][j] && datainstanz.getOM()[i][j]) {
-
-								massbalanceEquation3.addTerm(this.datainstanz.getMaterialCoefficient()[this.datainstanz.getAPI() - 1][i],
-										this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
-							}
-							/*if (OM[i][j] && IM[m][j]) {
-								massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-										this.shippedMaterialUnitsSupplierToFacility[j][i][m][k]);
-							}
-
-							else if (IM[i][j] && OM[m][j]) {
-
-								massbalanceEquation3.addTerm(this.materialCoefficient[this.API - 1][i],
-										this.shippedMaterialUnitsFacilityToCustomer[j][m][i][k]);
-							}*/
-							// }
-
-							// }
-
-							/*
-							 * if (k == 0) { System.out.println(this.massbalanceEquation3);
-							 * System.out.println( "facility " + (i + 1) + " s/c " + (m + 1) + " material "
-							 * + (j + 1)); }
-							 */
-							addEq(this.shippedMaterialUnitsSupplierToFacility[j][m][i][k],
-									this.shippedMaterialUnitsFacilityToCustomer[j][m][i][k]);
-						}
-						// Second equation
-						addEq(this.massbalanceEquation2, this.massbalanceEquation3);
+							for (int m = 0; m < this.datainstanz.getF(); m++) {
 						
-					}
+
+								if (datainstanz.getOM()[m][j] && datainstanz.getIM()[i][j]) {
+									massbalanceEquation2.addTerm(
+											this.datainstanz.getMaterialCoefficient()[this.datainstanz.getAPI() - 1][i],
+											this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
+								}
+
+								else if (datainstanz.getIM()[m][j] && datainstanz.getOM()[i][j]) {
+
+									massbalanceEquation2.addTerm(
+											this.datainstanz.getMaterialCoefficient()[this.datainstanz.getAPI() - 1][i],
+											this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
+								}
+								
+								addEq(this.shippedMaterialUnitsSupplierToFacility[j][m][i][k],
+										this.shippedMaterialUnitsFacilityToCustomer[j][m][i][k]);
+							}
+							
+							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
+
+						}
 
 					}
 
@@ -777,13 +627,12 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 	}
 
 	/**
-	 * 8th constraint: capacity restriction for production
+	 * Constraint: capacity restriction for production
 	 * 
 	 * @throws IloException
 	 */
 	private void addConstraintCapacityRestrictionForProduction() throws IloException {
 
-		// this.capacityRestrictionForProduction.clear();
 
 		for (int i = 0; i < this.datainstanz.getF(); i++) {
 			if (datainstanz.getIF()[i]) {
@@ -797,69 +646,10 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 
 	}
 
-	/**
-	 * 9th constraint: lower limit of production
-	 * 
-	 * @throws IloException
-	 */
-	private void addConstraintLowerLimitOfProduction() throws IloException {
-
-		//this.lowerLimitForProductionPF.clear();
-		this.lowerLimitForProductionPF1.clear();
-		this.lowerLimitForProductionSF.clear();
-
-		
-		  for (int j = 0; j < this.datainstanz.getT(); j++) { for (int i = 0; i < this.datainstanz.getF(); i++) {
-		 this.lowerLimitForProductionPF1.clear();
-		  this.lowerLimitForProductionSF.clear(); if (this.datainstanz.getIF()[i] && this.datainstanz.getPIF()[i]) {
-		  
-		  int tau1 = this.datainstanz.getT() - this.datainstanz.getMonthsToBuildPrimaryFacilities_location(); if (tau1 < 0) { tau1 =
-		  0; } for (int k = 0; k < tau1; k++) {
-		  
-		 this.lowerLimitForProductionPF1.addTerm(this.datainstanz.getLowerLimitProductionAPI()[i],
-		 this.constructionStartPrimaryFacility[i][k]);
-		  
-		 }
-		  
-		  addLe(this.lowerLimitForProductionPF1, this.consumedOrProducedAPI[i][j]);
-		 
-		  }
-		  
-		  else if (datainstanz.getIF()[i] && datainstanz.getSIF()[i]) { int tau2 = this.datainstanz.getT() -
-		  this.datainstanz.getMonthsToBuildSecondaryFacilities_location(); if (tau2 < 0) { tau2 = 0; } for (int k =
-		  0; k < tau2; k++) {
-		  
-		  this.lowerLimitForProductionSF.addTerm(this.datainstanz.getLowerLimitProductionAPI()[i],
-		  this.constructionStartSecondaryFacility[i][k]);
-		  
-		  }
-		  
-		  addLe(this.lowerLimitForProductionSF, this.consumedOrProducedAPI[i][j]); } }
-		  }
-		 
-
-		
-		  for (int i=0; i<this.datainstanz.getMonthsToBuildPrimaryFacilities_location(); i++) { for (int j=0;
-		  j<this.datainstanz.getF(); j++) { this.lowerLimitForProductionPF1.clear(); if (datainstanz.getIF()[j]&&datainstanz.getPIF()[j])
-		  { this.lowerLimitForProductionPF1.addTerm(1,
-		  this.consumedOrProducedAPI[j][i]); }
-		  addEq(this.lowerLimitForProductionPF1,0); } }
-		 
-
-		/*for (int i = (this.monthsToBuildPrimaryFacility); i < this.T; i++) {
-			for (int j = 0; j < this.F; j++) {
-				if (IF[j] && PIF[j]) {
-					this.lowerLimitForProductionPF2.clear();
-					this.lowerLimitForProductionPF2.addTerm(this.lowerLimitProductionAPI[j],
-							this.constructionStartPrimaryFacility[j][0]);
-					addLe(this.lowerLimitForProductionPF2, this.consumedOrProducedAPI[j][i]);
-				}
-			}
-		}*/
-	}
+	
 
 	/**
-	 * 10th constraint: demand and supply constraint
+	 * Constraint: demand fulfillment and supply limit
 	 * 
 	 * @throws IloException
 	 */
@@ -898,7 +688,7 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 	}
 
 	/**
-	 * 11th constraint: capital expenditure definition
+	 * Constraint: capital expenditure 
 	 * 
 	 * @throws IloException
 	 */
@@ -913,13 +703,15 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 					this.capitalExpenditureConstraint.addTerm(this.datainstanz.getParameter_setupCostPrimaryFacility(),
 							this.constructionStartPrimaryFacility[j][i]);
 
-					double variableCostPF = this.datainstanz.getMonthsToBuildPrimaryFacilities_location() * this.datainstanz.getConstructionCostPrimaryFacility_location();
+					double variableCostPF = this.datainstanz.getMonthsToBuildPrimaryFacilities_location()
+							* this.datainstanz.getConstructionCostPrimaryFacility_location();
 					this.capitalExpenditureConstraint.addTerm(variableCostPF,
 							this.constructionStartPrimaryFacility[j][i]);
 				}
 
 				else if (datainstanz.getIF()[j] && datainstanz.getSIF()[j]) {
-					this.capitalExpenditureConstraint.addTerm(this.datainstanz.getParameter_setupCostSecondaryFacility(),
+					this.capitalExpenditureConstraint.addTerm(
+							this.datainstanz.getParameter_setupCostSecondaryFacility(),
 							this.constructionStartSecondaryFacility[j][i]);
 
 					double variableCostSF = this.datainstanz.getMonthsToBuildSecondaryFacilities_location()
@@ -935,7 +727,7 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 	}
 
 	/**
-	 * 12th constraint: budget constraint
+	 * Constraint: budget limitation
 	 * 
 	 * @throws IloException
 	 */
@@ -948,7 +740,8 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 			for (int j = 0; j < this.datainstanz.getF(); j++) {
 				if (this.datainstanz.getIF()[j] && datainstanz.getPIF()[j]) {
 					for (int k = 0; k < i; k++) {// t<tau
-						this.budget.addTerm(this.datainstanz.getParameter_setupCostPrimaryFacility(), this.constructionStartPrimaryFacility[j][k]);
+						this.budget.addTerm(this.datainstanz.getParameter_setupCostPrimaryFacility(),
+								this.constructionStartPrimaryFacility[j][k]);
 
 						double variableCostPF = this.datainstanz.getMonthsToBuildPrimaryFacilities_location()
 								* this.datainstanz.getConstructionCostPrimaryFacility_location();
@@ -975,7 +768,7 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 	}
 
 	/**
-	 * 13th constraint: gross income of facility
+	 * Constraint: gross income 
 	 * 
 	 * @throws IloException
 	 */
@@ -998,7 +791,8 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 								for (int l = 0; l < this.datainstanz.getI(); l++) {
 									if (this.datainstanz.getIM()[m][k] && k == l) {
 										// System.out.println("Check gleiches Material: "+(k+1)+" und "+(l+1)+" ?");
-										this.grossIncomeConstraint.addTerm(this.datainstanz.getUnitSellingPrice()[k][j][i],
+										this.grossIncomeConstraint.addTerm(
+												this.datainstanz.getUnitSellingPrice()[k][j][i],
 												this.shippedMaterialUnitsFacilityToCustomer[k][j][m][i]);
 
 									}
@@ -1014,7 +808,8 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 										// + " ?");
 
 										double costCoefficient = this.datainstanz.getCostInsuranceFreight()[k][m][j]
-												+ (this.datainstanz.getCostInsuranceFreight()[k][m][j] * this.datainstanz.getImportDuty()[m][j]);
+												+ (this.datainstanz.getCostInsuranceFreight()[k][m][j]
+														* this.datainstanz.getImportDuty()[m][j]);
 
 										this.grossIncomeConstraint.addTerm(-costCoefficient,
 												this.shippedMaterialUnitsSupplierToFacility[k][m][j][i]);
@@ -1033,115 +828,10 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 
 	}
 
-	/**
-	 * 14th constraint: depreciation charge
-	 * 
-	 * @throws IloException
-	 */
-	private void addConstraintDepreciationCharge() throws IloException {
-
-		this.depreciationChargePrimaryFacilities.clear();
-		this.depreciationChargeSecondaryFacilities.clear();
-
-		// Primary Facilities
-		for (int i = 0; i < this.datainstanz.getT(); i++) {
-			for (int j = 0; j < this.datainstanz.getF(); j++) {
-				if (datainstanz.getIF()[j] && datainstanz.getPIF()[j]) {
-					for (int k = 0; k < this.datainstanz.getT(); k++) {// construction start
-														// (tau)
-						this.depreciationChargePrimaryFacilities.clear();
-						double lowerBound = k + this.datainstanz.getMonthsToBuildPrimaryFacilities_location();
-						double upperBound1 = k + this.datainstanz.getMonthsToBuildPrimaryFacilities_location() + this.datainstanz.getProjectLife();
-						double upperBound = 0;
-						if (upperBound1 < this.datainstanz.getT()) {
-							upperBound = upperBound1;
-						} else {
-							upperBound = this.datainstanz.getT();
-						}
-
-						if (i >= lowerBound && i <= upperBound) {
-
-							double setupCostPF = this.datainstanz.getParameter_setupCostPrimaryFacility() / this.datainstanz.getProjectLife();
-							this.depreciationChargePrimaryFacilities.addTerm(setupCostPF,
-									this.constructionStartPrimaryFacility[j][k]);
-
-							double variableCostPF = this.datainstanz.getMonthsToBuildPrimaryFacilities_location()
-									* this.datainstanz.getConstructionCostPrimaryFacility_location() / this.datainstanz.getProjectLife();
-							this.depreciationChargePrimaryFacilities.addTerm(variableCostPF,
-									this.constructionStartPrimaryFacility[j][k]);
-							/*
-							 * if (j==0 && k<10) { System.out.println( "facility " +(j+1)+ " tau "+ (k+1) +
-							 * " t " + (i+1)); System.out.println(this.
-							 * depreciationChargePrimaryFacilities);}
-							 */
-
-							addEq(this.depreciationChargePrimaryFacilities,
-									this.depreciationChargePrimaryFacility[j][k][i]);
-
-						}
-
-						else {
-							addEq(this.depreciationChargePrimaryFacilities,
-									this.depreciationChargePrimaryFacility[j][k][i]);
-							/*
-							 * if (j==0&& k<10) { System.out.println("facility " +(j+1)+ " tau "+ (k+1) +
-							 * " t " + (i+1)); System.out.println(this.
-							 * depreciationChargePrimaryFacilities); }
-							 */
-						}
-
-					}
-				}
-			}
-
-		}
-
-		// Secondary Facilities
-		for (int i = 0; i < this.datainstanz.getT(); i++) {
-			for (int j = 0; j < this.datainstanz.getF(); j++) {
-				if (datainstanz.getIF()[j] && datainstanz.getSIF()[j]) {
-					for (int k = 0; k < this.datainstanz.getT(); k++) {// construction start
-														// (tau)
-						this.depreciationChargeSecondaryFacilities.clear();
-						double lowerBound = k + this.datainstanz.getMonthsToBuildSecondaryFacilities_location();
-						double upperBound1 = k + this.datainstanz.getMonthsToBuildSecondaryFacilities_location() + this.datainstanz.getProjectLife();
-						double upperBound = 0;
-						if (upperBound1 < this.datainstanz.getT()) {
-							upperBound = upperBound1;
-						} else {
-							upperBound = this.datainstanz.getT();
-						}
-
-						if (i >= lowerBound && i <= upperBound) {
-
-							double setupCostSF = this.datainstanz.getParameter_setupCostSecondaryFacility() / this.datainstanz.getProjectLife();
-							this.depreciationChargeSecondaryFacilities.addTerm(setupCostSF,
-									this.constructionStartSecondaryFacility[j][k]);
-
-							double variableCostSF = this.datainstanz.getMonthsToBuildSecondaryFacilities_location()
-									* this.datainstanz.getConstructionCostSecondaryFacility_location() / this.datainstanz.getProjectLife();
-							this.depreciationChargeSecondaryFacilities.addTerm(variableCostSF,
-									this.constructionStartSecondaryFacility[j][k]);
-
-							addEq(this.depreciationChargeSecondaryFacilities,
-									this.depreciationChargeSecondaryFacility[j][k][i]);
-
-						}
-
-						else {
-							addEq(this.depreciationChargeSecondaryFacility[j][k][i], 0);
-						}
-
-					}
-				}
-			}
-
-		}
-
-	}
+	
 
 	/**
-	 * 15th constraint: taxable income
+	 * Constraint: taxable income
 	 * 
 	 * @throws IloException
 	 */
@@ -1156,14 +846,6 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 					if (datainstanz.getIF()[k] && datainstanz.getFn()[k][j]) {
 						this.taxableIncomeConstraint.addTerm(1, this.grossIncome[k][i]);
 
-						/*
-						 * for (int l = 0; l < i ; l++) { if(PIF[k]) {
-						 * this.taxableIncomeConstraint.addTerm(-1,
-						 * this.depreciationChargePrimaryFacility[k][l][i]); } else {
-						 * this.taxableIncomeConstraint.addTerm(-1,
-						 * this.depreciationChargeSecondaryFacility[k][l][i]); } }
-						 */
-
 					}
 
 				}
@@ -1175,6 +857,11 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 
 	}
 
+	/**
+	 * Write model in log-file
+	 * @param numbers
+	 * @throws IloException
+	 */
 	public void writeMatrix(int[] numbers) throws IloException {
 		String path = "./logs/model.lp";
 
@@ -1182,17 +869,27 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 
 	}
 
+	/**
+	 * Solves model 
+	 */
 	public boolean solve() throws IloException {
 
 		try {
 			return solve(new int[0]);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return true;
 
 	}
+	
+	/**
+	 * Solves model and give result in int numbers
+	 * @param numbers
+	 * @return
+	 * @throws IloException
+	 * @throws IOException
+	 */
 
 	public boolean solve(int[] numbers) throws IloException, IOException {
 		writeMatrix(numbers);
@@ -1200,11 +897,20 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		if (!super.solve()) {
 			return false;
 		}
-		// writeSolution(numbers);
+
 		return true;
 
 	}
 
+	/**
+	 * Writes solution in log-file and saves result in result-parameters
+	 * @param numbers
+	 * @param instanz
+	 * @throws IloException
+	 * @throws IOException
+	 * @throws BiffException
+	 * @throws WriteException
+	 */
 	public void writeSolution(int[] numbers, Data instanz)
 			throws IloException, IOException, BiffException, WriteException {
 
@@ -1221,15 +927,12 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 
 		out.write("objective value=" + getObjValue() + "\n");
 		instanz.setResult_netPresentValue(getObjValue());
-		
+
 		out.write("variable values\n");
 
 		out.write("\n Decision\n");
 
-		// for writing into the solution file use: out.write ("");
-		// for writing into the Excel file transfer decision variable values
-		// into result arrays of data instance and then use writeSolution() in
-		// ReadAndWrite class
+
 
 		// y and z
 		double yft[][] = new double[this.datainstanz.getF()][this.datainstanz.getT()];
@@ -1239,21 +942,21 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 			for (int k = 0; k < this.datainstanz.getT(); k++) {
 
 				if (this.datainstanz.getIF()[j] && datainstanz.getPIF()[j]) {
-					yft[j][k] = (int) (this.getValue(this.constructionStartPrimaryFacility[j][k])+0.1);
+					yft[j][k] = (int) (this.getValue(this.constructionStartPrimaryFacility[j][k]) + 0.1);
 					zft[j][k] = 0;
-					if (getValue(this.constructionStartPrimaryFacility[j][k])>0) {
-						out.write(" Primary Facility " + (j + 1) + " is build in " + (k + 1) + ". y = "
-								+ yft[j][k] + "\n");
+					if (getValue(this.constructionStartPrimaryFacility[j][k]) > 0) {
+						out.write(" Primary Facility " + (j + 1) + " is build in " + (k + 1) + ". y = " + yft[j][k]
+								+ "\n");
 
 					}
 				} else if (datainstanz.getIF()[j] && datainstanz.getSIF()[j]) {
-					zft[j][k] = (int) (this.getValue(this.constructionStartSecondaryFacility[j][k])+0.1);
+					zft[j][k] = (int) (this.getValue(this.constructionStartSecondaryFacility[j][k]) + 0.1);
 					yft[j][k] = 0;
 					if (getValue(this.constructionStartSecondaryFacility[j][k]) > 0) {
 
-						out.write(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = "
-								+ zft[j][k] + "\n");
-						
+						out.write(" Secondary Facility " + (j + 1) + " is build in " + (k + 1) + ". z = " + zft[j][k]
+								+ "\n");
+
 					}
 
 				} else {
@@ -1331,8 +1034,8 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 		instanz.setResult_capacityExpansionAmount(qft);
 
 		// F_ifct and F_isft
-		double [][][][] Fifct= new double [instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
-		double [][][][] Fisft= new double [instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
+		double[][][][] Fifct = new double[instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
+		double[][][][] Fisft = new double[instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
 		for (int i = 0; i < instanz.getI(); i++) {
 			for (int j = 0; j < instanz.getF(); j++) {
 				for (int k = 0; k < instanz.getF(); k++) {
@@ -1344,12 +1047,13 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 									out.write("Material " + (i + 1) + " is shipped from facility " + (j + 1)
 											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
 											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
-									
-									Fifct[i][j][k][l]=getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]);
-									
+
+									Fifct[i][j][k][l] = getValue(
+											this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]);
+
 								} else {
 
-									Fifct[i][j][k][l]=0;
+									Fifct[i][j][k][l] = 0;
 
 								}
 
@@ -1359,18 +1063,19 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 									out.write("Material " + (i + 1) + " is shipped from supplier " + (k + 1)
 											+ " to facility " + (j + 1) + " in period " + (l + 1) + " ."
 											+ getValue(this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]) + "\n");
-									
-									Fisft[i][k][j][l]=getValue(this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]);
+
+									Fisft[i][k][j][l] = getValue(
+											this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]);
 								}
-								
+
 								else {
-									Fisft[i][k][j][l]=0;
+									Fisft[i][k][j][l] = 0;
 								}
 							}
-							
+
 							else {
-								Fisft[i][k][j][l]=0;
-								Fifct[i][j][k][l]=0;
+								Fisft[i][k][j][l] = 0;
+								Fifct[i][j][k][l] = 0;
 							}
 
 						}
@@ -1378,11 +1083,11 @@ public void run (int primaryFacility) throws IloException, BiffException, IOExce
 				}
 			}
 		}
-		
+
 		instanz.setResult_shippedMaterialUnitsFacilityToCustomer(Fifct);
 		instanz.setResult_shippedMaterialUnitsSupplierToFacility(Fisft);
 
-		//
+		
 		out.close();
 
 		System.out.println("(WGP) wrote sol to file " + path + "\n");

@@ -47,12 +47,13 @@ public class ReadAndWrite {
 	public static String pathExcelAntoniaR1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Result.xls";
 	public static String pathExcelAntoniaOutput1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Computational_Study.xls";
 
-	// Pfad
-	// eingeben
-
 	public static String path = "";
 	public static String pathR = "";
 	public static String pathOutput = "";
+
+	/**
+	 * Chooses paths for user
+	 */
 
 	public static void choosePaths() {
 
@@ -91,22 +92,25 @@ public class ReadAndWrite {
 	 * 
 	 * - Sheet 0: DataTiming - Sheet 1: F - Sheet 2: F in N - Sheet 3: IMf - Sheet
 	 * 4: OMf - Sheet 5: Const. - Sheet 6: TRn - Sheet 7: MassBalance - Sheet 8:
-	 * DataF - Sheet 9: Dict - Sheet 10: Sis - Sheet 11: Pif - Sheet 12: CIF1sf -
-	 * Sheet 13: CIF2sf - Sheet 13: CIF3sf - Sheet 14: CIF4sf - Sheet 15: CIF5sf -
-	 * Sheet 18: IDisf
+	 * DataF - Sheet 9: Dict_Basics - Sheet 10: Dict - Sheet 11: Dict_final - Sheet
+	 * 12: Sis - Sheet 13: Pif_M -- Sheet 14: Pif_R - Sheet 15: CIF1sf - Sheet 16:
+	 * CIF2sf - Sheet 17: CIF3sf - Sheet 18: CIF4sf - Sheet 19: CIF5sf - Sheet 20:
+	 * IDisf
 	 */
 
 	// ____________________________________________________________________________________________
 
-	// Methoden, um aus der Excel-Datei einzulesen
+	// Methods to read from Excel file
 
 	// ____________________________________________________________________________________________
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 0: DataTiming
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Reads data for Decision Review Model 
+	 * 
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readDataTiming(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -117,21 +121,21 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("DataTiming");
 
-		// read planninghorizon T
+		// Planninghorizon T
 
 		Cell cell1 = sheet.getCell(1, 0);
 		NumberCell cell2 = (NumberCell) cell1;
 		double cell3 = cell2.getValue();
 		instanz.setParameter_planningHorizon((int) cell3);
 
-		// read discount factor
+		// Discount factor
 		Cell cell4 = sheet.getCell(1, 1);
 
 		NumberCell cell5 = (NumberCell) cell4;
 		double cell6 = cell5.getValue();
 		instanz.setParameter_discountFactor(cell6);
 
-		// read construction time sp0 und ss0
+		// Construction time sp0 und ss0
 		Cell cell7 = sheet.getCell(1, 2);
 
 		NumberCell cell8 = (NumberCell) cell7;
@@ -206,11 +210,13 @@ public class ReadAndWrite {
 
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 1: F
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Reads facility classification
+	 * 
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readF(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -221,7 +227,7 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("F");
 
-		// read IF[]
+		// IF[f]
 
 		boolean[] IF = new boolean[instanz.getF()];
 
@@ -243,7 +249,7 @@ public class ReadAndWrite {
 		}
 		instanz.setIF(IF);
 
-		// read EF
+		// EF[f]
 		boolean[] EF = new boolean[instanz.getF()];
 
 		for (int i = 0; i < instanz.getF(); i++) {
@@ -306,11 +312,13 @@ public class ReadAndWrite {
 
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 2: F in N
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Reads location for facilities
+	 * 
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readFinN(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -321,7 +329,7 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("F in N");
 
-		// read Fn[f][n]
+		// Fn[f][n]
 
 		boolean[][] Fn = new boolean[instanz.getF()][instanz.getN()];
 
@@ -339,8 +347,7 @@ public class ReadAndWrite {
 				} else {
 					help1 = false;
 				}
-				// System.out.println(help1);
-				// System.out.println("Fn["+i+"]["+j+"]");
+
 				Fn[i][j] = help1;
 
 			}
@@ -348,11 +355,14 @@ public class ReadAndWrite {
 		}
 		instanz.setFn(Fn);
 	}
-	// ____________________________________________________________________________________________
 
-	// Sheet 3: IMf
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Reads input materials for facilities
+	 * 
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readIMf(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -363,7 +373,7 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("IMf");
 
-		// read IM[f][i]
+		// IM[f][i]
 
 		boolean[][] IMf = new boolean[instanz.getF()][instanz.getI()];
 
@@ -390,11 +400,13 @@ public class ReadAndWrite {
 		instanz.setIM(IMf);
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 4: OMf
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Reads output materials for facilities
+	 * 
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readOMf(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -405,7 +417,7 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("OMf");
 
-		// read OM[f][i]
+		// OM[f][i]
 
 		boolean[][] OMf = new boolean[instanz.getF()][instanz.getI()];
 
@@ -432,11 +444,13 @@ public class ReadAndWrite {
 		instanz.setOM(OMf);
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 5: Const.
-
-	// ____________________________________________________________________________________________
+	
+	 /**
+	  * Reads general information 
+	  * @param instanz
+	  * @throws BiffException
+	  * @throws IOException
+	  */
 	public static void readConst(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -447,7 +461,7 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("Const.");
 
-		// read projectLife
+		// projectLife
 
 		Cell cell1 = sheet.getCell(1, 1);
 		NumberCell cell2 = (NumberCell) cell1;
@@ -455,33 +469,28 @@ public class ReadAndWrite {
 
 		instanz.setProjectLife((int) cell3);
 
-		// read numberFacilities F
+		// numberFacilities F
 		Cell cell7 = sheet.getCell(1, 8);
 
 		NumberCell cell8 = (NumberCell) cell7;
 		double cell9 = cell8.getValue();
 		instanz.setF((int) cell9);
 
-		// read numberMaterials I
+		// numberMaterials I
 		Cell cell10 = sheet.getCell(1, 9);
 		NumberCell cell11 = (NumberCell) cell10;
 		double cell12 = cell11.getValue();
 		instanz.setI((int) cell12);
 
-		// read numberMonths T
+		// numberMonths T will be calculated when Location Planning Model is called
 
-		/*
-		 * Cell cell13 = sheet.getCell(1, 10); NumberCell cell14 = (NumberCell) cell13;
-		 * double cell15 = cell14.getValue(); instanz.setT((int) cell15);
-		 */
-
-		// read numberOfNations N
+		// numberOfNations N
 		Cell cell16 = sheet.getCell(1, 11);
 		NumberCell cell17 = (NumberCell) cell16;
 		double cell18 = cell17.getValue();
 		instanz.setN((int) cell18);
 
-		// read initial capacity Q0
+		// initial capacity Q0
 
 		Cell cell19 = sheet.getCell(1, 3);
 
@@ -489,58 +498,52 @@ public class ReadAndWrite {
 		double cell21 = cell20.getValue();
 		instanz.setInitialCapacity((int) cell21);
 
-		// read API
+		// API
 		Cell cell22 = sheet.getCell(1, 4);
 		NumberCell cell23 = (NumberCell) cell22;
 		double cell24 = cell23.getValue();
 		instanz.setAPI((int) cell24);
 
-		// read timeMonopoly
+		// timeMonopoly
 		Cell cell25 = sheet.getCell(1, 14);
 		NumberCell cell26 = (NumberCell) cell25;
 		double cell27 = cell26.getValue();
 		instanz.setTimeM((int) cell27);
 
-		// read timeRegularMarket
+		// timeRegularMarket
 		Cell cell28 = sheet.getCell(1, 15);
 		NumberCell cell29 = (NumberCell) cell28;
 		double cell30 = cell29.getValue();
 		instanz.setTimeR((int) cell30);
 
-		// read monthlyDiscountFactor
+		// monthlyDiscountFactor
 		Cell cell31 = sheet.getCell(1, 5);
 		NumberCell cell32 = (NumberCell) cell31;
 		double cell33 = cell32.getValue();
 		instanz.setParameter_discountFactor_location(cell33);
 
-		/*
-		 * // read remainingTimeOfClinicalTrials Cell cell31 = sheet.getCell(1, 13);
-		 * NumberCell cell32 = (NumberCell) cell31; double cell33 = cell32.getValue();
-		 * instanz.setRemainingTimeofClinicalTrials((int) cell33);
-		 */
-
-		// read constructionTimePrimary
+		// constructionTimePrimary
 		Cell cell34 = sheet.getCell(1, 19);
 		NumberCell cell35 = (NumberCell) cell34;
 		double cell36 = cell35.getValue();
 		int cell37 = (int) cell36;
 		instanz.setMonthsToBuildPrimaryFacilities_location(cell37);
 
-		// read constructionTimeSecondary
+		// constructionTimeSecondary
 		Cell cell38 = sheet.getCell(1, 20);
 		NumberCell cell39 = (NumberCell) cell38;
 		double cell40 = cell39.getValue();
 		int cell41 = (int) cell40;
 		instanz.setMonthsToBuildSecondaryFacilities_location(cell41);
 
-		// read constructionCostPrimary
+		// constructionCostPrimary
 		Cell cell42 = sheet.getCell(1, 21);
 		NumberCell cell43 = (NumberCell) cell42;
 		double cell44 = cell43.getValue();
 		int cell45 = (int) cell44;
 		instanz.setConstructionCostPrimaryFacility_location(cell45);
 
-		// read constructionCostSecondary
+		// constructionCostSecondary
 		Cell cell46 = sheet.getCell(1, 22);
 		NumberCell cell47 = (NumberCell) cell46;
 		double cell48 = cell47.getValue();
@@ -548,12 +551,16 @@ public class ReadAndWrite {
 		instanz.setConstructionCostSecondaryFacility_location(cell49);
 
 	}
+	
+	/**
+	 * Writes tranfer parameters in sheet Const.
+	 * @param instanz
+	 * @param index
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws WriteException
+	 */
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 5: Const.: Write remaining time and time horizon T for LPM
-
-	// ____________________________________________________________________________________________
 	public static void writeTransferParameter(Data instanz, int index)
 			throws BiffException, IOException, WriteException {
 
@@ -587,18 +594,20 @@ public class ReadAndWrite {
 			Number label6 = new Number(3, 10, instanz.getT());
 			sheet.addCell(label6);
 		}
-		// close workbook
+		
+		
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook.close();
 
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 6: TRn
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Reads corporate tax rates
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readTRn(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -609,7 +618,7 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("TRn");
 
-		// read TRn[n]
+		// TRn[n]
 
 		double[] TRn = new double[instanz.getN()];
 
@@ -626,11 +635,12 @@ public class ReadAndWrite {
 		instanz.setCorporateTax(TRn);
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 7: Mass-balance
-
-	// ____________________________________________________________________________________________
+/**
+ * Reads massbalance information
+ * @param instanz
+ * @throws BiffException
+ * @throws IOException
+ */
 	public static void readMassbalance(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -641,7 +651,7 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("MassBalance");
 
-		// read sigma[i][f]
+		// sigma[i][f]
 
 		double[][] sigma = new double[instanz.getI()][instanz.getF()];
 
@@ -660,11 +670,12 @@ public class ReadAndWrite {
 		instanz.setMaterialCoefficient(sigma);
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 8: DataF
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Reads facility information
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readDataF(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -675,7 +686,7 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("DataF");
 
-		// read DataF[f]: Q_U_f, q_L_f, X_L_f, MC_f
+		// DataF[f]: Q_U_f, q_L_f, X_L_f, MC_f
 
 		double[] QU = new double[instanz.getF()];
 
@@ -731,11 +742,12 @@ public class ReadAndWrite {
 
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 9: D_ictBasics
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Reads basic information for demand 
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readDictBasics(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -746,7 +758,7 @@ public class ReadAndWrite {
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("Dict_Basics");
 
-		// read DictBasics[c]:
+		// DictBasics[c]:
 
 		double[] DemandM = new double[instanz.getF()];
 
@@ -777,12 +789,16 @@ public class ReadAndWrite {
 		instanz.setDemandR(DemandR);
 
 	}
-	// ____________________________________________________________________________________________
-
-	// Sheet 9.1: D_ict and P_ift
-
-	// ____________________________________________________________________________________________
-	public static void createAndWriteDict(Data instanz, int index) throws BiffException, IOException, WriteException {
+	
+	/**
+	 * Calculates demand, price, budget and write results in Excel-file
+	 * @param instanz
+	 * @param index
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws WriteException
+	 */
+	public static void calculateParameters(Data instanz, int index) throws BiffException, IOException, WriteException {
 
 		File file;
 		Workbook workbook;
@@ -793,7 +809,7 @@ public class ReadAndWrite {
 		Sheet sheet2 = workbook.getSheet("Pif_M");
 		Sheet sheet3 = workbook.getSheet("Pif_R");
 
-		// read P[i][f][t]
+		// P[i][f][t]
 
 		double[][][] P = new double[instanz.getI()][instanz.getF()][instanz.getT()];
 
@@ -819,8 +835,7 @@ public class ReadAndWrite {
 						P[i][j][k] = cell6;
 
 					}
-					// System.out.println("Price material"+(i+1)+" facility "+(j+1)+" period
-					// "+(k+1));
+					
 				}
 
 			}
@@ -835,7 +850,7 @@ public class ReadAndWrite {
 		workbook2 = Workbook.getWorkbook(file2);
 		Sheet sheet = workbook2.getSheet("Const.");
 
-		// read budget
+		// budget
 		Cell cell4 = sheet.getCell(1, 2);
 		NumberCell cell5 = (NumberCell) cell4;
 		double cell6 = cell5.getValue();
@@ -956,11 +971,12 @@ public class ReadAndWrite {
 		workbook1.close();
 
 	}
-	// ____________________________________________________________________________________________
-
-	// Sheet 10:Sis
-
-	// ____________________________________________________________________________________________
+	/**
+	 *Reads supplier information
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readSis(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -989,45 +1005,15 @@ public class ReadAndWrite {
 		}
 		instanz.setSupply(supply);
 	}
-	// ____________________________________________________________________________________________
 
-	// Sheet 11:
 
-	// ____________________________________________________________________________________________
-	// ____________________________________________________________________________________________
 
-	public static void readPif(Data instanz) throws BiffException, IOException {
-
-		File file;
-		Workbook workbook;
-		choosePaths();
-		file = new File(path);
-
-		workbook = Workbook.getWorkbook(file);
-		Sheet sheet = workbook.getSheet("Pif");
-
-		// read P[i][f]
-
-		/*
-		 * double[][] P = new double[instanz.getI()][instanz.getF()];
-		 * 
-		 * for (int i = 0; i < instanz.getI(); i++) { for (int j = 0; j <
-		 * instanz.getF(); j++) {
-		 * 
-		 * Cell cell1 = sheet.getCell(i + 1, j + 1); NumberCell cell2 = (NumberCell)
-		 * cell1; double cell3 = cell2.getValue();
-		 * 
-		 * P[i][j] = cell3;
-		 * 
-		 * }
-		 * 
-		 * } instanz.setUnitSellingPrice(P);
-		 */
-	}
-
-	// Sheet 12: CIF1sf
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Reads cost insurance and freight
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readCIFsf(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -1078,12 +1064,12 @@ public class ReadAndWrite {
 		instanz.setCostInsuranceFreight(CIF);
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Sheet 18:
-
-	// ____________________________________________________________________________________________
-
+	/**
+	 * Reads import duty rates
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readIDsf(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -1113,15 +1099,14 @@ public class ReadAndWrite {
 		instanz.setImportDuty(ID);
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Create Result:
-	// Step 1: Transfer decision variable values into result arrays of data
-	// instance in the location planning model
-	// Step 2: Write these result arrays into Excel Sheet (2003 compatible)
-
-	// ____________________________________________________________________________________________
-	public static void writeSolution(Data instanz) throws BiffException, IOException, WriteException {
+	/**
+	 * Writes solution of Location Planning Modelin Result Excel
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws WriteException
+	 */
+	public static void writeSolutionInResultFile(Data instanz) throws BiffException, IOException, WriteException {
 
 		File file;
 		WritableWorkbook writableWorkbook;
@@ -1396,21 +1381,21 @@ public class ReadAndWrite {
 			}
 		}
 
-		// close workbook
+		
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook.close();
 
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Create Result:
-	// Step 1: Transfer decision variable values into result arrays of data
-	// instance in the location planning model
-	// Step 2: Write these result arrays into Excel Sheet (2003 compatible)
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Writes solution of Location Planning Model: final planning
+	 * @param instanz
+	 * @param tab
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws WriteException
+	 */
 	public static void writeSolutionLocationModelFinalPlanning(Data instanz, String tab)
 			throws BiffException, IOException, WriteException {
 
@@ -1432,7 +1417,6 @@ public class ReadAndWrite {
 
 		// Revenue
 		double revenue = 0;
-		double revenue_pp = 0;
 		for (int i = 0; i < instanz.getI(); i++) {
 			for (int j = 0; j < instanz.getF(); j++) {
 				for (int k = 0; k < instanz.getF(); k++) {
@@ -1504,7 +1488,6 @@ public class ReadAndWrite {
 
 		// Secondaries
 		int counter = 0;
-		double constructionCosts = 0;
 		for (int i = 0; i < instanz.getF(); i++) {
 			for (int j = 0; j < instanz.getT(); j++) {
 				if (instanz.getResult_constructionStartSecondaryFacility()[i][j] == 1) {
@@ -1526,17 +1509,16 @@ public class ReadAndWrite {
 							instanz.getResult_availableProductionCapacity()[i][instanz.getT() - 1]);
 					sheet.addCell(label5);
 
-					// Production Monopoly and Regular Market//TODO
-					Number label500 = new Number(5, 15+counter,
+					// Production Monopoly and Regular Market
+					Number label500 = new Number(5, 15 + counter,
 							instanz.getResult_consumedOrProducedAPI()[i][instanz.getRemainingTimeofClinicalTrials()]);
 					sheet.addCell(label500);
 
-					Number label501 = new Number(6, 15+counter,
+					Number label501 = new Number(6, 15 + counter,
 							instanz.getResult_consumedOrProducedAPI()[i][instanz.getRemainingTimeofClinicalTrials()
 									+ instanz.getTimeM()]);
 					sheet.addCell(label501);
-					
-					
+
 					// GrossIncome
 					double grossincome = 0;
 					for (int l = 0; l < instanz.getT(); l++) {
@@ -1604,14 +1586,14 @@ public class ReadAndWrite {
 
 	}
 
-	// ____________________________________________________________________________________________
-
-	// Create Result:
-	// Step 1: Transfer decision variable values into result arrays of data
-	// instance in the location planning model
-	// Step 2: Write these result arrays into Excel Sheet (2003 compatible)
-
-	// ____________________________________________________________________________________________
+	/**
+	 * Writes solution of Location Planning Model: pre-planning
+	 * @param instanz_preplanning
+	 * @param tab
+	 * @throws BiffException
+	 * @throws IOException
+	 * @throws WriteException
+	 */
 	public static void writeSolutionLocationModelPrePlanning(Data instanz_preplanning, String tab)
 			throws BiffException, IOException, WriteException {
 
@@ -1627,12 +1609,12 @@ public class ReadAndWrite {
 
 		WritableSheet sheet = writableWorkbook.getSheet(tab);
 
-		// Time horizon
+		// Time horizon pre-planning
 
 		Number label100 = new Number(9, 5, instanz_preplanning.getT());
 		sheet.addCell(label100);
 
-		// Revenue pre plannling
+		// Revenue pre-planning
 
 		double revenue_pp = 0;
 
@@ -1652,12 +1634,12 @@ public class ReadAndWrite {
 		Number label400 = new Number(9, 8, revenue_pp);
 		sheet.addCell(label400);
 
-		// Net present value
+		// Net present value pre-planning
 
 		Number label300 = new Number(9, 9, instanz_preplanning.getResult_netPresentValue());
 		sheet.addCell(label300);
 
-		// Primary Pre planning
+		// Primary pre-planning
 		for (int i = 0; i < instanz_preplanning.getF(); i++) {
 			for (int j = 0; j < instanz_preplanning.getT(); j++) {
 
@@ -1665,7 +1647,7 @@ public class ReadAndWrite {
 					Number label4 = new Number(9, 13, i + 1);
 					sheet.addCell(label4);
 
-					// Nation
+					// Nation pre-planning
 					int nation = -1;
 					for (int k = 0; k < instanz_preplanning.getN(); k++) {
 						if (instanz_preplanning.getFn()[i][k]) {
@@ -1674,13 +1656,13 @@ public class ReadAndWrite {
 							sheet.addCell(label5);
 						}
 					}
-					// Total Capacity
+					// Total Capacity pre-planning
 					Number label5 = new Number(11, 13,
 							instanz_preplanning.getResult_availableProductionCapacity()[i][instanz_preplanning.getT()
 									- 1]);
 					sheet.addCell(label5);
 
-					// Production Monopoly and Regular Market
+					// Production Monopoly and Regular Market pre-planning
 					Number label500 = new Number(13, 13,
 							instanz_preplanning.getResult_consumedOrProducedAPI()[i][instanz_preplanning
 									.getRemainingTimeofClinicalTrials()]);
@@ -1691,7 +1673,7 @@ public class ReadAndWrite {
 									.getRemainingTimeofClinicalTrials() + instanz_preplanning.getTimeM()]);
 					sheet.addCell(label501);
 
-					// Assumed GrossIncome
+					// Assumed GrossIncome pre-planning
 					double grossincome = 0;
 
 					for (int l = 0; l < instanz_preplanning.getT(); l++) {
@@ -1701,7 +1683,7 @@ public class ReadAndWrite {
 					Number label6 = new Number(12, 13, grossincome);
 					sheet.addCell(label6);
 
-					// Construction costs
+					// Construction costs pre-planning
 					Number label7 = new Number(9, 20, instanz_preplanning.getResult_capitalExpenditure()[j]);
 					sheet.addCell(label7);
 
@@ -1709,7 +1691,7 @@ public class ReadAndWrite {
 			}
 		}
 
-		// Secondaries pre planning
+		// Secondaries pre-planning
 		int counter1 = 0;
 		for (int i = 0; i < instanz_preplanning.getF(); i++) {
 			for (int j = 0; j < instanz_preplanning.getT(); j++) {
@@ -1717,7 +1699,7 @@ public class ReadAndWrite {
 					Number label4 = new Number(9, 15 + counter1, i + 1);
 					sheet.addCell(label4);
 
-					// Nation
+					// Nation pre-planning
 					int nation = -1;
 					for (int k = 0; k < instanz_preplanning.getN(); k++) {
 						if (instanz_preplanning.getFn()[i][k]) {
@@ -1727,25 +1709,24 @@ public class ReadAndWrite {
 						}
 					}
 
-					// Capacity
+					// Capacity pre-planning
 					Number label5 = new Number(11, 15 + counter1,
 							instanz_preplanning.getResult_availableProductionCapacity()[i][instanz_preplanning.getT()
 									- 1]);
 					sheet.addCell(label5);
-					
 
-					// Production Monopoly and Regular Market
-					Number label500 = new Number(13, 15+counter1,
-							instanz_preplanning.getResult_consumedOrProducedAPI()[i][instanz_preplanning.getRemainingTimeofClinicalTrials()]);
+					// Production Monopoly and Regular Market pre-planning
+					Number label500 = new Number(13, 15 + counter1,
+							instanz_preplanning.getResult_consumedOrProducedAPI()[i][instanz_preplanning
+									.getRemainingTimeofClinicalTrials()]);
 					sheet.addCell(label500);
 
-					Number label501 = new Number(14, 15+counter1,
-							instanz_preplanning.getResult_consumedOrProducedAPI()[i][instanz_preplanning.getRemainingTimeofClinicalTrials()
-									+ instanz_preplanning.getTimeM()]);
+					Number label501 = new Number(14, 15 + counter1,
+							instanz_preplanning.getResult_consumedOrProducedAPI()[i][instanz_preplanning
+									.getRemainingTimeofClinicalTrials() + instanz_preplanning.getTimeM()]);
 					sheet.addCell(label501);
-					
 
-					// GrossIncome
+					// GrossIncome pre-planning
 					double grossincome = 0;
 					for (int l = 0; l < instanz_preplanning.getT(); l++) {
 						grossincome += instanz_preplanning.getResult_grossIncome()[i][l];
@@ -1754,7 +1735,7 @@ public class ReadAndWrite {
 					Number label6 = new Number(12, 15 + counter1, grossincome);
 					sheet.addCell(label6);
 
-					// Construction costs
+					// Construction costs pre-planning
 					if (counter1 == 0) {
 						Number label8 = new Number(9, 21, instanz_preplanning.getResult_capitalExpenditure()[j]);
 						sheet.addCell(label8);
@@ -1767,7 +1748,7 @@ public class ReadAndWrite {
 
 		}
 
-		// Assumed Production Cost Pre Planning
+		// Assumed Production Cost Pre Planning pre-planning
 
 		double productionCost1 = 0;
 		for (int i = 0; i < instanz_preplanning.getF(); i++) {
@@ -1792,7 +1773,7 @@ public class ReadAndWrite {
 		Number label90 = new Number(9, 23, corporateTax1);
 		sheet.addCell(label90);
 
-		// Custom Duties
+		// Custom Duties pre-planning
 		double customDuties1 = 0;
 
 		for (int m = 0; m < instanz_preplanning.getF(); m++) {
@@ -1806,7 +1787,6 @@ public class ReadAndWrite {
 		Number label1000 = new Number(9, 24, -customDuties1);
 		sheet.addCell(label1000);
 
-		// close workbook
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook.close();

@@ -80,23 +80,20 @@ public class Data {
 	private int initialCapacity; 										// Q0
 	private int monthsToBuildPrimaryFacilities_location;					// s_p_0 - in whole years
 	private int monthsToBuildSecondaryFacilities_location;				// s_s_0 - in fraction of years - if construction takes place, it starts in T+1
-	private double constructionCostPrimaryFacility_location;			// c_p
+	private double constructionCostPrimaryFacility_location;				// c_p
 	private double constructionCostSecondaryFacility_location;
 	
 	//Help parameter for demand
-	private double [] demandM; 										// demandM[f]
-	private double [] demandR; 										// demand[f]
+	private double [] demandM; 											// demandM[f]
+	private double [] demandR; 											// demand[f]
 	private int timeM;
 	private int timeR;
 	
 	//Result Arrays
 	private double[][][][] result_shippedMaterialUnitsFacilityToCustomer; // F_ifct
 	private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
-	private double[][][] result_depreciationChargePrimaryFacility; 		// NDC_p_ftaut
-	private double[][][] result_depreciationChargeSecondaryFacility; 		// NDC_s_ftaut
 	private double[][] result_availableProductionCapacity; 				// Q_ft
 	private double[][] result_taxableIncome; 							// TI_nt
-	private double[][][] result_consumedOrProducedMaterial; 				// x_ift
 	private double[][] result_consumedOrProducedAPI; 						// X_ft
 	private double[] result_capitalExpenditure; 							// CE_t
 	private double[][] result_grossIncome; 								// GI_ft
@@ -108,7 +105,9 @@ public class Data {
 
 	private double result_netPresentValue;
 	
-	
+	/**
+	 * Constructor: empty data instance
+	 */
 	public Data () {
 		
 		
@@ -117,7 +116,7 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 * Constructor: with data from excel sheet
 	 * @param x
 	 * @throws BiffException
 	 * @throws IOException
@@ -135,7 +134,6 @@ public class Data {
 		ReadAndWrite.readMassbalance(this);
 		ReadAndWrite.readDataF(this);
 		ReadAndWrite.readSis(this);
-		//ReadAndWrite.readPif(this);
 		ReadAndWrite.readIDsf(this);
 		ReadAndWrite.readCIFsf(this);
 		ReadAndWrite.readDictBasics(this);
@@ -1086,33 +1084,6 @@ public class Data {
 		this.result_shippedMaterialUnitsSupplierToFacility = result_shippedMaterialUnitsSupplierToFacility;
 	}
 
-	/**
-	 * @return the result_depreciationChargePrimaryFacility
-	 */
-	public double[][][] getResult_depreciationChargePrimaryFacility() {
-		return result_depreciationChargePrimaryFacility;
-	}
-
-	/**
-	 * @param result_depreciationChargePrimaryFacility the result_depreciationChargePrimaryFacility to set
-	 */
-	public void setResult_depreciationChargePrimaryFacility(double[][][] result_depreciationChargePrimaryFacility) {
-		this.result_depreciationChargePrimaryFacility = result_depreciationChargePrimaryFacility;
-	}
-
-	/**
-	 * @return the result_depreciationChargeSecondaryFacility
-	 */
-	public double[][][] getResult_depreciationChargeSecondaryFacility() {
-		return result_depreciationChargeSecondaryFacility;
-	}
-
-	/**
-	 * @param result_depreciationChargeSecondaryFacility the result_depreciationChargeSecondaryFacility to set
-	 */
-	public void setResult_depreciationChargeSecondaryFacility(double[][][] result_depreciationChargeSecondaryFacility) {
-		this.result_depreciationChargeSecondaryFacility = result_depreciationChargeSecondaryFacility;
-	}
 
 	/**
 	 * @return the result_availableProductionCapacity
@@ -1142,19 +1113,7 @@ public class Data {
 		this.result_taxableIncome = result_taxableIncome;
 	}
 
-	/**
-	 * @return the result_consumedOrProducedMaterial
-	 */
-	public double[][][] getResult_consumedOrProducedMaterial() {
-		return result_consumedOrProducedMaterial;
-	}
-
-	/**
-	 * @param result_consumedOrProducedMaterial the result_consumedOrProducedMaterial to set
-	 */
-	public void setResult_consumedOrProducedMaterial(double[][][] result_consumedOrProducedMaterial) {
-		this.result_consumedOrProducedMaterial = result_consumedOrProducedMaterial;
-	}
+	
 
 	/**
 	 * @return the result_consumedOrProducedAPI
