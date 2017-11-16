@@ -111,7 +111,7 @@ public class Algorithm {
 			
 			else {
 				if(decisionReviewModel.countTrueValuesInArray(dataInstances[i].getInvestmentDecisionPrimaryFacility())>0){
-					ReadAndWrite.writeSolutionLocationModelPrePlanning(dataInstances_copy[i], tab);
+					ReadAndWrite.writeSolutionLocationModelPrePlanning(dataInstances[i], tab);
 				}
 			}
 
