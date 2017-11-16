@@ -1569,7 +1569,7 @@ public class Data {
 	private void calculateTotalPenaltyCost () {
 		
 		double penaltyCost = 0;
-		
+		if(this.successOfClinicalTrials) {
 		int countInvestments = 0;
 		
 		for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
@@ -1582,6 +1582,7 @@ public class Data {
 		
 		int remainingPeriodsToBuild = this.parameter_periodsToBuildPrimaryFacilities - countInvestments;
 		penaltyCost = this.parameter_penaltyCost * remainingPeriodsToBuild;
+		}
 		
 		this.totalPenaltyCost_primary = penaltyCost;
 	}
