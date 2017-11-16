@@ -79,10 +79,8 @@ public class Algorithm {
 
 			endOfModel(i);
 
-			// TODO: Call Location Planning Model again, redefine
-			// remainingTimeOfClinicalTrials and fix primary facility, überschreiben?
 
-			int primaryFacility = 0;
+			int primaryFacility = -1;
 
 			for (int k = 0; k < dataInstances[i].getF(); k++) {
 
@@ -110,6 +108,8 @@ public class Algorithm {
 			}
 			
 			else {
+				
+				//TODO: wie statisch aufrufen?
 				if(decisionReviewModel.countTrueValuesInArray(dataInstances[i].getInvestmentDecisionPrimaryFacility())>0){
 					ReadAndWrite.writeSolutionLocationModelPrePlanning(dataInstances[i], tab);
 				}
@@ -117,8 +117,6 @@ public class Algorithm {
 
 			printModelInformation_End(i); // TODO: rework needed
 
-
-			
 			ReadAndWrite.writeSolutionDecisionPlanningModel(dataInstances[i], tab);
 
 		}
