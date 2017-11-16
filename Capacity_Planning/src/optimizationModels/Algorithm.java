@@ -95,7 +95,7 @@ public class Algorithm {
 				}
 			}
 
-			
+			String tab = "Run " + (i + 1);
 
 			if (dataInstances[i].isSuccessOfClinicalTrials()) {
 				Data dataInstance_copy = dataInstances[i].clone();
@@ -104,6 +104,7 @@ public class Algorithm {
 						primaryFacility);
 				locationPlanningModels[i] = locationPlanningModel;
 				locationPlanningModels[i].run(primaryFacility);
+				ReadAndWrite.writeSolutionLocationModel(dataInstances[i], dataInstances_copy[i], tab);
 
 			}
 			
@@ -116,12 +117,12 @@ public class Algorithm {
 
 			printModelInformation_End(i); // TODO: rework needed
 
-			String tab = "Run " + (i + 1);
+			
 
 			// TODO: Welche dataInstance soll am Ende in die Excel geschrieben werden?
 			// dataInstances[i] oder dataInstances_copy[i] ?
 
-			ReadAndWrite.writeSolutionLocationModel(dataInstances[i], dataInstances_copy[i], tab);
+			
 			ReadAndWrite.writeSolutionDecisionPlanningModel(dataInstances[i], tab);
 
 		}
