@@ -116,8 +116,8 @@ public class LocationPlanningModel extends IloCplex {
 		this.datainstanz.setRemainingTimeofClinicalTrials(tmp_remainingTime+12);
 		datainstanz.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
 
-		ReadAndWrite.writeTransferParameter(datainstanz);
-		ReadAndWrite.createAndWriteDict(datainstanz);
+		ReadAndWrite.writeTransferParameter(datainstanz,1);
+		ReadAndWrite.createAndWriteDict(datainstanz,1);
 		
 		// Initialization of decision variables
 		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
@@ -147,8 +147,8 @@ public class LocationPlanningModel extends IloCplex {
 		datainstanz.setT(datainstanz.getRemainingTimeofClinicalTrials() + datainstanz.getTimeM() + datainstanz.getTimeR());
 
 		//TODO: rausschreiben überprüfen
-		ReadAndWrite.writeTransferParameter(datainstanz);
-		ReadAndWrite.createAndWriteDict(datainstanz);
+		ReadAndWrite.writeTransferParameter(datainstanz,2);
+		ReadAndWrite.createAndWriteDict(datainstanz,2);
 		
 		// Initialization of decision variables
 		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];

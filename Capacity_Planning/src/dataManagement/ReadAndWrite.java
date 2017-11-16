@@ -554,7 +554,7 @@ public class ReadAndWrite {
 	// Sheet 5: Const.: Write remaining time and time horizon T for LPM
 
 	// ____________________________________________________________________________________________
-	public static void writeTransferParameter(Data instanz) throws BiffException, IOException, WriteException {
+	public static void writeTransferParameter(Data instanz, int index) throws BiffException, IOException, WriteException {
 
 		File file;
 		WritableWorkbook writableWorkbook;
@@ -570,13 +570,21 @@ public class ReadAndWrite {
 
 		// remaining Time
 
+		if(index==1) {
 		Number label3 = new Number(1, 16, instanz.getRemainingTimeofClinicalTrials());
-		sheet.addCell(label3);
+		sheet.addCell(label3);}
+		else if (index==2) {
+		Number label5 = new Number(3, 16, instanz.getRemainingTimeofClinicalTrials());
+		sheet.addCell(label5);
+		}
 
 		// planning horizon T
+		if(index==1) {
 		Number label4 = new Number(1, 10, instanz.getT());
-		sheet.addCell(label4);
-
+		sheet.addCell(label4);}
+		else if (index==2) {
+		Number label6 = new Number(3, 10, instanz.getT());
+		sheet.addCell(label6);}
 		// close workbook
 		writableWorkbook.write();
 		writableWorkbook.close();
@@ -772,7 +780,7 @@ public class ReadAndWrite {
 	// Sheet 9.1: D_ict and P_ift
 
 	// ____________________________________________________________________________________________
-	public static void createAndWriteDict(Data instanz) throws BiffException, IOException, WriteException {
+	public static void createAndWriteDict(Data instanz, int index) throws BiffException, IOException, WriteException {
 
 		File file;
 		Workbook workbook;
@@ -848,20 +856,38 @@ public class ReadAndWrite {
 		writableWorkbook = Workbook.createWorkbook(file1, workbook1);
 
 		WritableSheet sheet0 = writableWorkbook.getSheet("Dict");
+		WritableSheet sheet1 = writableWorkbook.getSheet("Dict_final");
 
 		// headings
 
+		if (index==1) {
 		for (int i = 0; i < instanz.getT(); i++) {
 			Number label3 = new Number(i + 1, 1, i + 1);
 			sheet0.addCell(label3);
 
 		}
+		}
+		
+		else if (index==2) {
+		for (int i = 0; i < instanz.getT(); i++) {
+			Number label3 = new Number(i + 1, 1, i + 1);
+			sheet1.addCell(label3);
 
+		}
+		}
+
+		//final product
+		if (index==1) {
 		Number label30 = new Number(1, 0, instanz.getI());
 		sheet0.addCell(label30);
+		}
+		else if (index==2) {
+		Number label30 = new Number(1, 0, instanz.getI());
+		sheet1.addCell(label30);	
+		}
 
-		// Dict
-
+		// Dict or Dict_final
+if (index==1) {
 		double[][][] Dict = new double[instanz.getI()][instanz.getF()][instanz.getT()];
 		for (int i = 0; i < instanz.getI(); i++) {
 			for (int j = 0; j < instanz.getF(); j++) {
@@ -892,6 +918,39 @@ public class ReadAndWrite {
 			}
 		}
 		instanz.setDemand(Dict);
+}
+else if (index==2) {
+	double[][][] Dict = new double[instanz.getI()][instanz.getF()][instanz.getT()];
+	for (int i = 0; i < instanz.getI(); i++) {
+		for (int j = 0; j < instanz.getF(); j++) {
+			for (int k = 0; k < instanz.getT(); k++) {
+				if (i == instanz.getI() - 1 && k < instanz.getRemainingTimeofClinicalTrials()) {
+					Dict[i][j][k] = 0;
+					Number label3 = new Number(k + 1, j + 2, Dict[i][j][k]);
+					sheet1.addCell(label3);
+
+				} else if (i == instanz.getI() - 1
+						&& k < (instanz.getRemainingTimeofClinicalTrials() + instanz.getTimeM())) {
+					Dict[i][j][k] = instanz.getDemandM()[j];
+					Number label3 = new Number(k + 1, j + 2, Dict[i][j][k]);
+					sheet1.addCell(label3);
+
+				} else if (i == instanz.getI() - 1 && k <= instanz.getT()) {
+					Dict[i][j][k] = instanz.getDemandR()[j];
+					Number label3 = new Number(k + 1, j + 2, Dict[i][j][k]);
+					sheet1.addCell(label3);
+
+				}
+
+				else {
+					Dict[i][j][k] = 0;
+
+				}
+			}
+		}
+	}
+	instanz.setDemand(Dict);
+}
 
 		writableWorkbook.write();
 		writableWorkbook.close();
@@ -1353,7 +1412,7 @@ public class ReadAndWrite {
 	// Step 2: Write these result arrays into Excel Sheet (2003 compatible)
 
 	// ____________________________________________________________________________________________
-	public static void writeSolutionLocationModel(Data instanz, String tab)
+	public static void writeSolutionLocationModel(Data instanz,Data instanz_preplanning, String tab)
 			throws BiffException, IOException, WriteException {
 
 		File file;
@@ -1371,9 +1430,13 @@ public class ReadAndWrite {
 		// Time horizon
 		Number label3 = new Number(1, 5, instanz.getT());
 		sheet.addCell(label3);
+		
+		Number label100 = new Number(9, 5, instanz_preplanning.getT());
+		sheet.addCell(label100);
 
 		// Revenue
 		double revenue = 0;
+		double revenue_pp = 0;
 		for (int i = 0; i < instanz.getI(); i++) {
 			for (int j = 0; j < instanz.getF(); j++) {
 				for (int k = 0; k < instanz.getF(); k++) {
@@ -1381,11 +1444,21 @@ public class ReadAndWrite {
 
 						revenue += (instanz.getUnitSellingPrice()[i][j][l]
 								* instanz.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l]);
-						if (instanz.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l] > 0) {
-							/*System.out.println("UnitSellingPrice " + instanz.getUnitSellingPrice()[i][j][l]
-									+ " for shipping material " + (i + 1) + " from facility " + (j + 1)
-									+ " to customer " + k + " in period " + (l + 1));*/
-						}
+						
+					}
+				}
+			}
+		}
+		
+		for (int i = 0; i < instanz_preplanning.getI(); i++) {
+			for (int j = 0; j < instanz_preplanning.getF(); j++) {
+				for (int k = 0; k < instanz_preplanning.getF(); k++) {
+					for (int l = 0; l < instanz_preplanning.getT(); l++) {
+
+						
+						revenue_pp += (instanz_preplanning.getUnitSellingPrice()[i][j][l]
+								* instanz_preplanning.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l]);
+						
 					}
 				}
 			}
@@ -1393,9 +1466,15 @@ public class ReadAndWrite {
 		Number label40 = new Number(1, 8, revenue);
 		sheet.addCell(label40);
 
+		Number label400 = new Number(9, 8, revenue_pp);
+		sheet.addCell(label400);
+		
 		// Net present value
 		Number label30 = new Number(1, 9, instanz.getResult_netPresentValue());
 		sheet.addCell(label30);
+		
+		Number label300 = new Number(9, 9, instanz_preplanning.getResult_netPresentValue());
+		sheet.addCell(label300);
 
 		// Primary
 		for (int i = 0; i < instanz.getF(); i++) {
@@ -1437,6 +1516,46 @@ public class ReadAndWrite {
 			}
 		}
 
+		// Primary Pre planning
+				for (int i = 0; i < instanz_preplanning.getF(); i++) {
+					for (int j = 0; j < instanz_preplanning.getT(); j++) {
+
+						if (instanz_preplanning.getResult_constructionStartPrimaryFacility()[i][j] == 1) {
+							Number label4 = new Number(9, 13, i + 1);
+							sheet.addCell(label4);
+
+							// Nation
+							int nation = -1;
+							for (int k = 0; k < instanz_preplanning.getN(); k++) {
+								if (instanz_preplanning.getFn()[i][k]) {
+									nation = (k + 1);
+									Number label5 = new Number(10, 13, nation);
+									sheet.addCell(label5);
+								}
+							}
+							// Capacity
+							Number label5 = new Number(11, 13,
+							instanz_preplanning.getResult_availableProductionCapacity()[i][instanz_preplanning.getT() - 1]);
+							sheet.addCell(label5);
+
+							// Assumed GrossIncome
+							double grossincome = 0;
+
+							for (int l = 0; l < instanz_preplanning.getT(); l++) {
+								grossincome += instanz_preplanning.getResult_grossIncome()[i][l];
+							}
+
+							Number label6 = new Number(12, 13, grossincome);
+							sheet.addCell(label6);
+
+							// Construction costs
+							Number label7 = new Number(9, 20, instanz_preplanning.getResult_capitalExpenditure()[j]);
+							sheet.addCell(label7);
+
+						}
+					}
+				}
+				
 		// Secondaries
 		int counter = 0;
 		double constructionCosts = 0;
@@ -1483,6 +1602,51 @@ public class ReadAndWrite {
 
 		}
 
+		// Secondaries pre planning
+				int counter1 = 0;
+				for (int i = 0; i < instanz_preplanning.getF(); i++) {
+					for (int j = 0; j < instanz_preplanning.getT(); j++) {
+						if (instanz_preplanning.getResult_constructionStartSecondaryFacility()[i][j] == 1) {
+							Number label4 = new Number(9, 15 + counter1, i + 1);
+							sheet.addCell(label4);
+
+							// Nation
+							int nation = -1;
+							for (int k = 0; k < instanz_preplanning.getN(); k++) {
+								if (instanz_preplanning.getFn()[i][k]) {
+									nation = (k + 1);
+									Number label5 = new Number(10, 15 + counter1, nation);
+									sheet.addCell(label5);
+								}
+							}
+
+							// Capacity
+							Number label5 = new Number(11, 15 + counter1,
+									instanz_preplanning.getResult_availableProductionCapacity()[i][instanz_preplanning.getT() - 1]);
+							sheet.addCell(label5);
+
+							// GrossIncome
+							double grossincome = 0;
+							for (int l = 0; l < instanz_preplanning.getT(); l++) {
+								grossincome += instanz_preplanning.getResult_grossIncome()[i][l];
+							}
+
+							Number label6 = new Number(12, 15 + counter1, grossincome);
+							sheet.addCell(label6);
+
+							// Construction costs
+							if (counter1 == 0) {
+								Number label8 = new Number(9, 21, instanz_preplanning.getResult_capitalExpenditure()[j]);
+								sheet.addCell(label8);
+							}
+
+							counter1++;
+
+						}
+					}
+
+				}
+
 		// Assumed Production Cost
 
 		double productionCost = 0;
@@ -1507,6 +1671,7 @@ public class ReadAndWrite {
 		Number label9 = new Number(1, 23, corporateTax);
 		sheet.addCell(label9);
 
+		
 		// Custom Duties
 		double customDuties = 0;
 
@@ -1520,6 +1685,45 @@ public class ReadAndWrite {
 		customDuties -= revenue;
 		Number label10 = new Number(1, 24, -customDuties);
 		sheet.addCell(label10);
+		
+		// Assumed Production Cost Pre Planning
+
+				double productionCost1 = 0;
+				for (int i = 0; i < instanz_preplanning.getF(); i++) {
+					for (int l = 0; l < instanz_preplanning.getT(); l++) {
+						productionCost1 += (instanz_preplanning.getVariableProductionCosts()[i]
+								* instanz_preplanning.getResult_consumedOrProducedAPI()[i][l]);
+					}
+				}
+				Number label70 = new Number(9, 22, productionCost1);
+				sheet.addCell(label70);
+
+				// Assumed corporate Tax
+				double corporateTax1 = 0;
+
+				for (int m = 0; m < instanz_preplanning.getN(); m++) {
+					for (int l = 0; l < instanz_preplanning.getT(); l++) {
+						corporateTax1 += (instanz_preplanning.getResult_taxableIncome()[m][l] * instanz_preplanning.getCorporateTax()[m]);
+					}
+				}
+
+				Number label90 = new Number(9, 23, corporateTax1);
+				sheet.addCell(label9);
+
+				
+				// Custom Duties
+				double customDuties1 = 0;
+
+				for (int m = 0; m < instanz_preplanning.getF(); m++) {
+					for (int l = 0; l < instanz_preplanning.getT(); l++) {
+						customDuties1 += (instanz_preplanning.getResult_grossIncome()[m][l]);
+
+					}
+				}
+				customDuties1 += productionCost1;
+				customDuties1 -= revenue_pp;
+				Number label1000 = new Number(9, 24, -customDuties1);
+				sheet.addCell(label1000);
 
 		// close workbook
 		writableWorkbook.write();
