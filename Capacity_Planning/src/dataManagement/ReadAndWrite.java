@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 4;
+	public static int user = 2;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
@@ -1708,7 +1708,7 @@ else if (index==2) {
 				}
 
 				Number label90 = new Number(9, 23, corporateTax1);
-				sheet.addCell(label9);
+				sheet.addCell(label90);
 
 				
 				// Custom Duties
@@ -1832,7 +1832,7 @@ else if (index==2) {
 
 		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
 
-			number = new Number(column + i, row + 14, dataInstance.getTestResults()[i]);
+			number = new Number(column + i -1, row + 14, dataInstance.getTestResults()[i]);
 			sheet.addCell(number);
 		}
 
@@ -1840,7 +1840,7 @@ else if (index==2) {
 
 		for (int i = 1; i <= dataInstance.getParameter_planningHorizon(); i++) {
 
-			number = new Number(column + i, row + 15, dataInstance.getTestProbability()[i]);
+			number = new Number(column + i-1, row + 15, dataInstance.getTestProbability()[i]);
 			sheet.addCell(number);
 		}
 
@@ -1850,7 +1850,7 @@ else if (index==2) {
 
 			for (int j = 1; j <= dataInstance.getParameter_planningHorizon(); j++) {
 
-				number = new Number(column + j, row + 19 + i, dataInstance.getInvestmentStrategies()[i][j]);
+				number = new Number(column + j-1, row + 18 + i, dataInstance.getInvestmentStrategies()[i][j]);
 				sheet.addCell(number);
 			}
 		}
@@ -1861,7 +1861,7 @@ else if (index==2) {
 
 			sheet.getCell(column + i, row + 25).getCellFormat();
 
-			number = new Number(column + i, row + 25, dataInstance.getInvestmentDecisionPrimaryFacility()[i]);
+			number = new Number(column + i-1, row + 25, dataInstance.getInvestmentDecisionPrimaryFacility()[i]);
 			sheet.addCell(number);
 		}
 
