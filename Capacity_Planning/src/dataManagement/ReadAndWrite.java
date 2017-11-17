@@ -1919,22 +1919,6 @@ public class ReadAndWrite {
 		workbook.close();
 	}
 
-	public static void writeSolutionBothModels(Data instance, String tab)
-			throws BiffException, IOException, WriteException {
-
-		File file;
-		WritableWorkbook writableWorkbook;
-		Workbook workbook;
-		choosePaths();
-
-		file = new File(pathR);
-
-		workbook = Workbook.getWorkbook(file);
-		writableWorkbook = Workbook.createWorkbook(file, workbook);
-
-		WritableSheet sheet = writableWorkbook.getSheet("tab");
-
-	}
 
 	/**
 	 * Should go into ReadAndWrite-Class later
