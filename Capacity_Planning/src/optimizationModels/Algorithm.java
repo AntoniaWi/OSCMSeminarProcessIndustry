@@ -51,7 +51,7 @@ public class Algorithm {
 	public static void main(String[] args)
 			throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 
-		long startTime = System.currentTimeMillis();
+		long startTime_overall = System.currentTimeMillis();
 		
 		// Initialize firstInvestment array
 
@@ -62,6 +62,8 @@ public class Algorithm {
 		// Start test runs
 
 		for (int i = 0; i < numberOfTestRuns; i++) {
+			
+			long startTime = System.currentTimeMillis();
 			
 			System.out.println("****************************************************************************");
 			System.out.println();
@@ -143,13 +145,18 @@ public class Algorithm {
 			
 			long endTime = System.currentTimeMillis();
 			
-			System.out.println("****************************************************************************");
+			System.out.println("\t- Run time: " + ((endTime - startTime)/1000) + " sec");	
 			System.out.println();
 			
-			System.out.println("Run time: " + ((endTime - startTime)/1000) + " sec");	
+			System.out.println("****************************************************************************");
+			System.out.println();
 		}
+		
+		long endTime_overall = System.currentTimeMillis();
+		System.out.println("Overall run time: " + ((endTime_overall - startTime_overall)/1000) + " sec");	
 	}
 
+	
 	/**
 	 * Creates next period, updates former knowledge, calls the Timing Model and if
 	 * needed the Location Planning Model
