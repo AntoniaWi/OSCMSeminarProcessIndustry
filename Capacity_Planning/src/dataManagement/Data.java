@@ -1462,8 +1462,17 @@ public class Data {
 	 */
 	public void updateClinicalTrialOutcome () {
 		
-		if (countSuccessfulTests[this.getParameter_planningHorizon()] >= this.parameter_thresholdSuccessfulTests) {
+		int count = 0;
+		
+		for (int i = 0; i < this.testResults.length; i++) {
 			
+			if (this.testResults[i] == 1) {
+				count++;
+			}
+		}
+		
+		if(count >= this.parameter_thresholdSuccessfulTests) {
+		
 			this.successOfClinicalTrials = true;
 		}
 	}
@@ -1526,19 +1535,22 @@ public class Data {
 	private void calculateTotalPenaltyCost () {
 		
 		double penaltyCost = 0;
-		if(this.successOfClinicalTrials) {
-		int countInvestments = 0;
 		
-		for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
+		if(this.successOfClinicalTrials) {
 			
-			if (investmentDecisionPrimaryFacility[i] == 1) {
+			int countInvestments = 0;
+		
+			for (int i = 0; i < this.investmentDecisionPrimaryFacility.length; i++) {
+			
+				if (investmentDecisionPrimaryFacility[i] == 1) {
 				
-				countInvestments++;
+					countInvestments++;
+				}
 			}
-		}
 		
 		int remainingPeriodsToBuild = this.parameter_periodsToBuildPrimaryFacilities - countInvestments;
 		penaltyCost = this.parameter_penaltyCost * remainingPeriodsToBuild;
+		
 		}
 		
 		this.totalPenaltyCost_primary = penaltyCost;

@@ -190,8 +190,11 @@ public class Algorithm {
 	public static void endOfModel(int testRun) {
 
 		dataInstances[testRun].incrementCountPeriods();
+		
 		updateFormerKnowledge(testRun);
+		
 		dataInstances[testRun].calculateTotalExpansionCost();
+		
 		dataInstances[testRun].updateClinicalTrialOutcome();
 	}
 
