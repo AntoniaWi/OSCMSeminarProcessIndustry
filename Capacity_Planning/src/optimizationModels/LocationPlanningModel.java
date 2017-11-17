@@ -151,7 +151,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.build();
 		this.solve();
 		this.writeSolution(new int[] { 1, 2, 3 }, datainstanz);
-		ReadAndWrite.writeSolutionInResultFile(this.datainstanz);
+		//ReadAndWrite.writeSolutionInResultFile(this.datainstanz);
 		// lpm.ergebnisschreibenRobust(lpm);
 
 	}
@@ -172,7 +172,7 @@ public class LocationPlanningModel extends IloCplex {
 		this.build(primaryFacility);
 		this.solve();
 		this.writeSolution(new int[] { 1, 2, 3, 4 }, datainstanz);
-		ReadAndWrite.writeSolutionInResultFile(this.datainstanz);
+		//ReadAndWrite.writeSolutionInResultFile(this.datainstanz);
 
 	}
 
