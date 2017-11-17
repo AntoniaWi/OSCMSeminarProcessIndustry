@@ -714,23 +714,10 @@ public class ReadAndWrite {
 
 		instanz.setLowerLimitExpansionSize(qL);
 
-		double[] XLf = new double[instanz.getF()];
-
-		for (int i = 0; i < instanz.getF(); i++) {
-			Cell cell1 = sheet.getCell(3, i + 1);
-			NumberCell cell2 = (NumberCell) cell1;
-			double cell3 = cell2.getValue();
-
-			XLf[i] = cell3;
-
-		}
-
-		instanz.setLowerLimitProductionAPI(XLf);
-
 		double[] Mcf = new double[instanz.getF()];
 
 		for (int i = 0; i < instanz.getF(); i++) {
-			Cell cell1 = sheet.getCell(4, i + 1);
+			Cell cell1 = sheet.getCell(3, i + 1);
 			NumberCell cell2 = (NumberCell) cell1;
 			double cell3 = cell2.getValue();
 
