@@ -195,7 +195,6 @@ public class Algorithm {
 		
 		dataInstances[testRun].calculateTotalExpansionCost();
 		
-		dataInstances[testRun].updateClinicalTrialOutcome();
 	}
 
 	/**

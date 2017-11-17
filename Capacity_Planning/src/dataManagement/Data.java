@@ -1548,8 +1548,8 @@ public class Data {
 				}
 			}
 		
-		int remainingPeriodsToBuild = this.parameter_periodsToBuildPrimaryFacilities - countInvestments;
-		penaltyCost = this.parameter_penaltyCost * remainingPeriodsToBuild;
+			int remainingPeriodsToBuild = this.parameter_periodsToBuildPrimaryFacilities - countInvestments;
+			penaltyCost = this.parameter_penaltyCost * remainingPeriodsToBuild;
 		
 		}
 		
@@ -1561,6 +1561,8 @@ public class Data {
 	 * 
 	 */
 	public void calculateTotalExpansionCost () {
+		
+		this.updateClinicalTrialOutcome();
 		
 		this.calculateTotalConstructionCost();
 		this.calculateTotalSetUpCost();
