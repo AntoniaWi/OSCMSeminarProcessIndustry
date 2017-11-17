@@ -1840,7 +1840,6 @@ public class Data {
 		copy.upperLimitCapacity = Data.clone(this.upperLimitCapacity);							
 		copy.supply = Data.clone(this.supply);									
 		copy.corporateTax = Data.clone(this.corporateTax);									
-		copy.lowerLimitProductionAPI = Data.clone(this.lowerLimitProductionAPI);							
 		copy.API = this.API;
 		copy.materialCoefficient = Data.clone(this.materialCoefficient);								
 		copy.initialCapacity = this.initialCapacity;										
