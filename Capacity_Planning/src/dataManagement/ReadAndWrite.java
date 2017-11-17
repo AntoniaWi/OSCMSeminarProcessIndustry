@@ -25,7 +25,7 @@ import java.io.FileOutputStream;
 
 public class ReadAndWrite {
 
-	public static int user = 4;
+	public static int user = 2;
 
 	// Paths Antonia #1
 	public static String pathExcelAntonia = "/Users/antoniawiggert/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
@@ -460,14 +460,6 @@ public class ReadAndWrite {
 
 		workbook = Workbook.getWorkbook(file);
 		Sheet sheet = workbook.getSheet("Const.");
-
-		// projectLife
-
-		Cell cell1 = sheet.getCell(1, 1);
-		NumberCell cell2 = (NumberCell) cell1;
-		double cell3 = cell2.getValue();
-
-		instanz.setProjectLife((int) cell3);
 
 		// numberFacilities F
 		Cell cell7 = sheet.getCell(1, 8);
