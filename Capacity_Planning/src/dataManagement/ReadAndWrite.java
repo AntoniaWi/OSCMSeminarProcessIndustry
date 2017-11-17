@@ -1447,12 +1447,12 @@ public class ReadAndWrite {
 
 					// Production Monopoly and Regular Market
 					Number label500 = new Number(5, 13,
-							instanz.getResult_consumedOrProducedAPI()[i][instanz.getRemainingTimeofClinicalTrials()]);
+							instanz.getResult_consumedOrProducedAPI()[i][instanz.getRemainingTimeofClinicalTrials()+instanz.getTimeM()-1]);
 					sheet.addCell(label500);
 
 					Number label501 = new Number(6, 13,
 							instanz.getResult_consumedOrProducedAPI()[i][instanz.getRemainingTimeofClinicalTrials()
-									+ instanz.getTimeM()]);
+									+ instanz.getTimeM()+instanz.getTimeR()-1]);
 					sheet.addCell(label501);
 
 					// Assumed GrossIncome
@@ -1652,12 +1652,12 @@ public class ReadAndWrite {
 					// Production Monopoly and Regular Market pre-planning
 					Number label500 = new Number(13, 13,
 							instanz_preplanning.getResult_consumedOrProducedAPI()[i][instanz_preplanning
-									.getRemainingTimeofClinicalTrials()]);
+									.getRemainingTimeofClinicalTrials()+instanz_preplanning.getTimeM()-1]);
 					sheet.addCell(label500);
 
 					Number label501 = new Number(14, 13,
 							instanz_preplanning.getResult_consumedOrProducedAPI()[i][instanz_preplanning
-									.getRemainingTimeofClinicalTrials() + instanz_preplanning.getTimeM()]);
+									.getRemainingTimeofClinicalTrials() + instanz_preplanning.getTimeM()+instanz_preplanning.getTimeR()-1]);
 					sheet.addCell(label501);
 
 					// Assumed GrossIncome pre-planning
@@ -1919,6 +1919,22 @@ public class ReadAndWrite {
 		workbook.close();
 	}
 
+	public static void writeSolutionBothModels(Data instance, String tab)
+			throws BiffException, IOException, WriteException {
+
+		File file;
+		WritableWorkbook writableWorkbook;
+		Workbook workbook;
+		choosePaths();
+
+		file = new File(pathR);
+
+		workbook = Workbook.getWorkbook(file);
+		writableWorkbook = Workbook.createWorkbook(file, workbook);
+
+		WritableSheet sheet = writableWorkbook.getSheet("tab");
+
+	}
 
 	/**
 	 * Should go into ReadAndWrite-Class later
