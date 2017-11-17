@@ -2,9 +2,7 @@ package dataManagement;
 
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex.UnknownObjectException;
-
 import java.io.*;
-
 import jxl.*;
 import jxl.read.biff.BiffException;
 import jxl.write.Label;
@@ -13,20 +11,17 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
-
 import java.io.IOException;
 import java.io.FileWriter;
 import java.util.*;
-
 import helper.Event;
 import jxl.*;
-
 import java.io.FileOutputStream;
 
 
 /**
  * Used for Excel input, output and console output
- * @author RamonaZauner
+ * @author AntoniaWiggert
  *
  */
 public class ReadAndWrite {
