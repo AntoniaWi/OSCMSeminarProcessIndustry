@@ -17,6 +17,15 @@ import jxl.write.biff.RowsExceededException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Implements the Location Planning Model and solves it. 
+ * The optimization model is called for the preplanning when the first positive investment decision is taken. 
+ * In the preplanning the location for the primary facility is planned and fixed. The location for the secondary facilities is just preplanned.
+ * The optimization model is called for the final planning when the outcome of the clinical trials is positive. As the primary facility location is already fixed with the preplanning only the secondaries are replanned.
+
+ * @author antoniawiggert
+ *
+ */
 public class LocationPlanningModel extends IloCplex {
 
 	private Data datainstanz;
@@ -55,9 +64,9 @@ public class LocationPlanningModel extends IloCplex {
 	private IloLinearNumExpr taxableIncomeConstraint = linearNumExpr();
 
 	/**
-	 * Constructor for Pre-Planning
+	 * Constructor for Preplanning
 	 * 
-	 * @param datainstanz
+	 * @param datainstanz - contains all relevant information
 	 * @throws IloException
 	 * @throws BiffException
 	 * @throws WriteException
@@ -97,9 +106,8 @@ public class LocationPlanningModel extends IloCplex {
 	/**
 	 * Constructor for final planning
 	 * 
-	 * @param datainstanz
-	 * @param primaryFacility
-	 *            for which we decided in the pre-planning
+	 * @param datainstanz - contains all relevant information
+	 * @param primaryFacility - for which we decided in the pre-planning
 	 * @throws IloException
 	 * @throws BiffException
 	 * @throws WriteException
@@ -138,7 +146,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Runs the Location Planning Model for the pre-planning
+	 * Runs the Location Planning Model for the preplanning
 	 * 
 	 * @throws IloException
 	 * @throws BiffException
@@ -177,7 +185,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Builds the model for the pre-planning
+	 * Builds the optimization model for the preplanning
 	 * 
 	 * @throws IloException
 	 */
@@ -223,7 +231,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Builds the model for the final planning
+	 * Builds the optimization model for the final planning
 	 * 
 	 * @param primaryFacility
 	 *            which is fixed for the final planning
@@ -350,7 +358,7 @@ public class LocationPlanningModel extends IloCplex {
 
 
 	/**
-	 * Fix primary facility
+	 * Constraint: fix primary facility
 	 * 
 	 * @throws IloException
 	 */
@@ -382,8 +390,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 	
 	/**
-	 * Constraint: choose at
-	 * least one facility as secondary facility
+	 * Constraint: choose at least one facility as secondary facility
 	 * 
 	 * @throws IloException
 	 */
@@ -407,7 +414,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Constraint: start exactly one construction during the planning horizon
+	 * Constraint: start exactly once the construction during the planning horizon
 	 * for primary facilities
 	 * 
 	 * @throws IloException
@@ -858,7 +865,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Write model in log-file
+	 * Writes model in log-file
 	 * @param numbers
 	 * @throws IloException
 	 */
