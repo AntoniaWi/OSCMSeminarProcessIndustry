@@ -1471,7 +1471,7 @@ public class Data {
 			}
 		}
 		
-		if(count >= this.parameter_thresholdSuccessfulTests) {
+		if((count + this.parameter_preliminaryKnowledgeAboutSuccessfulTests) >= this.parameter_thresholdSuccessfulTests) {
 		
 			this.successOfClinicalTrials = true;
 		}

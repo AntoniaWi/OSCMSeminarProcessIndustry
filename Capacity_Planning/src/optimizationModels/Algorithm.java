@@ -193,9 +193,7 @@ public class Algorithm {
 		
 		updateFormerKnowledge(testRun);
 		
-		dataInstances[testRun].updateClinicalTrialOutcome();
 		dataInstances[testRun].calculateTotalExpansionCost();
-		dataInstances[testRun].updateClinicalTrialOutcome();
 		
 	}
 
