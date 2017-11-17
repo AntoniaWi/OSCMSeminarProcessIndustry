@@ -9,7 +9,8 @@ import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
 /**
- * Runs the whole algorithm with the Decision Review and Location Planning Model
+ * Runs the whole algorithm with stochastic test results and applies the Decision Review and 
+ * Location Planning Model to the different data instances.
  * 
  * @author RamonaZauner
  *
@@ -158,8 +159,7 @@ public class Algorithm {
 
 	
 	/**
-	 * Creates next period, updates former knowledge, calls the Timing Model and if
-	 * needed the Location Planning Model
+	 * Creates next period, updates former knowledge, calls the Timing Model and if needed the Location Planning Model
 	 */
 	public static void nextPeriod(int testRun)
 			throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
@@ -182,10 +182,10 @@ public class Algorithm {
 
 		newTestResult(testRun);
 	}
+	
 
 	/**
-	 * Sets period to T+1, updates knowledge about former successful and failed test
-	 * results, and calculates final expansion cost
+	 * Sets period to T+1, updates knowledge about former successful and failed test results, and calculates final expansion cost
 	 */
 	public static void endOfModel(int testRun) {
 
@@ -196,6 +196,7 @@ public class Algorithm {
 		dataInstances[testRun].calculateTotalExpansionCost();
 		
 	}
+	
 
 	/**
 	 * Updates knowledge about former successful and failed test results
@@ -209,9 +210,9 @@ public class Algorithm {
 		}
 	}
 
+	
 	/**
-	 * Creates a new test result based on the former knowledge about successful and
-	 * failed test results
+	 * Creates a new test result based on the former knowledge about successful and failed test results
 	 */
 	public static void newTestResult(int testRun) {
 
@@ -230,6 +231,7 @@ public class Algorithm {
 		}
 	}
 
+	
 	/**
 	 * Prints out the model information into the console at the start of one run
 	 */
@@ -240,7 +242,7 @@ public class Algorithm {
 		System.out.println("");
 
 		System.out.println("Planning horizon (T): " + dataInstances[testRun].getParameter_planningHorizon());
-		System.out.println("Discount factor (alpha): " + dataInstances[testRun].getParameter_discountFactor());
+		System.out.println("Discount factor (alpha): " + dataInstances[testRun].getParameter_discountFactor_timing());
 
 		System.out.println("Number of periods (year) to build a primary facility (s_p_0): "
 				+ dataInstances[testRun].getParameter_periodsToBuildPrimaryFacilities());
@@ -268,6 +270,7 @@ public class Algorithm {
 
 		System.out.println("Model 'Planning under Uncertainty' starts.");
 	}
+	
 
 	/**
 	 * Prints out the period information into the console in the end of one period
@@ -315,6 +318,7 @@ public class Algorithm {
 				+ dataInstances[testRun].getTestResults()[dataInstances[testRun].getCountPeriods()]);
 	}
 
+	
 	/**
 	 * Prints out the model information into the console in the end of one run
 	 */
