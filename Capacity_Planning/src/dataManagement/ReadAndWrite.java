@@ -2,9 +2,7 @@ package dataManagement;
 
 import ilog.concert.IloException;
 import ilog.cplex.IloCplex.UnknownObjectException;
-
 import java.io.*;
-
 import jxl.*;
 import jxl.read.biff.BiffException;
 import jxl.write.Label;
@@ -13,16 +11,19 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
-
 import java.io.IOException;
 import java.io.FileWriter;
 import java.util.*;
-
 import helper.Event;
 import jxl.*;
-
 import java.io.FileOutputStream;
 
+
+/**
+ * Used for Excel input, output and console output
+ * @author AntoniaWiggert
+ *
+ */
 public class ReadAndWrite {
 
 	public static int user = 4;
@@ -40,7 +41,7 @@ public class ReadAndWrite {
 	// Paths Ramona #3
 	public static String pathExcelRamona = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";
 	public static String pathExcelRamonaR = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Result.xls";
-	public static String pathExcelRamonaOutput = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Computational_Study.xls"; // TODO:
+	public static String pathExcelRamonaOutput = "/Users/RamonaZauner/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/Computational_Study.xls";
 
 	// Paths Antonia Windows #4
 	public static String pathExcelAntonia1 = "C:/Users/Antonia Wi/Documents/GitHub/OSCMSeminarProcessIndustry/Capacity_Planning/lib/CaseDataBasic.xls";//
@@ -51,10 +52,10 @@ public class ReadAndWrite {
 	public static String pathR = "";
 	public static String pathOutput = "";
 
+	
 	/**
-	 * Chooses paths for user
+	 * Chooses paths for different user 
 	 */
-
 	public static void choosePaths() {
 
 		if (user == 1) {
@@ -87,6 +88,7 @@ public class ReadAndWrite {
 
 	}
 
+	
 	/*
 	 * Excel-File:
 	 * 
@@ -104,8 +106,9 @@ public class ReadAndWrite {
 
 	// ____________________________________________________________________________________________
 
+	
 	/**
-	 * Reads data for Decision Review Model 
+	 * Reads data for the Decision Review Model 
 	 * 
 	 * @param instanz
 	 * @throws BiffException
@@ -133,7 +136,7 @@ public class ReadAndWrite {
 
 		NumberCell cell5 = (NumberCell) cell4;
 		double cell6 = cell5.getValue();
-		instanz.setParameter_discountFactor(cell6);
+		instanz.setParameter_discountFactor_timing(cell6);
 
 		// Construction time sp0 und ss0
 		Cell cell7 = sheet.getCell(1, 2);
@@ -400,6 +403,7 @@ public class ReadAndWrite {
 		instanz.setIM(IMf);
 	}
 
+	
 	/**
 	 * Reads output materials for facilities
 	 * 
@@ -552,6 +556,7 @@ public class ReadAndWrite {
 
 	}
 	
+	
 	/**
 	 * Writes tranfer parameters in sheet Const.
 	 * @param instanz
@@ -599,9 +604,9 @@ public class ReadAndWrite {
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook.close();
-
 	}
 
+	
 	/**
 	 * Reads corporate tax rates
 	 * @param instanz
@@ -635,12 +640,13 @@ public class ReadAndWrite {
 		instanz.setCorporateTax(TRn);
 	}
 
-/**
- * Reads massbalance information
- * @param instanz
- * @throws BiffException
- * @throws IOException
- */
+	
+	/**
+	 * Reads massbalance information
+	 * @param instanz
+	 * @throws BiffException
+	 * @throws IOException
+	 */
 	public static void readMassbalance(Data instanz) throws BiffException, IOException {
 
 		File file;
@@ -669,6 +675,7 @@ public class ReadAndWrite {
 		}
 		instanz.setMaterialCoefficient(sigma);
 	}
+	
 
 	/**
 	 * Reads facility information
@@ -729,6 +736,7 @@ public class ReadAndWrite {
 
 	}
 
+	
 	/**
 	 * Reads basic information for demand 
 	 * @param instanz
@@ -776,6 +784,7 @@ public class ReadAndWrite {
 		instanz.setDemandR(DemandR);
 
 	}
+	
 	
 	/**
 	 * Calculates demand, price, budget and write results in Excel-file
@@ -827,6 +836,7 @@ public class ReadAndWrite {
 
 			}
 		}
+		
 		instanz.setUnitSellingPrice(P);
 
 		File file2;
@@ -958,6 +968,8 @@ public class ReadAndWrite {
 		workbook1.close();
 
 	}
+	
+	
 	/**
 	 *Reads supplier information
 	 * @param instanz
@@ -992,7 +1004,6 @@ public class ReadAndWrite {
 		}
 		instanz.setSupply(supply);
 	}
-
 
 
 	/**
@@ -1050,6 +1061,7 @@ public class ReadAndWrite {
 		}
 		instanz.setCostInsuranceFreight(CIF);
 	}
+	
 
 	/**
 	 * Reads import duty rates
@@ -1086,6 +1098,7 @@ public class ReadAndWrite {
 		instanz.setImportDuty(ID);
 	}
 
+	
 	/**
 	 * Writes solution of Location Planning Modelin Result Excel
 	 * @param instanz
@@ -1374,6 +1387,7 @@ public class ReadAndWrite {
 		workbook.close();
 
 	}
+	
 
 	/**
 	 * Writes solution of Location Planning Model: final planning
@@ -1570,9 +1584,9 @@ public class ReadAndWrite {
 		writableWorkbook.write();
 		writableWorkbook.close();
 		workbook.close();
-
 	}
 
+	
 	/**
 	 * Writes solution of Location Planning Model: pre-planning
 	 * @param instanz_preplanning
@@ -1780,35 +1794,9 @@ public class ReadAndWrite {
 
 	}
 
+	
 	/**
-	 * @param array
-	 * @param title
-	 */
-	public static void printArrayWithPeriodsInt(int[] array, String title) {
-
-		System.out.println("\n\n" + title);
-
-		System.out.println("--------------------------------------------------------------------------");
-
-		System.out.print("Period ");
-
-		for (int i = 0; i < array.length; i++) {
-
-			System.out.print("| " + i + "\t");
-		}
-
-		System.out.println("");
-
-		System.out.print("Result ");
-
-		for (int i = 0; i < array.length; i++) {
-
-			System.out.print("| " + array[i] + "\t");
-		}
-	}
-
-	/**
-	 * 
+	 * Exports Decision Planning Model data into an Excel file
 	 * @param instance
 	 * @param tab
 	 * @throws BiffException
@@ -1918,27 +1906,39 @@ public class ReadAndWrite {
 		writableWorkbook.close();
 		workbook.close();
 	}
-
-	public static void writeSolutionBothModels(Data instance, String tab)
-			throws BiffException, IOException, WriteException {
-
-		File file;
-		WritableWorkbook writableWorkbook;
-		Workbook workbook;
-		choosePaths();
-
-		file = new File(pathR);
-
-		workbook = Workbook.getWorkbook(file);
-		writableWorkbook = Workbook.createWorkbook(file, workbook);
-
-		WritableSheet sheet = writableWorkbook.getSheet("tab");
-
-	}
+	
 
 	/**
-	 * Should go into ReadAndWrite-Class later
-	 * 
+	 * Prints an integer array with periods to the console
+	 * @param array
+	 * @param title
+	 */
+	public static void printArrayWithPeriodsInt(int[] array, String title) {
+
+		System.out.println("\n\n" + title);
+
+		System.out.println("--------------------------------------------------------------------------");
+
+		System.out.print("Period ");
+
+		for (int i = 0; i < array.length; i++) {
+
+			System.out.print("| " + i + "\t");
+		}
+
+		System.out.println("");
+
+		System.out.print("Result ");
+
+		for (int i = 0; i < array.length; i++) {
+
+			System.out.print("| " + array[i] + "\t");
+		}
+	}
+	
+	
+	/**
+	 * Prints an double array with periods to the console
 	 * @param array
 	 * @param title
 	 */
@@ -1968,8 +1968,9 @@ public class ReadAndWrite {
 		}
 	}
 
+	
 	/**
-	 * 
+	 * Prints an array to the console
 	 * @param array
 	 * @param title
 	 */
@@ -1985,8 +1986,9 @@ public class ReadAndWrite {
 		System.out.println("");
 	}
 
+	
 	/**
-	 * 
+	 * Prints a strategy list to the console with regards to a period
 	 * @param strategies
 	 */
 	public static void printStrategies(ArrayList<int[]> strategies, int period) {
@@ -2003,8 +2005,10 @@ public class ReadAndWrite {
 		System.out.println("\n--------------------------------------------------------------------------------\n\n");
 	}
 
+	
 	/**
-	 * 
+	 * Prints a scenario tree to the console
+	 * @param scenarioTree
 	 */
 	public static void printScenarioTree(ArrayList<ArrayList<Event>> scenarioTree) {
 

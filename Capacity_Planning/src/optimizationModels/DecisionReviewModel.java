@@ -6,7 +6,7 @@ import helper.*;
 
 
 /**
- * Implements all methods required by the timing model: calculating all strategies, generating scenario trees and finding the strategy that minimizes cost for each period
+ * Implements all methods required by the decision review model: calculating all strategies, generating scenario trees and finding the strategy that minimizes cost for each period
  * @author RamonaZauner
  *
  */
@@ -314,7 +314,7 @@ public class DecisionReviewModel {
 		double K = this.dataInstance.getParameter_setupCostPrimaryFacility();
 		double phi = this.dataInstance.getParameter_penaltyCost();
 		int gamma_c = this.dataInstance.getParameter_thresholdSuccessfulTests();
-		double alpha = this.dataInstance.getParameter_discountFactor();
+		double alpha = this.dataInstance.getParameter_discountFactor_timing();
 		
 		// Cost calculation for every strategy
 		
