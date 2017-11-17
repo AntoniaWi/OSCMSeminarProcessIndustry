@@ -110,7 +110,6 @@ public class Permuter {
 				search_index++;
 			}
 		}
-		
 		list.removeAll(remove);
 	}
 }

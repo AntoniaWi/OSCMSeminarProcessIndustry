@@ -1415,8 +1415,6 @@ public class Data {
 		this.countPeriods++;
 	}
 	
-	
-	
 
 	/**
 	 * 

@@ -6,6 +6,8 @@ public class TestClass {
 	
 	public static void main(String[] args) {
 		
+		double startTime = System.currentTimeMillis();
+		
 		double r_yearly = 0.05;
 		double r_monthly = 0.05/12.0;
 		
@@ -23,7 +25,14 @@ public class TestClass {
 		System.out.println("Yearly discount factor coming from month: " +  discount_monthly_yearly);
 	
 		
-	    
+		
+		double d = 490 / (12*5);
+		System.out.println(d);
+		
+		long endTime = System.currentTimeMillis();
+		
+		System.out.println("Run time: " + (endTime - startTime));
+		System.out.println("Run time: " + ((endTime - startTime)/1000));
 	}
 }
 

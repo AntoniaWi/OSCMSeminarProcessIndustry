@@ -38,7 +38,7 @@ public class Algorithm {
 	// ---------------------------------------------------------------------------------------------------------------//
 
 	/**
-	 * Let the algorithm run
+	 * Main method of the algorithm, creates test instances, simulates stochastic test results and applies the optimization models
 	 * 
 	 * @param args
 	 * @throws BiffException
@@ -51,6 +51,8 @@ public class Algorithm {
 	public static void main(String[] args)
 			throws BiffException, IOException, WriteException, IloException, BiffException, RowsExceededException {
 
+		long startTime = System.currentTimeMillis();
+		
 		// Initialize firstInvestment array
 
 		for (int i = 0; i < firstInvestment.length; i++) {
@@ -60,14 +62,26 @@ public class Algorithm {
 		// Start test runs
 
 		for (int i = 0; i < numberOfTestRuns; i++) {
-
+			
+			System.out.println("****************************************************************************");
+			System.out.println();
+			System.out.println("Test run # " + (i+1) + " starts.");
+			System.out.println();
+			
+			System.out.println("\t- Data input starts.");
+			System.out.println();
+			
 			Data dataInstance = new Data(1);
 			dataInstances[i] = dataInstance;
+			
+			System.out.println("\t- Data input finished.");
+			System.out.println();
+			
+			System.out.println("\t- Optimization models start.");
+			System.out.println();
 
 			DecisionReviewModel decisionReviewModel = new DecisionReviewModel(dataInstances[i]);
 			decisionReviewModels[i] = decisionReviewModel;
-
-			printModelInformation_Start(i); // TODO: rework needed
 
 			int period = 1;
 
@@ -78,7 +92,6 @@ public class Algorithm {
 			}
 
 			endOfModel(i);
-
 
 			int primaryFacility = -1;
 
@@ -96,31 +109,45 @@ public class Algorithm {
 			String tab = "Run " + (i + 1);
 
 			if (dataInstances[i].isSuccessOfClinicalTrials()) {
+				
 				Data dataInstance_copy = dataInstances[i].clone();
 				dataInstances_copy[i] = dataInstance_copy;
-				LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[i],
-						primaryFacility);
+				
+				LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[i],primaryFacility);
 				locationPlanningModels[i] = locationPlanningModel;
 				locationPlanningModels[i].run(primaryFacility);
+				
 				ReadAndWrite.writeSolutionLocationModelPrePlanning(dataInstances_copy[i], tab);
 				ReadAndWrite.writeSolutionLocationModelFinalPlanning(dataInstances[i], tab);
-
 			}
 			
 			else {
 				
-				//TODO: wie statisch aufrufen?
-				if(decisionReviewModel.countTrueValuesInArray(dataInstances[i].getInvestmentDecisionPrimaryFacility())>0){
+				if (DecisionReviewModel.countTrueValuesInArray(dataInstances[i].getInvestmentDecisionPrimaryFacility()) > 0) {
+					
 					ReadAndWrite.writeSolutionLocationModelPrePlanning(dataInstances[i], tab);
 				}
 			}
 
-			printModelInformation_End(i); // TODO: rework needed
-
+			System.out.println("\t- Optimization models found a solution.");
+			System.out.println();
+			
+			System.out.println("\t- Solution output into Excel starts.");
+			System.out.println();
+			
+			
 			ReadAndWrite.writeSolutionDecisionPlanningModel(dataInstances[i], tab);
-
+			
+			System.out.println("\t- Solution output into Excel finished.");
+			System.out.println();
+			
+			long endTime = System.currentTimeMillis();
+			
+			System.out.println("****************************************************************************");
+			System.out.println();
+			
+			System.out.println("Run time: " + ((endTime - startTime)/1000) + " sec");	
 		}
-
 	}
 
 	/**
@@ -147,8 +174,6 @@ public class Algorithm {
 		}
 
 		newTestResult(testRun);
-
-		printModelInformation_Period(testRun); // TODO: rework needed
 	}
 
 	/**
@@ -197,7 +222,7 @@ public class Algorithm {
 	}
 
 	/**
-	 * Prints out the model information at the start of one run
+	 * Prints out the model information into the console at the start of one run
 	 */
 	public static void printModelInformation_Start(int testRun) {
 
@@ -236,7 +261,7 @@ public class Algorithm {
 	}
 
 	/**
-	 * Prints out the period information in the end of one period
+	 * Prints out the period information into the console in the end of one period
 	 */
 	public static void printModelInformation_Period(int testRun) {
 
@@ -282,7 +307,7 @@ public class Algorithm {
 	}
 
 	/**
-	 * Prints out the model information in the end of one run
+	 * Prints out the model information into the console in the end of one run
 	 */
 	public static void printModelInformation_End(int testRun) {
 
