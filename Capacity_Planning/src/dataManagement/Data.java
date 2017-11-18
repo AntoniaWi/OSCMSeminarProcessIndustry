@@ -100,7 +100,7 @@ public class Data {
 	
 	//Result Arrays
 	private double[][][][] result_shippedMaterialUnitsFacilityToCustomer; // F_ifct
-	private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
+	//private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
 	private double[][] result_availableProductionCapacity; 				// Q_ft
 	private double[][] result_taxableIncome; 							// TI_nt
 	private double[][] result_consumedOrProducedAPI; 						// X_ft
@@ -1221,7 +1221,7 @@ public class Data {
 	/**
 	 * @return the result_shippedMaterialUnitsFacilityToCustomer
 	 */
-	public double[][][][] getResult_shippedMaterialUnitsFacilityToCustomer() {
+	public double[][][][] getResult_shippedMaterialUnits() {
 		return result_shippedMaterialUnitsFacilityToCustomer;
 	}
 
@@ -1229,28 +1229,13 @@ public class Data {
 	/**
 	 * @param result_shippedMaterialUnitsFacilityToCustomer the result_shippedMaterialUnitsFacilityToCustomer to set
 	 */
-	public void setResult_shippedMaterialUnitsFacilityToCustomer(
+	public void setResult_shippedMaterialUnits(
 			double[][][][] result_shippedMaterialUnitsFacilityToCustomer) {
 		this.result_shippedMaterialUnitsFacilityToCustomer = result_shippedMaterialUnitsFacilityToCustomer;
 	}
 
 
-	/**
-	 * @return the result_shippedMaterialUnitsSupplierToFacility
-	 */
-	public double[][][][] getResult_shippedMaterialUnitsSupplierToFacility() {
-		return result_shippedMaterialUnitsSupplierToFacility;
-	}
-
-
-	/**
-	 * @param result_shippedMaterialUnitsSupplierToFacility the result_shippedMaterialUnitsSupplierToFacility to set
-	 */
-	public void setResult_shippedMaterialUnitsSupplierToFacility(
-			double[][][][] result_shippedMaterialUnitsSupplierToFacility) {
-		this.result_shippedMaterialUnitsSupplierToFacility = result_shippedMaterialUnitsSupplierToFacility;
-	}
-
+	
 
 	/**
 	 * @return the result_availableProductionCapacity
@@ -1865,7 +1850,7 @@ public class Data {
 		copy.timeR = this.timeR;
 		
 		copy.result_shippedMaterialUnitsFacilityToCustomer = Data.clone(this.result_shippedMaterialUnitsFacilityToCustomer);
-		copy.result_shippedMaterialUnitsSupplierToFacility = Data.clone(this.result_shippedMaterialUnitsSupplierToFacility);
+		//copy.result_shippedMaterialUnitsSupplierToFacility = Data.clone(this.result_shippedMaterialUnitsSupplierToFacility);
 		//copy.result_depreciationChargePrimaryFacility = Data.clone(this.result_depreciationChargePrimaryFacility);
 		//copy.result_depreciationChargeSecondaryFacility = Data.clone(this.result_depreciationChargeSecondaryFacility);
 		copy.result_availableProductionCapacity = Data.clone(this.result_availableProductionCapacity);				

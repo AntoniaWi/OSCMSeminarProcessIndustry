@@ -1416,7 +1416,7 @@ public class ReadAndWrite {
 					for (int l = 0; l < instanz.getT(); l++) {
 
 						revenue += (instanz.getUnitSellingPrice()[i][j][l]
-								* instanz.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l]);
+								* instanz.getResult_shippedMaterialUnits()[i][j][k][l]);
 
 					}
 				}
@@ -1617,7 +1617,7 @@ public class ReadAndWrite {
 					for (int l = 0; l < instanz_preplanning.getT(); l++) {
 
 						revenue_pp += (instanz_preplanning.getUnitSellingPrice()[i][j][l]
-								* instanz_preplanning.getResult_shippedMaterialUnitsFacilityToCustomer()[i][j][k][l]);
+								* instanz_preplanning.getResult_shippedMaterialUnits()[i][j][k][l]);
 
 					}
 				}

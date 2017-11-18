@@ -31,8 +31,9 @@ public class LocationPlanningModel extends IloCplex {
 	private IloObjective objective;
 
 	//Decision variables 
-	private IloNumVar[][][][] shippedMaterialUnitsFacilityToCustomer; // F_ifct
-	private IloNumVar[][][][] shippedMaterialUnitsSupplierToFacility; // F_isft
+	//private IloNumVar[][][][] shippedMaterialUnitsFacilityToCustomer; // F_ifct
+	//private IloNumVar[][][][] shippedMaterialUnitsSupplierToFacility; // F_isft
+	private IloNumVar[][][][] shippedMaterialUnits; // F_isft
 	private IloNumVar[][] availableProductionCapacity; // Q_ft
 	private IloNumVar[][] taxableIncome; // TI_nt
 	private IloNumVar[][] consumedOrProducedAPI; // X_ft
@@ -87,10 +88,10 @@ public class LocationPlanningModel extends IloCplex {
 		// Initialization of decision variables
 		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
 		this.constructionStartSecondaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];
-		this.shippedMaterialUnitsFacilityToCustomer = new IloNumVar[this.datainstanz.getI()][this.datainstanz
+		this.shippedMaterialUnits = new IloNumVar[this.datainstanz.getI()][this.datainstanz
 				.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_ifct
-		this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz
-				.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
+		//this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz
+			//	.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
 		this.availableProductionCapacity = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // Q_ft
 		this.taxableIncome = new IloNumVar[this.datainstanz.getN()][this.datainstanz.getT()]; // TI_nt
 		this.consumedOrProducedAPI = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // X_ft
@@ -129,10 +130,10 @@ public class LocationPlanningModel extends IloCplex {
 		// Initialization of decision variables
 		this.constructionStartPrimaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];// y_ft
 		this.constructionStartSecondaryFacility = new IloIntVar[this.datainstanz.getF()][this.datainstanz.getT()];// z_ft
-		this.shippedMaterialUnitsFacilityToCustomer = new IloNumVar[this.datainstanz.getI()][this.datainstanz
+		this.shippedMaterialUnits = new IloNumVar[this.datainstanz.getI()][this.datainstanz
 				.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_ifct
-		this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz
-				.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
+		//this.shippedMaterialUnitsSupplierToFacility = new IloNumVar[this.datainstanz.getI()][this.datainstanz
+			//	.getF()][this.datainstanz.getF()][this.datainstanz.getT()]; // F_isft
 		this.availableProductionCapacity = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // Q_ft
 		this.taxableIncome = new IloNumVar[this.datainstanz.getN()][this.datainstanz.getT()]; // TI_nt
 		this.consumedOrProducedAPI = new IloNumVar[this.datainstanz.getF()][this.datainstanz.getT()]; // X_ft
@@ -294,8 +295,8 @@ public class LocationPlanningModel extends IloCplex {
 
 								}
 								this.capacityExpansionAmount[i][j] = numVar(0, 1000000);
-								this.shippedMaterialUnitsFacilityToCustomer[l][i][k][j] = numVar(0, 1000000);
-								this.shippedMaterialUnitsSupplierToFacility[l][k][i][j] = numVar(0, 1000000);
+								//this.shippedMaterialUnitsFacilityToCustomer[l][i][k][j] = numVar(0, 1000000);
+								this.shippedMaterialUnits[l][k][i][j] = numVar(0, 1000000);
 								this.availableProductionCapacity[i][j] = numVar(0, 1000000);
 								this.taxableIncome[n][j] = numVar(0, 1000000000);
 								this.consumedOrProducedAPI[i][j] = numVar(0, 10000000);
@@ -604,20 +605,20 @@ public class LocationPlanningModel extends IloCplex {
 								if (datainstanz.getOM()[m][j] && datainstanz.getIM()[i][j]) {
 									massbalanceEquation2.addTerm(
 											this.datainstanz.getMaterialCoefficient()[this.datainstanz.getAPI() - 1][i],
-											this.shippedMaterialUnitsSupplierToFacility[j][m][i][k]);
+											this.shippedMaterialUnits[j][m][i][k]);
 								}
 
 								else if (datainstanz.getIM()[m][j] && datainstanz.getOM()[i][j]) {
 
 									massbalanceEquation2.addTerm(
 											this.datainstanz.getMaterialCoefficient()[this.datainstanz.getAPI() - 1][i],
-											this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
+											this.shippedMaterialUnits[j][i][m][k]);
 								}
 								
-								if (datainstanz.getIF()[m]) {
+							/*	if (datainstanz.getIF()[m]) {
 								addEq(this.shippedMaterialUnitsSupplierToFacility[j][m][i][k],
 										this.shippedMaterialUnitsFacilityToCustomer[j][m][i][k]);
-								}
+								}*/
 							}
 							
 							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
@@ -671,10 +672,10 @@ public class LocationPlanningModel extends IloCplex {
 
 							for (int l = 0; l < this.datainstanz.getF(); l++) {
 								if (this.datainstanz.getIF()[l] && datainstanz.getOM()[l][k]) {// facility to customer
-									demandAndSupply.addTerm(1, this.shippedMaterialUnitsFacilityToCustomer[k][l][i][j]);
+									demandAndSupply.addTerm(1, this.shippedMaterialUnits[k][l][i][j]);
 
 								} else if (datainstanz.getIF()[l] && datainstanz.getIM()[l][k]) {// supplier to facility
-									demandAndSupply.addTerm(1, this.shippedMaterialUnitsSupplierToFacility[k][i][l][j]);
+									demandAndSupply.addTerm(1, this.shippedMaterialUnits[k][i][l][j]);
 
 								}
 							}
@@ -798,7 +799,7 @@ public class LocationPlanningModel extends IloCplex {
 										// System.out.println("Check gleiches Material: "+(k+1)+" und "+(l+1)+" ?");
 										this.grossIncomeConstraint.addTerm(
 												this.datainstanz.getUnitSellingPrice()[k][j][i],
-												this.shippedMaterialUnitsFacilityToCustomer[k][j][m][i]);
+												this.shippedMaterialUnits[k][j][m][i]);
 
 									}
 
@@ -817,7 +818,7 @@ public class LocationPlanningModel extends IloCplex {
 														* this.datainstanz.getImportDuty()[m][j]);
 
 										this.grossIncomeConstraint.addTerm(-costCoefficient,
-												this.shippedMaterialUnitsSupplierToFacility[k][m][j][i]);
+												this.shippedMaterialUnits[k][m][j][i]);
 
 									}
 
@@ -1038,49 +1039,42 @@ public class LocationPlanningModel extends IloCplex {
 		instanz.setResult_consumedOrProducedAPI(Xft);
 		instanz.setResult_capacityExpansionAmount(qft);
 
-		// F_ifct and F_isft
-		double[][][][] Fifct = new double[instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
-		double[][][][] Fisft = new double[instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
+		// F
+		double[][][][] flow = new double[instanz.getI()][instanz.getF()][instanz.getF()][instanz.getT()];
+		
 		for (int i = 0; i < instanz.getI(); i++) {
 			for (int j = 0; j < instanz.getF(); j++) {
 				for (int k = 0; k < instanz.getF(); k++) {
 					for (int l = 0; l < instanz.getT(); l++) {
 						if (datainstanz.getIF()[j]) {
 							if (datainstanz.getOM()[j][i] && datainstanz.getIM()[k][i]) {
-								if (getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) > 0) {
+								if (getValue(this.shippedMaterialUnits[i][j][k][l]) > 0) {
 
 									out.write("Material " + (i + 1) + " is shipped from facility " + (j + 1)
 											+ " to customer " + (k + 1) + " in period " + (l + 1) + " ."
-											+ getValue(this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]) + "\n");
+											+ getValue(this.shippedMaterialUnits[i][j][k][l]) + "\n");
 
-									Fifct[i][j][k][l] = getValue(
-											this.shippedMaterialUnitsFacilityToCustomer[i][j][k][l]);
-
-								} else {
-
-									Fifct[i][j][k][l] = 0;
+									flow[i][j][k][l] = getValue(
+											this.shippedMaterialUnits[i][j][k][l]);
 
 								}
-
 							} else if (datainstanz.getIM()[j][i] && datainstanz.getOM()[k][i]) {
-								if (getValue(this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]) > 0) {
+								if (getValue(this.shippedMaterialUnits[i][k][j][l]) > 0) {
 
 									out.write("Material " + (i + 1) + " is shipped from supplier " + (k + 1)
 											+ " to facility " + (j + 1) + " in period " + (l + 1) + " ."
-											+ getValue(this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]) + "\n");
+											+ getValue(this.shippedMaterialUnits[i][k][j][l]) + "\n");
 
-									Fisft[i][k][j][l] = getValue(
-											this.shippedMaterialUnitsSupplierToFacility[i][k][j][l]);
+									flow[i][k][j][l] = getValue(
+											this.shippedMaterialUnits[i][k][j][l]);
+
 								}
 
-								else {
-									Fisft[i][k][j][l] = 0;
-								}
 							}
 
 							else {
-								Fisft[i][k][j][l] = 0;
-								Fifct[i][j][k][l] = 0;
+								flow[i][j][k][l] = 0;
+								flow[i][k][j][l] = 0;
 							}
 
 						}
@@ -1089,8 +1083,8 @@ public class LocationPlanningModel extends IloCplex {
 			}
 		}
 
-		instanz.setResult_shippedMaterialUnitsFacilityToCustomer(Fifct);
-		instanz.setResult_shippedMaterialUnitsSupplierToFacility(Fisft);
+		instanz.setResult_shippedMaterialUnits(flow);
+		//instanz.setResult_shippedMaterialUnitsSupplierToFacility(Fisft);
 
 		
 		out.close();
