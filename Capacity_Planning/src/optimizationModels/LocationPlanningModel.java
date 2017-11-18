@@ -614,8 +614,10 @@ public class LocationPlanningModel extends IloCplex {
 											this.shippedMaterialUnitsFacilityToCustomer[j][i][m][k]);
 								}
 								
+								if (datainstanz.getIF()[m]) {
 								addEq(this.shippedMaterialUnitsSupplierToFacility[j][m][i][k],
 										this.shippedMaterialUnitsFacilityToCustomer[j][m][i][k]);
+								}
 							}
 							
 							addEq(this.massbalanceEquation1, this.massbalanceEquation2);
