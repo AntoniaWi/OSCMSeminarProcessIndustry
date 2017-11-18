@@ -4,9 +4,18 @@ import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 import java.io.IOException;
 
+
+/**
+ * Represents a data instance with all relevant information for the test runs. For each test run, a data instance is created by
+ * importing the information from a pre-defined Excel. The decision review and location planning model are applied on the data instance
+ * and define a optimal solution.
+ * 
+ * @author RamonaZauner
+ *
+ */
 public class Data {
 	
-	// Timing Model
+	// Decision Review Model
 	
 	private int parameter_planningHorizon;  								// T
 	
@@ -33,7 +42,7 @@ public class Data {
 	private int [] countFailedTests;										// Zeta_t
 	private int [] remainingYearsToBuildPrimaryFacility;					// s_p_t
 	private double [] testProbability;									// p
-	private int remainingTimeofClinicalTrials;							//delta_t
+	private int remainingTimeofClinicalTrials;							// delta_t
 	
 	private int [] investmentDecisionPrimaryFacility;						// a_p_t
 	private int investmentDecisionSecondaryFacility;						// a_s_T+1 - secondary facility is built in period T+1 if clinical trails are successful
@@ -41,11 +50,11 @@ public class Data {
 	
 	private int countPeriods;											// t
 	
-	private double totalConstructionCost_primary;
-	private double totalSetUpCost_primary;
-	private double totalPenaltyCost_primary;
-	private double totalExpansionCost_primary;
-	private boolean successOfClinicalTrials;
+	private double totalConstructionCost_primary;						// total construction cost c over planning horizon T
+	private double totalSetUpCost_primary;								// total set up cost K over planning horizon T
+	private double totalPenaltyCost_primary;								// total penalty cost phi over planning horizon T
+	private double totalExpansionCost_primary;							// total expansion cost over planning horizon T
+	private boolean successOfClinicalTrials;								// outcome of clinical trials
 	
 	//Location Planning Model
 
@@ -90,8 +99,7 @@ public class Data {
 	private int timeR;
 	
 	//Result Arrays
-	private double[][][][] result_shippedMaterialUnitsFacilityToCustomer; // F_ifct
-	private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
+	private double[][][][] result_shippedMaterialUnits; 					// F
 	private double[][] result_availableProductionCapacity; 				// Q_ft
 	private double[][] result_taxableIncome; 							// TI_nt
 	private double[][] result_consumedOrProducedAPI; 						// X_ft
@@ -105,18 +113,17 @@ public class Data {
 
 	private double result_netPresentValue;
 	
+	
 	/**
-	 * Constructor: empty data instance
+	 * Dummy constructor: empty constructor to initialize a data instance 
 	 */
-	public Data () {
-		
+	public Data () {	
 		
 	}
 	
 	
-	
 	/**
-	 * Constructor: with data from excel sheet
+	 * Constructor that reads all relevant information from a pre-defined Excel sheet
 	 * @param x
 	 * @throws BiffException
 	 * @throws IOException
@@ -138,7 +145,7 @@ public class Data {
 		ReadAndWrite.readCIFsf(this);
 		ReadAndWrite.readDictBasics(this);
 		
-		// Currently no test results are available
+		// Test results
 		
 		this.testResults = new int [this.parameter_planningHorizon + 1];	
 		
@@ -146,7 +153,7 @@ public class Data {
 			this.testResults[i] = -1;
 		}
 		
-		// Currently no knowledge available except from preliminary knowledge
+		// Preliminary knowledge about successful test results
 		
 		this.countSuccessfulTests = new int [this.parameter_planningHorizon + 1];
 		this.countSuccessfulTests[0] = this.parameter_preliminaryKnowledgeAboutSuccessfulTests;
@@ -155,7 +162,7 @@ public class Data {
 			this.countSuccessfulTests[i] = -1;
 		}
 		
-		// Currently no knowledge available except from preliminary knowledge
+		// Preliminary knowledge about failed test results
 		
 		this.countFailedTests = new int [this.parameter_planningHorizon + 1];
 		this.countFailedTests[0] = this.parameter_preliminaryKnowledgeAboutFailedTests;
@@ -164,7 +171,7 @@ public class Data {
 			this.countFailedTests[i] = -1;
 		}		
 		
-		// Currently only available for period 0
+		// Remaining periods to build
 		
 		this.remainingYearsToBuildPrimaryFacility = new int [this.parameter_planningHorizon + 2];
 		this.remainingYearsToBuildPrimaryFacility[0] = this.parameter_periodsToBuildPrimaryFacilities;
@@ -173,7 +180,7 @@ public class Data {
 			this.remainingYearsToBuildPrimaryFacility[i] = -1;
 		}	
 		
-		// Currently no investment decision about primary facility made
+		// Investment decision about primary facility
 		
 		this.investmentDecisionPrimaryFacility = new int [this.parameter_planningHorizon + 1];
 		this.investmentDecisionPrimaryFacility[0] = 0;
@@ -181,23 +188,21 @@ public class Data {
 			this.investmentDecisionPrimaryFacility[i] = -1;
 		}
 		
-		// Currently no test probability is calculated
+		// Test probability
 		
 		this.testProbability = new double [this.parameter_planningHorizon + 1];
 		for (int i = 0; i < this.testProbability.length; i++) {
 			this.testProbability[i] = -1;
 		}
 		
-		// Currently no investment decision about secondary facility made
+		// Investment decision about secondary facility
 		
 		this.investmentDecisionSecondaryFacility = -1;
 		
-		// Initiate strategy list to see how strategy updates influence the overall decision making, period 0 does not have any strategy
+		// Investment strategy list in each period
 		
 		this.investmentStrategies = new int [this.parameter_planningHorizon + 1][this.parameter_planningHorizon + 1];
-		
 		for (int i = 0; i < this.parameter_planningHorizon; i++) {
-			
 			this.investmentStrategies[0][i] = -1;
 		}
 		
@@ -205,16 +210,20 @@ public class Data {
 		
 		this.countPeriods = 0;
 		
+		// Initialize total cost at planning horizon end
+		
 		this.totalConstructionCost_primary = 0;
 		this.totalSetUpCost_primary = 0;
 		this.totalPenaltyCost_primary = 0;
 		this.totalExpansionCost_primary = 0; 
 		
+		// Success of clinical trials 
+		
 		this.successOfClinicalTrials = false;
 	
-		}
-
-
+	}
+	
+	
 	/**
 	 * @return the parameter_planningHorizon
 	 */
@@ -232,23 +241,39 @@ public class Data {
 
 
 	/**
-	 * @return the parameter_discountFactor
+	 * @return the parameter_discountFactor_timing
 	 */
-	public double getParameter_discountFactor() {
+	public double getParameter_discountFactor_timing() {
 		return parameter_discountFactor_timing;
 	}
 
 
 	/**
-	 * @param parameter_discountFactor the parameter_discountFactor to set
+	 * @param parameter_discountFactor_timing the parameter_discountFactor_timing to set
 	 */
-	public void setParameter_discountFactor(double parameter_discountFactor) {
-		this.parameter_discountFactor_timing = parameter_discountFactor;
+	public void setParameter_discountFactor_timing(double parameter_discountFactor_timing) {
+		this.parameter_discountFactor_timing = parameter_discountFactor_timing;
 	}
 
 
 	/**
-	 * @return the parameter_monthsToBuildPrimaryFacilities
+	 * @return the parameter_discountFactor_location
+	 */
+	public double getParameter_discountFactor_location() {
+		return parameter_discountFactor_location;
+	}
+
+
+	/**
+	 * @param parameter_discountFactor_location the parameter_discountFactor_location to set
+	 */
+	public void setParameter_discountFactor_location(double parameter_discountFactor_location) {
+		this.parameter_discountFactor_location = parameter_discountFactor_location;
+	}
+
+
+	/**
+	 * @return the parameter_periodsToBuildPrimaryFacilities
 	 */
 	public int getParameter_periodsToBuildPrimaryFacilities() {
 		return parameter_periodsToBuildPrimaryFacilities;
@@ -256,15 +281,15 @@ public class Data {
 
 
 	/**
-	 * @param parameter_monthsToBuildPrimaryFacilities the parameter_yearsToBuildPrimaryFacilities to set
+	 * @param parameter_periodsToBuildPrimaryFacilities the parameter_periodsToBuildPrimaryFacilities to set
 	 */
-	public void setParameter_periodsToBuildPrimaryFacilities(int parameter_monthsToBuildPrimaryFacilities) {
-		this.parameter_periodsToBuildPrimaryFacilities = parameter_monthsToBuildPrimaryFacilities;
+	public void setParameter_periodsToBuildPrimaryFacilities(int parameter_periodsToBuildPrimaryFacilities) {
+		this.parameter_periodsToBuildPrimaryFacilities = parameter_periodsToBuildPrimaryFacilities;
 	}
 
 
 	/**
-	 * @return the parameter_monthsToBuildSecondaryFacilities
+	 * @return the parameter_periodsToBuildSecondaryFacilities
 	 */
 	public int getParameter_periodsToBuildSecondaryFacilities() {
 		return parameter_periodsToBuildSecondaryFacilities;
@@ -272,10 +297,10 @@ public class Data {
 
 
 	/**
-	 * @param parameter_monthsToBuildSecondaryFacilities the parameter_yearsToBuildSecondaryFacilities to set
+	 * @param parameter_periodsToBuildSecondaryFacilities the parameter_periodsToBuildSecondaryFacilities to set
 	 */
-	public void setParameter_periodsToBuildSecondaryFacilities(int parameter_monthsToBuildSecondaryFacilities) {
-		this.parameter_periodsToBuildSecondaryFacilities = parameter_monthsToBuildSecondaryFacilities;
+	public void setParameter_periodsToBuildSecondaryFacilities(int parameter_periodsToBuildSecondaryFacilities) {
+		this.parameter_periodsToBuildSecondaryFacilities = parameter_periodsToBuildSecondaryFacilities;
 	}
 
 
@@ -290,7 +315,7 @@ public class Data {
 	/**
 	 * @param parameter_constructionCostPrimaryFacility the parameter_constructionCostPrimaryFacility to set
 	 */
-	public void setParameter_constructionCostPrimaryFacility(int parameter_constructionCostPrimaryFacility) {
+	public void setParameter_constructionCostPrimaryFacility(double parameter_constructionCostPrimaryFacility) {
 		this.parameter_constructionCostPrimaryFacility = parameter_constructionCostPrimaryFacility;
 	}
 
@@ -311,7 +336,38 @@ public class Data {
 	}
 
 
-	
+	/**
+	 * @return the parameter_setupCostPrimaryFacility
+	 */
+	public double getParameter_setupCostPrimaryFacility() {
+		return parameter_setupCostPrimaryFacility;
+	}
+
+
+	/**
+	 * @param parameter_setupCostPrimaryFacility the parameter_setupCostPrimaryFacility to set
+	 */
+	public void setParameter_setupCostPrimaryFacility(double parameter_setupCostPrimaryFacility) {
+		this.parameter_setupCostPrimaryFacility = parameter_setupCostPrimaryFacility;
+	}
+
+
+	/**
+	 * @return the parameter_setupCostSecondaryFacility
+	 */
+	public double getParameter_setupCostSecondaryFacility() {
+		return parameter_setupCostSecondaryFacility;
+	}
+
+
+	/**
+	 * @param parameter_setupCostSecondaryFacility the parameter_setupCostSecondaryFacility to set
+	 */
+	public void setParameter_setupCostSecondaryFacility(double parameter_setupCostSecondaryFacility) {
+		this.parameter_setupCostSecondaryFacility = parameter_setupCostSecondaryFacility;
+	}
+
+
 	/**
 	 * @return the parameter_penaltyCost
 	 */
@@ -458,6 +514,22 @@ public class Data {
 
 
 	/**
+	 * @return the remainingTimeofClinicalTrials
+	 */
+	public int getRemainingTimeofClinicalTrials() {
+		return remainingTimeofClinicalTrials;
+	}
+
+
+	/**
+	 * @param remainingTimeofClinicalTrials the remainingTimeofClinicalTrials to set
+	 */
+	public void setRemainingTimeofClinicalTrials(int remainingTimeofClinicalTrials) {
+		this.remainingTimeofClinicalTrials = remainingTimeofClinicalTrials;
+	}
+
+
+	/**
 	 * @return the investmentDecisionPrimaryFacility
 	 */
 	public int[] getInvestmentDecisionPrimaryFacility() {
@@ -496,12 +568,14 @@ public class Data {
 		return investmentStrategies;
 	}
 
+
 	/**
 	 * @param investmentStrategies the investmentStrategies to set
 	 */
 	public void setInvestmentStrategies(int[][] investmentStrategies) {
 		this.investmentStrategies = investmentStrategies;
 	}
+
 
 	/**
 	 * @return the countPeriods
@@ -519,259 +593,83 @@ public class Data {
 	}
 
 
-
 	/**
-	 * @return the capitalBudget
+	 * @return the totalConstructionCost_primary
 	 */
-	public double[] getCapitalBudget() {
-		return capitalBudget;
+	public double getTotalConstructionCost_primary() {
+		return totalConstructionCost_primary;
 	}
 
 
 	/**
-	 * @param capitalBudget the capitalBudget to set
+	 * @param totalConstructionCost_primary the totalConstructionCost_primary to set
 	 */
-	public void setCapitalBudget(double[] capitalBudget) {
-		this.capitalBudget = capitalBudget;
-	}
-
-
-	
-	/**
-	 * @return the costInsuranceFreight
-	 */
-	public double[][][] getCostInsuranceFreight() {
-		return costInsuranceFreight;
+	public void setTotalConstructionCost_primary(double totalConstructionCost_primary) {
+		this.totalConstructionCost_primary = totalConstructionCost_primary;
 	}
 
 
 	/**
-	 * @param costInsuranceFreight the costInsuranceFreight to set
+	 * @return the totalSetUpCost_primary
 	 */
-	public void setCostInsuranceFreight(double[][][] costInsuranceFreight) {
-		this.costInsuranceFreight = costInsuranceFreight;
+	public double getTotalSetUpCost_primary() {
+		return totalSetUpCost_primary;
 	}
 
 
 	/**
-	 * @return the demand
+	 * @param totalSetUpCost_primary the totalSetUpCost_primary to set
 	 */
-	public double[][][] getDemand() {
-		return demand;
+	public void setTotalSetUpCost_primary(double totalSetUpCost_primary) {
+		this.totalSetUpCost_primary = totalSetUpCost_primary;
 	}
 
 
 	/**
-	 * @param demand the demand to set
+	 * @return the totalPenaltyCost_primary
 	 */
-	public void setDemand(double[][][] demand) {
-		this.demand = demand;
+	public double getTotalPenaltyCost_primary() {
+		return totalPenaltyCost_primary;
 	}
 
 
 	/**
-	 * @return the importDuty
+	 * @param totalPenaltyCost_primary the totalPenaltyCost_primary to set
 	 */
-	public double[][] getImportDuty() {
-		return importDuty;
+	public void setTotalPenaltyCost_primary(double totalPenaltyCost_primary) {
+		this.totalPenaltyCost_primary = totalPenaltyCost_primary;
 	}
 
 
 	/**
-	 * @param importDuty the importDuty to set
+	 * @return the totalExpansionCost_primary
 	 */
-	public void setImportDuty(double[][]importDuty) {
-		this.importDuty = importDuty;
+	public double getTotalExpansionCost_primary() {
+		return totalExpansionCost_primary;
 	}
 
 
 	/**
-	 * @return the projectLife
+	 * @param totalExpansionCost_primary the totalExpansionCost_primary to set
 	 */
-	public int getProjectLife() {
-		return projectLife;
+	public void setTotalExpansionCost_primary(double totalExpansionCost_primary) {
+		this.totalExpansionCost_primary = totalExpansionCost_primary;
 	}
 
 
 	/**
-	 * @param projectLife the projectLife to set
+	 * @return the successOfClinicalTrials
 	 */
-	public void setProjectLife(int projectLife) {
-		this.projectLife = projectLife;
+	public boolean isSuccessOfClinicalTrials() {
+		return successOfClinicalTrials;
 	}
 
 
 	/**
-	 * @return the variableProductionCostsPrimaryFacility
+	 * @param successOfClinicalTrials the successOfClinicalTrials to set
 	 */
-	public double [] getVariableProductionCosts() {
-		return variableProductionCosts;
-	}
-
-
-	/**
-	 * @param variableProductionCostsPrimaryFacility the variableProductionCostsPrimaryFacility to set
-	 */
-	public void setVariableProductionCosts(double [] variableProductionCosts) {
-		this.variableProductionCosts = variableProductionCosts;
-	}
-
-
-
-	/**
-	 * @return the unitSellingPrice
-	 */
-	public double[][][] getUnitSellingPrice() {
-		return unitSellingPrice;
-	}
-
-
-	/**
-	 * @param unitSellingPrice the unitSellingPrice to set
-	 */
-	public void setUnitSellingPrice(double[][][] unitSellingPrice) {
-		this.unitSellingPrice = unitSellingPrice;
-	}
-
-
-	/**
-	 * @return the lowerLimitExpansionSize
-	 */
-	public double[] getLowerLimitExpansionSize() {
-		return lowerLimitExpansionSize;
-	}
-
-
-	/**
-	 * @param lowerLimitExpansionSize the lowerLimitExpansionSize to set
-	 */
-	public void setLowerLimitExpansionSize(double[] lowerLimitExpansionSize) {
-		this.lowerLimitExpansionSize = lowerLimitExpansionSize;
-	}
-
-
-	
-
-
-	/**
-	 * @return the upperLimitCapacity
-	 */
-	public double[] getUpperLimitCapacity() {
-		return upperLimitCapacity;
-	}
-
-
-	/**
-	 * @param upperLimitCapacity the upperLimitCapacity to set
-	 */
-	public void setUpperLimitCapacity(double[] upperLimitCapacity) {
-		this.upperLimitCapacity = upperLimitCapacity;
-	}
-
-
-	/**
-	 * @return the supply
-	 */
-	public double[][] getSupply() {
-		return supply;
-	}
-
-
-	/**
-	 * @param supply the supply to set
-	 */
-	public void setSupply(double[][] supply) {
-		this.supply = supply;
-	}
-
-
-	/**
-	 * @return the corporateTax
-	 */
-	public double[] getCorporateTax() {
-		return corporateTax;
-	}
-
-
-	/**
-	 * @param corporateTax the corporateTax to set
-	 */
-	public void setCorporateTax(double[] corporateTax) {
-		this.corporateTax = corporateTax;
-	}
-
-
-	/**
-	 * @return the lowerLimitProductionAPI
-	 */
-	public double[] getLowerLimitProductionAPI() {
-		return lowerLimitProductionAPI;
-	}
-
-
-	/**
-	 * @param lowerLimitProductionAPI the lowerLimitProductionAPI to set
-	 */
-	public void setLowerLimitProductionAPI(double[] lowerLimitProductionAPI) {
-		this.lowerLimitProductionAPI = lowerLimitProductionAPI;
-	}
-
-
-	/**
-	 * @return the aPI
-	 */
-	public int getAPI() {
-		return API;
-	}
-
-
-	/**
-	 * @param aPI the aPI to set
-	 */
-	public void setAPI(int aPI) {
-		API = aPI;
-	}
-
-
-	/**
-	 * @return the materialCoefficient
-	 */
-	public double[][] getMaterialCoefficient() {
-		return materialCoefficient;
-	}
-
-
-	/**
-	 * @param materialCoefficient the materialCoefficient to set
-	 */
-	public void setMaterialCoefficient(double[][] materialCoefficient) {
-		this.materialCoefficient = materialCoefficient;
-	}
-
-
-	
-
-	/**
-	 * @param parameter_constructionCostPrimaryFacility the parameter_constructionCostPrimaryFacility to set
-	 */
-	public void setParameter_constructionCostPrimaryFacility(double parameter_constructionCostPrimaryFacility) {
-		this.parameter_constructionCostPrimaryFacility = parameter_constructionCostPrimaryFacility;
-	}
-
-
-	/**
-	 * @param parameter_setupCostPrimaryFacility the parameter_setupCostPrimaryFacility to set
-	 */
-	public void setParameter_setupCostPrimaryFacility(double parameter_setupCostPrimaryFacility) {
-		this.parameter_setupCostPrimaryFacility = parameter_setupCostPrimaryFacility;
-	}
-
-
-	/**
-	 * @param parameter_setupCostSecondaryFacility the parameter_setupCostSecondaryFacility to set
-	 */
-	public void setParameter_setupCostSecondaryFacility(double parameter_setupCostSecondaryFacility) {
-		this.parameter_setupCostSecondaryFacility = parameter_setupCostSecondaryFacility;
+	public void setSuccessOfClinicalTrials(boolean successOfClinicalTrials) {
+		this.successOfClinicalTrials = successOfClinicalTrials;
 	}
 
 
@@ -952,6 +850,230 @@ public class Data {
 
 
 	/**
+	 * @return the capitalBudget
+	 */
+	public double[] getCapitalBudget() {
+		return capitalBudget;
+	}
+
+
+	/**
+	 * @param capitalBudget the capitalBudget to set
+	 */
+	public void setCapitalBudget(double[] capitalBudget) {
+		this.capitalBudget = capitalBudget;
+	}
+
+
+	/**
+	 * @return the costInsuranceFreight
+	 */
+	public double[][][] getCostInsuranceFreight() {
+		return costInsuranceFreight;
+	}
+
+
+	/**
+	 * @param costInsuranceFreight the costInsuranceFreight to set
+	 */
+	public void setCostInsuranceFreight(double[][][] costInsuranceFreight) {
+		this.costInsuranceFreight = costInsuranceFreight;
+	}
+
+
+	/**
+	 * @return the demand
+	 */
+	public double[][][] getDemand() {
+		return demand;
+	}
+
+
+	/**
+	 * @param demand the demand to set
+	 */
+	public void setDemand(double[][][] demand) {
+		this.demand = demand;
+	}
+
+
+	/**
+	 * @return the importDuty
+	 */
+	public double[][] getImportDuty() {
+		return importDuty;
+	}
+
+
+	/**
+	 * @param importDuty the importDuty to set
+	 */
+	public void setImportDuty(double[][] importDuty) {
+		this.importDuty = importDuty;
+	}
+
+
+	/**
+	 * @return the projectLife
+	 */
+	public int getProjectLife() {
+		return projectLife;
+	}
+
+
+	/**
+	 * @param projectLife the projectLife to set
+	 */
+	public void setProjectLife(int projectLife) {
+		this.projectLife = projectLife;
+	}
+
+
+	/**
+	 * @return the variableProductionCosts
+	 */
+	public double[] getVariableProductionCosts() {
+		return variableProductionCosts;
+	}
+
+
+	/**
+	 * @param variableProductionCosts the variableProductionCosts to set
+	 */
+	public void setVariableProductionCosts(double[] variableProductionCosts) {
+		this.variableProductionCosts = variableProductionCosts;
+	}
+
+
+	/**
+	 * @return the unitSellingPrice
+	 */
+	public double[][][] getUnitSellingPrice() {
+		return unitSellingPrice;
+	}
+
+
+	/**
+	 * @param unitSellingPrice the unitSellingPrice to set
+	 */
+	public void setUnitSellingPrice(double[][][] unitSellingPrice) {
+		this.unitSellingPrice = unitSellingPrice;
+	}
+
+
+	/**
+	 * @return the lowerLimitExpansionSize
+	 */
+	public double[] getLowerLimitExpansionSize() {
+		return lowerLimitExpansionSize;
+	}
+
+
+	/**
+	 * @param lowerLimitExpansionSize the lowerLimitExpansionSize to set
+	 */
+	public void setLowerLimitExpansionSize(double[] lowerLimitExpansionSize) {
+		this.lowerLimitExpansionSize = lowerLimitExpansionSize;
+	}
+
+
+	/**
+	 * @return the upperLimitCapacity
+	 */
+	public double[] getUpperLimitCapacity() {
+		return upperLimitCapacity;
+	}
+
+
+	/**
+	 * @param upperLimitCapacity the upperLimitCapacity to set
+	 */
+	public void setUpperLimitCapacity(double[] upperLimitCapacity) {
+		this.upperLimitCapacity = upperLimitCapacity;
+	}
+
+
+	/**
+	 * @return the supply
+	 */
+	public double[][] getSupply() {
+		return supply;
+	}
+
+
+	/**
+	 * @param supply the supply to set
+	 */
+	public void setSupply(double[][] supply) {
+		this.supply = supply;
+	}
+
+
+	/**
+	 * @return the corporateTax
+	 */
+	public double[] getCorporateTax() {
+		return corporateTax;
+	}
+
+
+	/**
+	 * @param corporateTax the corporateTax to set
+	 */
+	public void setCorporateTax(double[] corporateTax) {
+		this.corporateTax = corporateTax;
+	}
+
+
+	/**
+	 * @return the lowerLimitProductionAPI
+	 */
+	public double[] getLowerLimitProductionAPI() {
+		return lowerLimitProductionAPI;
+	}
+
+
+	/**
+	 * @param lowerLimitProductionAPI the lowerLimitProductionAPI to set
+	 */
+	public void setLowerLimitProductionAPI(double[] lowerLimitProductionAPI) {
+		this.lowerLimitProductionAPI = lowerLimitProductionAPI;
+	}
+
+
+	/**
+	 * @return the aPI
+	 */
+	public int getAPI() {
+		return API;
+	}
+
+
+	/**
+	 * @param aPI the aPI to set
+	 */
+	public void setAPI(int aPI) {
+		API = aPI;
+	}
+
+
+	/**
+	 * @return the materialCoefficient
+	 */
+	public double[][] getMaterialCoefficient() {
+		return materialCoefficient;
+	}
+
+
+	/**
+	 * @param materialCoefficient the materialCoefficient to set
+	 */
+	public void setMaterialCoefficient(double[][] materialCoefficient) {
+		this.materialCoefficient = materialCoefficient;
+	}
+
+
+	/**
 	 * @return the initialCapacity
 	 */
 	public int getInitialCapacity() {
@@ -964,352 +1086,6 @@ public class Data {
 	 */
 	public void setInitialCapacity(int initialCapacity) {
 		this.initialCapacity = initialCapacity;
-	}
-
-
-	/**
-	 * @return the remainingTimeofClinicalTrials
-	 */
-	public int getRemainingTimeofClinicalTrials() {
-		return remainingTimeofClinicalTrials;
-	}
-
-
-	/**
-	 * @param remainingTimeofClinicalTrials the remainingTimeofClinicalTrials to set
-	 */
-	public void setRemainingTimeofClinicalTrials(int remainingTimeofClinicalTrials) {
-		this.remainingTimeofClinicalTrials = remainingTimeofClinicalTrials;
-	}
-
-
-	/**
-	 * @return the parameter_setupCostPrimaryFacility
-	 */
-	public double getParameter_setupCostPrimaryFacility() {
-		return parameter_setupCostPrimaryFacility;
-	}
-
-	/**
-	 * @return the parameter_setupCostSecondaryFacility
-	 */
-	public double getParameter_setupCostSecondaryFacility() {
-		return parameter_setupCostSecondaryFacility;
-	}
-
-	/**
-	 * @return the demandM
-	 */
-	public double[] getDemandM() {
-		return demandM;
-	}
-
-	/**
-	 * @param demandM the demandM to set
-	 */
-	public void setDemandM(double[] demandM) {
-		this.demandM = demandM;
-	}
-
-	/**
-	 * @return the demandR
-	 */
-	public double[] getDemandR() {
-		return demandR;
-	}
-
-	/**
-	 * @param demandR the demandR to set
-	 */
-	public void setDemandR(double[] demandR) {
-		this.demandR = demandR;
-	}
-
-	/**
-	 * @return the timeM
-	 */
-	public int getTimeM() {
-		return timeM;
-	}
-
-	/**
-	 * @param timeM the timeM to set
-	 */
-	public void setTimeM(int timeM) {
-		this.timeM = timeM;
-	}
-
-	/**
-	 * @return the timeR
-	 */
-	public int getTimeR() {
-		return timeR;
-	}
-
-	/**
-	 * @param timeR the timeR to set
-	 */
-	public void setTimeR(int timeR) {
-		this.timeR = timeR;
-	}
-
-	
-	/**
-	 * @return the result_shippedMaterialUnitsFacilityToCustomer
-	 */
-	public double[][][][] getResult_shippedMaterialUnitsFacilityToCustomer() {
-		return result_shippedMaterialUnitsFacilityToCustomer;
-	}
-
-	/**
-	 * @param result_shippedMaterialUnitsFacilityToCustomer the result_shippedMaterialUnitsFacilityToCustomer to set
-	 */
-	public void setResult_shippedMaterialUnitsFacilityToCustomer(
-			double[][][][] result_shippedMaterialUnitsFacilityToCustomer) {
-		this.result_shippedMaterialUnitsFacilityToCustomer = result_shippedMaterialUnitsFacilityToCustomer;
-	}
-
-	/**
-	 * @return the result_shippedMaterialUnitsSupplierToFacility
-	 */
-	public double[][][][] getResult_shippedMaterialUnitsSupplierToFacility() {
-		return result_shippedMaterialUnitsSupplierToFacility;
-	}
-
-	/**
-	 * @param result_shippedMaterialUnitsSupplierToFacility the result_shippedMaterialUnitsSupplierToFacility to set
-	 */
-	public void setResult_shippedMaterialUnitsSupplierToFacility(
-			double[][][][] result_shippedMaterialUnitsSupplierToFacility) {
-		this.result_shippedMaterialUnitsSupplierToFacility = result_shippedMaterialUnitsSupplierToFacility;
-	}
-
-
-	/**
-	 * @return the result_availableProductionCapacity
-	 */
-	public double[][] getResult_availableProductionCapacity() {
-		return result_availableProductionCapacity;
-	}
-
-	/**
-	 * @param result_availableProductionCapacity the result_availableProductionCapacity to set
-	 */
-	public void setResult_availableProductionCapacity(double[][] result_availableProductionCapacity) {
-		this.result_availableProductionCapacity = result_availableProductionCapacity;
-	}
-
-	/**
-	 * @return the result_taxableIncome
-	 */
-	public double[][] getResult_taxableIncome() {
-		return result_taxableIncome;
-	}
-
-	/**
-	 * @param result_taxableIncome the result_taxableIncome to set
-	 */
-	public void setResult_taxableIncome(double[][] result_taxableIncome) {
-		this.result_taxableIncome = result_taxableIncome;
-	}
-
-	
-
-	/**
-	 * @return the result_consumedOrProducedAPI
-	 */
-	public double[][] getResult_consumedOrProducedAPI() {
-		return result_consumedOrProducedAPI;
-	}
-
-	/**
-	 * @param result_consumedOrProducedAPI the result_consumedOrProducedAPI to set
-	 */
-	public void setResult_consumedOrProducedAPI(double[][] result_consumedOrProducedAPI) {
-		this.result_consumedOrProducedAPI = result_consumedOrProducedAPI;
-	}
-
-	/**
-	 * @return the result_capitalExpenditure
-	 */
-	public double[] getResult_capitalExpenditure() {
-		return result_capitalExpenditure;
-	}
-
-	/**
-	 * @param result_capitalExpenditure the result_capitalExpenditure to set
-	 */
-	public void setResult_capitalExpenditure(double[] result_capitalExpenditure) {
-		this.result_capitalExpenditure = result_capitalExpenditure;
-	}
-
-	/**
-	 * @return the result_grossIncome
-	 */
-	public double[][] getResult_grossIncome() {
-		return result_grossIncome;
-	}
-
-	/**
-	 * @param result_grossIncome the result_grossIncome to set
-	 */
-	public void setResult_grossIncome(double[][] result_grossIncome) {
-		this.result_grossIncome = result_grossIncome;
-	}
-
-	/**
-	 * @return the result_deltaCapacityExpansion
-	 */
-	public double[][] getResult_deltaCapacityExpansion() {
-		return result_deltaCapacityExpansion;
-	}
-
-	/**
-	 * @param result_deltaCapacityExpansion the result_deltaCapacityExpansion to set
-	 */
-	public void setResult_deltaCapacityExpansion(double[][] result_deltaCapacityExpansion) {
-		this.result_deltaCapacityExpansion = result_deltaCapacityExpansion;
-	}
-
-	/**
-	 * @return the result_capacityExpansionAmount
-	 */
-	public double[][] getResult_capacityExpansionAmount() {
-		return result_capacityExpansionAmount;
-	}
-
-	/**
-	 * @param result_capacityExpansionAmount the result_capacityExpansionAmount to set
-	 */
-	public void setResult_capacityExpansionAmount(double[][] result_capacityExpansionAmount) {
-		this.result_capacityExpansionAmount = result_capacityExpansionAmount;
-	}
-
-	/**
-	 * @return the result_constructionStartPrimaryFacility
-	 */
-	public double[][] getResult_constructionStartPrimaryFacility() {
-		return result_constructionStartPrimaryFacility;
-	}
-
-	/**
-	 * @param result_constructionStartPrimaryFacility the result_constructionStartPrimaryFacility to set
-	 */
-	public void setResult_constructionStartPrimaryFacility(double[][] result_constructionStartPrimaryFacility) {
-		this.result_constructionStartPrimaryFacility = result_constructionStartPrimaryFacility;
-	}
-
-	/**
-	 * @return the result_constructionStartSecondaryFacility
-	 */
-	public double[][] getResult_constructionStartSecondaryFacility() {
-		return result_constructionStartSecondaryFacility;
-	}
-
-	/**
-	 * @param result_constructionStartSecondaryFacility the result_constructionStartSecondaryFacility to set
-	 */
-	public void setResult_constructionStartSecondaryFacility(double[][] result_constructionStartSecondaryFacility) {
-		this.result_constructionStartSecondaryFacility = result_constructionStartSecondaryFacility;
-	}
-
-	/**
-
-	 * @param parameter_discountFactor_timing the parameter_discountFactor_timing to set
-	 */
-	public void setParameter_discountFactor_timing(double parameter_discountFactor_timing) {
-		this.parameter_discountFactor_timing = parameter_discountFactor_timing;
-	}
-
-
-	/**
-	 * @return the parameter_discountFactor_location
-	 */
-	public double getParameter_discountFactor_location() {
-		return parameter_discountFactor_location;
-	}
-
-
-
-
-
-	/**
-	 * @return the parameter_discountFactor_timing
-	 */
-	public double getParameter_discountFactor_timing() {
-		return parameter_discountFactor_timing;
-	}
-
-
-	/**
-	 * @param parameter_discountFactor_location the parameter_discountFactor_location to set
-	 */
-	public void setParameter_discountFactor_location(double parameter_discountFactor_location) {
-		this.parameter_discountFactor_location = parameter_discountFactor_location;
-	}
-
-
-	/**
-	 * @return the totalConstructionCost_primary
-	 */
-	public double getTotalConstructionCost_primary() {
-		return totalConstructionCost_primary;
-	}
-
-
-	/**
-	 * @param totalConstructionCost_primary the totalConstructionCost_primary to set
-	 */
-	public void setTotalConstructionCost_primary(double totalConstructionCost_primary) {
-		this.totalConstructionCost_primary = totalConstructionCost_primary;
-	}
-
-
-	/**
-	 * @return the totalSetUpCost_primary
-	 */
-	public double getTotalSetUpCost_primary() {
-		return totalSetUpCost_primary;
-	}
-
-
-	/**
-	 * @param totalSetUpCost_primary the totalSetUpCost_primary to set
-	 */
-	public void setTotalSetUpCost_primary(double totalSetUpCost_primary) {
-		this.totalSetUpCost_primary = totalSetUpCost_primary;
-	}
-
-
-	/**
-	 * @return the totalPenaltyCost_primary
-	 */
-	public double getTotalPenaltyCost_primary() {
-		return totalPenaltyCost_primary;
-	}
-
-
-	/**
-	 * @param totalPenaltyCost_primary the totalPenaltyCost_primary to set
-	 */
-	public void setTotalPenaltyCost_primary(double totalPenaltyCost_primary) {
-		this.totalPenaltyCost_primary = totalPenaltyCost_primary;
-	}
-
-
-	/**
-	 * @return the totalExpansionCost_primary
-	 */
-	public double getTotalExpansionCost_primary() {
-		return totalExpansionCost_primary;
-	}
-
-
-	/**
-	 * @param totalExpansionCost_primary the totalExpansionCost_primary to set
-	 */
-	public void setTotalExpansionCost_primary(double totalExpansionCost_primary) {
-		this.totalExpansionCost_primary = totalExpansionCost_primary;
 	}
 
 
@@ -1378,21 +1154,232 @@ public class Data {
 
 
 	/**
-	 * @return the clinicalTrialOutcome
+	 * @return the demandM
 	 */
-	public boolean isSuccessOfClinicalTrials() {
-		return successOfClinicalTrials;
+	public double[] getDemandM() {
+		return demandM;
 	}
 
 
 	/**
-	 * @param clinicalTrialOutcome the clinicalTrialOutcome to set
+	 * @param demandM the demandM to set
 	 */
-	public void setSuccessOfClinicalTrials(boolean successOfClinicalTrials) {
-		this.successOfClinicalTrials = successOfClinicalTrials;
+	public void setDemandM(double[] demandM) {
+		this.demandM = demandM;
 	}
 
+
+	/**
+	 * @return the demandR
+	 */
+	public double[] getDemandR() {
+		return demandR;
+	}
+
+
+	/**
+	 * @param demandR the demandR to set
+	 */
+	public void setDemandR(double[] demandR) {
+		this.demandR = demandR;
+	}
+
+
+	/**
+	 * @return the timeM
+	 */
+	public int getTimeM() {
+		return timeM;
+	}
+
+
+	/**
+	 * @param timeM the timeM to set
+	 */
+	public void setTimeM(int timeM) {
+		this.timeM = timeM;
+	}
+
+
+	/**
+	 * @return the timeR
+	 */
+	public int getTimeR() {
+		return timeR;
+	}
+
+
+	/**
+	 * @param timeR the timeR to set
+	 */
+	public void setTimeR(int timeR) {
+		this.timeR = timeR;
+	}
+
+
+	/**
+	 * @return the result_shippedMaterialUnitsFacilityToCustomer
+	 */
+	public double[][][][] getResult_shippedMaterialUnits() {
+		return result_shippedMaterialUnits;
+	}
+
+
+	/**
+	 * @param result_shippedMaterialUnitsFacilityToCustomer the result_shippedMaterialUnitsFacilityToCustomer to set
+	 */
+	public void setResult_shippedMaterialUnits(
+			double[][][][] result_shippedMaterialUnits) {
+		this.result_shippedMaterialUnits = result_shippedMaterialUnits;
+	}
+
+
 	
+
+	/**
+	 * @return the result_availableProductionCapacity
+	 */
+	public double[][] getResult_availableProductionCapacity() {
+		return result_availableProductionCapacity;
+	}
+
+
+	/**
+	 * @param result_availableProductionCapacity the result_availableProductionCapacity to set
+	 */
+	public void setResult_availableProductionCapacity(double[][] result_availableProductionCapacity) {
+		this.result_availableProductionCapacity = result_availableProductionCapacity;
+	}
+
+
+	/**
+	 * @return the result_taxableIncome
+	 */
+	public double[][] getResult_taxableIncome() {
+		return result_taxableIncome;
+	}
+
+
+	/**
+	 * @param result_taxableIncome the result_taxableIncome to set
+	 */
+	public void setResult_taxableIncome(double[][] result_taxableIncome) {
+		this.result_taxableIncome = result_taxableIncome;
+	}
+
+
+	/**
+	 * @return the result_consumedOrProducedAPI
+	 */
+	public double[][] getResult_consumedOrProducedAPI() {
+		return result_consumedOrProducedAPI;
+	}
+
+
+	/**
+	 * @param result_consumedOrProducedAPI the result_consumedOrProducedAPI to set
+	 */
+	public void setResult_consumedOrProducedAPI(double[][] result_consumedOrProducedAPI) {
+		this.result_consumedOrProducedAPI = result_consumedOrProducedAPI;
+	}
+
+
+	/**
+	 * @return the result_capitalExpenditure
+	 */
+	public double[] getResult_capitalExpenditure() {
+		return result_capitalExpenditure;
+	}
+
+
+	/**
+	 * @param result_capitalExpenditure the result_capitalExpenditure to set
+	 */
+	public void setResult_capitalExpenditure(double[] result_capitalExpenditure) {
+		this.result_capitalExpenditure = result_capitalExpenditure;
+	}
+
+
+	/**
+	 * @return the result_grossIncome
+	 */
+	public double[][] getResult_grossIncome() {
+		return result_grossIncome;
+	}
+
+
+	/**
+	 * @param result_grossIncome the result_grossIncome to set
+	 */
+	public void setResult_grossIncome(double[][] result_grossIncome) {
+		this.result_grossIncome = result_grossIncome;
+	}
+
+
+	/**
+	 * @return the result_deltaCapacityExpansion
+	 */
+	public double[][] getResult_deltaCapacityExpansion() {
+		return result_deltaCapacityExpansion;
+	}
+
+
+	/**
+	 * @param result_deltaCapacityExpansion the result_deltaCapacityExpansion to set
+	 */
+	public void setResult_deltaCapacityExpansion(double[][] result_deltaCapacityExpansion) {
+		this.result_deltaCapacityExpansion = result_deltaCapacityExpansion;
+	}
+
+
+	/**
+	 * @return the result_capacityExpansionAmount
+	 */
+	public double[][] getResult_capacityExpansionAmount() {
+		return result_capacityExpansionAmount;
+	}
+
+
+	/**
+	 * @param result_capacityExpansionAmount the result_capacityExpansionAmount to set
+	 */
+	public void setResult_capacityExpansionAmount(double[][] result_capacityExpansionAmount) {
+		this.result_capacityExpansionAmount = result_capacityExpansionAmount;
+	}
+
+
+	/**
+	 * @return the result_constructionStartPrimaryFacility
+	 */
+	public double[][] getResult_constructionStartPrimaryFacility() {
+		return result_constructionStartPrimaryFacility;
+	}
+
+
+	/**
+	 * @param result_constructionStartPrimaryFacility the result_constructionStartPrimaryFacility to set
+	 */
+	public void setResult_constructionStartPrimaryFacility(double[][] result_constructionStartPrimaryFacility) {
+		this.result_constructionStartPrimaryFacility = result_constructionStartPrimaryFacility;
+	}
+
+
+	/**
+	 * @return the result_constructionStartSecondaryFacility
+	 */
+	public double[][] getResult_constructionStartSecondaryFacility() {
+		return result_constructionStartSecondaryFacility;
+	}
+
+
+	/**
+	 * @param result_constructionStartSecondaryFacility the result_constructionStartSecondaryFacility to set
+	 */
+	public void setResult_constructionStartSecondaryFacility(double[][] result_constructionStartSecondaryFacility) {
+		this.result_constructionStartSecondaryFacility = result_constructionStartSecondaryFacility;
+	}
+
+
 	/**
 	 * @return the result_netPresentValue
 	 */
@@ -1408,23 +1395,23 @@ public class Data {
 		this.result_netPresentValue = result_netPresentValue;
 	}
 
+
 	/**
 	 * Increments period count by one
 	 */
 	public void incrementCountPeriods() {
+		
 		this.countPeriods++;
 	}
 	
 
 	/**
-	 * 
-	 * @param period
+	 * Updates the count of successful test results representing the knowledge of previous test results in period t
+	 * @param period for which the knowledge of previous test results should be updated
 	 */
 	public void updateCountSuccessfulTests (int period) {
 		
-		// E.g. we are in period t = 3, then we compute gamma for t = 3-1 = 2 out of gamma for t = 3-2 = 1 and the test result on t = 3-1 = 2
-		
-		if (this.testResults[period-1] == -1) {
+		if ((this.testResults[period-1] == -1)) {
 			
 			System.out.println("ERROR - update count successful tests");
 		}
@@ -1437,8 +1424,8 @@ public class Data {
 	
 	
 	/**
-	 * 
-	 * @param period
+	 * Updates the count of failed test results representing the knowledge of previous test results in period t
+	 * @param period for which the knowledge of previous test results should be updated
 	 */
 	public void updateCountFailedTests (int period) {
 		
@@ -1457,8 +1444,7 @@ public class Data {
 	
 	
 	/**
-	 * 
-	 * @param period
+	 * Updates the variable "success of clinical trials" in the end of the planning horizon
 	 */
 	public void updateClinicalTrialOutcome () {
 		
@@ -1479,7 +1465,7 @@ public class Data {
 	
 	
 	/**
-	 * Calculates test probability for current period
+	 * Calculates test probability for current period with regards to the knowledge of previous test results
 	 * @return
 	 */
 	public double calculateTestProbability () {
@@ -1496,7 +1482,7 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 * Calculates the total construction cost c in the end of the planning horizon
 	 */
 	private void calculateTotalConstructionCost () {
 	
@@ -1512,7 +1498,7 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 *  Calculates the total setup cost K in the end of the planning horizon
 	 */
 	private void calculateTotalSetUpCost () {
 		
@@ -1530,7 +1516,7 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 *  Calculates the total penalty cost phi in the end of the planning horizon
 	 */
 	private void calculateTotalPenaltyCost () {
 		
@@ -1558,7 +1544,7 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 * Calculates the total cost in the end of the planning horizon
 	 */
 	public void calculateTotalExpansionCost () {
 		
@@ -1569,13 +1555,12 @@ public class Data {
 		this.calculateTotalPenaltyCost();
 		
 		this.totalExpansionCost_primary = this.totalConstructionCost_primary + this.totalSetUpCost_primary + this.totalPenaltyCost_primary;
-		
-		
 	}
 	
 	
 	/**
-	 * 
+	 * Calculates the remaining periods to build with regards to period t
+	 * @param period
 	 */
 	public void calculateRemainingPeriodsToBuildPrimaryFacility(int period) {
 		
@@ -1597,31 +1582,29 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 * Sets investment decision in period t
 	 * @param period
 	 * @param new_decision
 	 */
 	public void setInvestmentDecisionPrimaryFacility (int period, int new_decision) {
 		
-		this.investmentDecisionPrimaryFacility[period] = new_decision;
-		
+		this.investmentDecisionPrimaryFacility[period] = new_decision;	
 	}
 	
 	
 	/**
-	 * 
-	 * @param period
-	 * @param strategy
+	 * Adds a new investment strategy for period t to the investment strategy list
+	 * @param period 
+	 * @param strategy to be added
 	 */
 	public void addNewStrategyDecision (int period, int [] strategy) {
 		
 		this.investmentStrategies[period] = strategy;
-		
 	}
 	
 	
 	/**
-	 * 
+	 * Clones an int array
 	 * @param array
 	 * @return
 	 */
@@ -1639,7 +1622,7 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 * Clones an int matrix
 	 * @param array
 	 * @return
 	 */
@@ -1659,25 +1642,7 @@ public class Data {
 	
 	
 	/**
-	 * 
-	 * @param array
-	 * @return
-	 */
-	private static double[] clone (double[] array) {
-		
-		double[] copy = new double[array.length];
-		
-		for (int i = 0; i < array.length; i++) {
-			
-			copy[i] = array[i];
-		}
-		
-		return copy;	
-	}
-	
-	
-	/**
-	 * 
+	 * Clones a boolean array
 	 * @param array
 	 * @return
 	 */
@@ -1695,7 +1660,7 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 * Clones a boolean matrix
 	 * @param array
 	 * @return
 	 */
@@ -1715,7 +1680,25 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 * Clones a double array
+	 * @param array
+	 * @return
+	 */
+	private static double[] clone (double[] array) {
+		
+		double[] copy = new double[array.length];
+		
+		for (int i = 0; i < array.length; i++) {
+			
+			copy[i] = array[i];
+		}
+		
+		return copy;	
+	}
+	
+	
+	/**
+	 * Clones a double matrix
 	 * @param array
 	 * @return
 	 */
@@ -1735,7 +1718,7 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 * Clones a double 3D-matrix
 	 * @param array
 	 * @return
 	 */
@@ -1758,7 +1741,7 @@ public class Data {
 	
 	
 	/**
-	 * 
+	 * Clones a double 4D-matrix
 	 * @param array
 	 * @return
 	 */
@@ -1784,7 +1767,7 @@ public class Data {
 	
 
 	/**
-	 * 
+	 * Clones a data instance and returns the clone
 	 */
 	public Data clone () {
 		
@@ -1865,13 +1848,9 @@ public class Data {
 		copy.timeM = this.timeM;
 		copy.timeR = this.timeR;
 		
-		copy.result_shippedMaterialUnitsFacilityToCustomer = Data.clone(this.result_shippedMaterialUnitsFacilityToCustomer);
-		copy.result_shippedMaterialUnitsSupplierToFacility = Data.clone(this.result_shippedMaterialUnitsSupplierToFacility);
-		//copy.result_depreciationChargePrimaryFacility = Data.clone(this.result_depreciationChargePrimaryFacility);
-		//copy.result_depreciationChargeSecondaryFacility = Data.clone(this.result_depreciationChargeSecondaryFacility);
+		copy.result_shippedMaterialUnits = Data.clone(this.result_shippedMaterialUnits);
 		copy.result_availableProductionCapacity = Data.clone(this.result_availableProductionCapacity);				
 		copy.result_taxableIncome = Data.clone(this.result_taxableIncome);				
-		//copy.result_consumedOrProducedMaterial = Data.clone(this.result_consumedOrProducedMaterial);			
 		copy.result_consumedOrProducedAPI = Data.clone(this.result_consumedOrProducedAPI); 						
 		copy.result_capitalExpenditure = Data.clone(this.result_capitalExpenditure);					
 		copy.result_grossIncome = Data.clone(this.result_grossIncome);							
@@ -1884,28 +1863,5 @@ public class Data {
 		copy.result_netPresentValue = this.result_netPresentValue;
 
 		return copy;
-	}
-	
-	
-	
-	
+	}	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
