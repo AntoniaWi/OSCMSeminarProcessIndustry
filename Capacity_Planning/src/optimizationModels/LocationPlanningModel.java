@@ -18,11 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Implements the Location Planning Model and solves it. 
- * The optimization model is called for the preplanning when the first positive investment decision is taken. 
- * In the preplanning the location for the primary facility is planned and fixed. The location for the secondary facilities is just preplanned.
- * The optimization model is called for the final planning when the outcome of the clinical trials is positive. As the primary facility location is already fixed with the preplanning only the secondaries are replanned.
-
+ * Implements the Location Planning Model for the pharmaceutical industry and  and solves it. The model optimizes the location for primary and secondary facilities considering the regulatory factors custom duties and corporate tax.
+ *  
  * @author antoniawiggert
  *
  */
@@ -64,7 +61,7 @@ public class LocationPlanningModel extends IloCplex {
 	private IloLinearNumExpr taxableIncomeConstraint = linearNumExpr();
 
 	/**
-	 * Constructor for Preplanning
+	 * Constructor for the here-and-now decision to locate the primary facility optimally. This constructor is called when the company decides to invest in the primary facility. 
 	 * 
 	 * @param datainstanz - contains all relevant information
 	 * @throws IloException
@@ -104,10 +101,10 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Constructor for final planning
+	 * Constructor for the wait-and-see decision to review the allocation and number of secondary facilities at the end of the clinical trials when there was already a location planning for the primary facility 
 	 * 
 	 * @param datainstanz - contains all relevant information
-	 * @param primaryFacility - for which we decided in the pre-planning
+	 * @param primaryFacility - which is fixed when construction started earlier (here-and-now decision during clinical trials)  
 	 * @throws IloException
 	 * @throws BiffException
 	 * @throws WriteException
@@ -146,7 +143,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Runs the Location Planning Model for the preplanning
+	 * Runs the Location Planning Model for the first investment decision: locations for primary and secondary facilities are optimized.
 	 * 
 	 * @throws IloException
 	 * @throws BiffException
@@ -165,7 +162,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Runs the Location Planning Model for the final planning
+	 * Runs the Location Planning Model at the end of the clinical trials when the outcome is positive and known: the location for the primary facility is already fixed, only the locations and the number of secondary facilities are optimized.
 	 * 
 	 * @param primaryFacility
 	 * @throws IloException
@@ -185,7 +182,7 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Builds the optimization model for the preplanning
+	 * Builds the Location Planning Model for the first investment decision
 	 * 
 	 * @throws IloException
 	 */
@@ -193,7 +190,7 @@ public class LocationPlanningModel extends IloCplex {
 		long start = System.currentTimeMillis();
 
 		/* Variables */
-		addVarsX();
+		addDecisionVars();
 
 		/* Objective */
 		addObjective();
@@ -231,17 +228,17 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Builds the optimization model for the final planning
+	 * Builds the Location Planning Model at the end of the clinical trials with positive outcome, when the location for the primary facility is already known and fixed. 
 	 * 
-	 * @param primaryFacility
-	 *            which is fixed for the final planning
+	 * @param primaryFacility - which is fixed as construction has already started
+	 *            
 	 * @throws IloException
 	 */
 	public void build(int primaryFacility) throws IloException {
 		long start = System.currentTimeMillis();
 
 		/* Variables */
-		addVarsX();
+		addDecisionVars();
 
 		/* Objective */
 		addObjective();
@@ -278,11 +275,11 @@ public class LocationPlanningModel extends IloCplex {
 	}
 
 	/**
-	 * Initalisation of decision variables
+	 * Initialization of decision variables
 	 * 
 	 * @throws IloException
 	 */
-	private void addVarsX() throws IloException {
+	public void addDecisionVars() throws IloException {
 		for (int i = 0; i < datainstanz.getF(); i++) {// f
 			for (int k = 0; k < datainstanz.getF(); k++) {// c,s
 				for (int n = 0; n < datainstanz.getN(); n++) {
@@ -319,7 +316,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addObjective() throws IloException {
+	public void addObjective() throws IloException {
 
 		IloLinearNumExpr expr = linearNumExpr();
 
@@ -362,7 +359,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintFixPrimaryFacility(int f) throws IloException {
+	public void addConstraintFixPrimaryFacility(int f) throws IloException {
 
 		addEq(this.constructionStartPrimaryFacility[f][0], 1);
 
@@ -373,7 +370,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintNumberOfPrimaryFacilities() throws IloException {
+	public void addConstraintNumberOfPrimaryFacilities() throws IloException {
 
 		this.numberOfPrimaryFacilities.clear();
 
@@ -395,7 +392,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * @throws IloException
 	 */
 
-	private void addConstraintNumberOfSecondaryFacilities() throws IloException {
+	public void addConstraintNumberOfSecondaryFacilities() throws IloException {
 
 		this.numberOfSecondaryFacilities.clear();
 
@@ -419,7 +416,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintOneConstructionDuringPlanningHorizonPF() throws IloException {
+	public void addConstraintOneConstructionDuringPlanningHorizonPF() throws IloException {
 
 		this.limitationOfConstructionStartsPrimaryFacilities.clear();
 
@@ -442,7 +439,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintOneConstructionDuringPlanningHorizonSF() throws IloException {
+	public void addConstraintOneConstructionDuringPlanningHorizonSF() throws IloException {
 
 		this.limitationOfConstructionStartsSecondaryFacilities.clear();
 
@@ -468,7 +465,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintExpansionSize() throws IloException {
+	public void addConstraintExpansionSize() throws IloException {
 
 		this.expansionSize1.clear();
 		this.expansionSize2.clear();
@@ -535,7 +532,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintAvailableCapacity() throws IloException {
+	public void addConstraintAvailableCapacity() throws IloException {
 
 		this.availableCapacity.clear();
 		for (int i = 0; i < this.datainstanz.getF(); i++) {
@@ -584,9 +581,8 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintsMassBalanceEquation() throws IloException {
+	public void addConstraintsMassBalanceEquation() throws IloException {
 
-		// this.massbalanceEquation1.clear();
 		this.massbalanceEquation1.clear();
 		this.massbalanceEquation2.clear();
 
@@ -638,7 +634,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintCapacityRestrictionForProduction() throws IloException {
+	public void addConstraintCapacityRestrictionForProduction() throws IloException {
 
 
 		for (int i = 0; i < this.datainstanz.getF(); i++) {
@@ -660,7 +656,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintSupplyAndDemand() throws IloException {
+	public void addConstraintSupplyAndDemand() throws IloException {
 
 		this.demandAndSupply.clear();
 
@@ -699,7 +695,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintCapitalExpenditure() throws IloException {
+	public void addConstraintCapitalExpenditure() throws IloException {
 
 		this.capitalExpenditureConstraint.clear();
 
@@ -738,7 +734,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintBudgetConstraint() throws IloException {
+	public void addConstraintBudgetConstraint() throws IloException {
 		double budgetUntilTau = 0;
 		this.budget.clear();
 
@@ -779,7 +775,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintGrossIncome() throws IloException {
+	public void addConstraintGrossIncome() throws IloException {
 
 		this.grossIncomeConstraint.clear();
 
@@ -842,7 +838,7 @@ public class LocationPlanningModel extends IloCplex {
 	 * 
 	 * @throws IloException
 	 */
-	private void addConstraintTaxableIncome() throws IloException {
+	public void addConstraintTaxableIncome() throws IloException {
 
 		this.taxableIncomeConstraint.clear();
 		for (int j = 0; j < this.datainstanz.getN(); j++) {

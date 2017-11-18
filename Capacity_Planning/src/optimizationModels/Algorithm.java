@@ -96,23 +96,26 @@ public class Algorithm {
 
 			endOfModel(i);
 
-			int primaryFacility = -1;
-
-			for (int k = 0; k < dataInstances[i].getF(); k++) {
-
-				for (int j = 0; j < dataInstances[i].getT(); j++) {
-
-					if (dataInstances[i].getResult_constructionStartPrimaryFacility()[k][j] == 1) {
-
-						primaryFacility = k;
-					}
-				}
-			}
+			
 
 			String tab = "Run " + (i + 1);
 
 			if (dataInstances[i].isSuccessOfClinicalTrials()) {
 				
+				int primaryFacility = -1;
+
+				for (int k = 0; k < dataInstances[i].getF(); k++) {
+
+					for (int j = 0; j < dataInstances[i].getT(); j++) {
+
+						if (dataInstances[i].getResult_constructionStartPrimaryFacility()[k][j] == 1) {
+
+							primaryFacility = k;
+						}
+					}
+				}
+				
+				if(firstInvestment[i] == false) {
 				Data dataInstance_copy = dataInstances[i].clone();
 				dataInstances_copy[i] = dataInstance_copy;
 				
@@ -120,15 +123,24 @@ public class Algorithm {
 				locationPlanningModels[i] = locationPlanningModel;
 				locationPlanningModels[i].run(primaryFacility);
 				
-				ReadAndWrite.writeSolutionLocationModelPrePlanning(dataInstances_copy[i], tab);
-				ReadAndWrite.writeSolutionLocationModelFinalPlanning(dataInstances[i], tab);
-			}
+				ReadAndWrite.writeSolutionLocationModelFirstInvestmentDecision(dataInstances_copy[i], tab);
+				ReadAndWrite.writeSolutionLocationModelReplanning(dataInstances[i], tab);
+				}
+				else {
+					LocationPlanningModel locationPlanningModel = new LocationPlanningModel(dataInstances[i]);
+					locationPlanningModels[i] = locationPlanningModel;
+					locationPlanningModels[i].run();
+					
+					ReadAndWrite.writeSolutionLocationModelReplanning(dataInstances[i], tab);	
+				}
+				
+				}
 			
 			else {
 				
 				if (DecisionReviewModel.countTrueValuesInArray(dataInstances[i].getInvestmentDecisionPrimaryFacility()) > 0) {
 					
-					ReadAndWrite.writeSolutionLocationModelPrePlanning(dataInstances[i], tab);
+					ReadAndWrite.writeSolutionLocationModelFirstInvestmentDecision(dataInstances[i], tab);
 				}
 			}
 

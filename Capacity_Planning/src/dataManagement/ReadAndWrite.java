@@ -1382,14 +1382,14 @@ public class ReadAndWrite {
 	
 
 	/**
-	 * Writes solution of Location Planning Model: final planning
+	 * Writes solution of Location Planning Model: replanning at the end of the clinical trials
 	 * @param instanz
 	 * @param tab
 	 * @throws BiffException
 	 * @throws IOException
 	 * @throws WriteException
 	 */
-	public static void writeSolutionLocationModelFinalPlanning(Data instanz, String tab)
+	public static void writeSolutionLocationModelReplanning(Data instanz, String tab)
 			throws BiffException, IOException, WriteException {
 
 		File file;
@@ -1580,14 +1580,14 @@ public class ReadAndWrite {
 
 	
 	/**
-	 * Writes solution of Location Planning Model: pre-planning
+	 * Writes solution of Location Planning Model: first investment decision
 	 * @param instanz_preplanning
 	 * @param tab
 	 * @throws BiffException
 	 * @throws IOException
 	 * @throws WriteException
 	 */
-	public static void writeSolutionLocationModelPrePlanning(Data instanz_preplanning, String tab)
+	public static void writeSolutionLocationModelFirstInvestmentDecision(Data instanz_preplanning, String tab)
 			throws BiffException, IOException, WriteException {
 
 		File file;
@@ -1602,12 +1602,12 @@ public class ReadAndWrite {
 
 		WritableSheet sheet = writableWorkbook.getSheet(tab);
 
-		// Time horizon pre-planning
+		// Time horizon first investment decision
 
 		Number label100 = new Number(9, 5, instanz_preplanning.getT());
 		sheet.addCell(label100);
 
-		// Revenue pre-planning
+		// Revenue first investment decision
 
 		double revenue_pp = 0;
 
@@ -1627,12 +1627,12 @@ public class ReadAndWrite {
 		Number label400 = new Number(9, 8, revenue_pp);
 		sheet.addCell(label400);
 
-		// Net present value pre-planning
+		// Net present value first investment decision
 
 		Number label300 = new Number(9, 9, instanz_preplanning.getResult_netPresentValue());
 		sheet.addCell(label300);
 
-		// Primary pre-planning
+		// Primary first investment decision
 		for (int i = 0; i < instanz_preplanning.getF(); i++) {
 			for (int j = 0; j < instanz_preplanning.getT(); j++) {
 
@@ -1640,7 +1640,7 @@ public class ReadAndWrite {
 					Number label4 = new Number(9, 13, i + 1);
 					sheet.addCell(label4);
 
-					// Nation pre-planning
+					// Nation first investment decision
 					int nation = -1;
 					for (int k = 0; k < instanz_preplanning.getN(); k++) {
 						if (instanz_preplanning.getFn()[i][k]) {
@@ -1649,13 +1649,13 @@ public class ReadAndWrite {
 							sheet.addCell(label5);
 						}
 					}
-					// Total Capacity pre-planning
+					// Total Capacity first investment decision
 					Number label5 = new Number(11, 13,
 							instanz_preplanning.getResult_availableProductionCapacity()[i][instanz_preplanning.getT()
 									- 1]);
 					sheet.addCell(label5);
 
-					// Production Monopoly and Regular Market pre-planning
+					// Production Monopoly and Regular Market first investment decision
 					Number label500 = new Number(13, 13,
 							instanz_preplanning.getResult_consumedOrProducedAPI()[i][instanz_preplanning
 									.getRemainingTimeofClinicalTrials()+instanz_preplanning.getTimeM()-1]);
@@ -1666,7 +1666,7 @@ public class ReadAndWrite {
 									.getRemainingTimeofClinicalTrials() + instanz_preplanning.getTimeM()+instanz_preplanning.getTimeR()-1]);
 					sheet.addCell(label501);
 
-					// Assumed GrossIncome pre-planning
+					// Assumed GrossIncome first investment decision
 					double grossincome = 0;
 
 					for (int l = 0; l < instanz_preplanning.getT(); l++) {
@@ -1676,7 +1676,7 @@ public class ReadAndWrite {
 					Number label6 = new Number(12, 13, grossincome);
 					sheet.addCell(label6);
 
-					// Construction costs pre-planning
+					// Construction costs first investment decision
 					Number label7 = new Number(9, 20, instanz_preplanning.getResult_capitalExpenditure()[j]);
 					sheet.addCell(label7);
 
@@ -1684,7 +1684,7 @@ public class ReadAndWrite {
 			}
 		}
 
-		// Secondaries pre-planning
+		// Secondaries first investment decision
 		int counter1 = 0;
 		for (int i = 0; i < instanz_preplanning.getF(); i++) {
 			for (int j = 0; j < instanz_preplanning.getT(); j++) {
@@ -1692,7 +1692,7 @@ public class ReadAndWrite {
 					Number label4 = new Number(9, 15 + counter1, i + 1);
 					sheet.addCell(label4);
 
-					// Nation pre-planning
+					// Nation first investment decision
 					int nation = -1;
 					for (int k = 0; k < instanz_preplanning.getN(); k++) {
 						if (instanz_preplanning.getFn()[i][k]) {
@@ -1702,13 +1702,13 @@ public class ReadAndWrite {
 						}
 					}
 
-					// Capacity pre-planning
+					// Capacity first investment decision
 					Number label5 = new Number(11, 15 + counter1,
 							instanz_preplanning.getResult_availableProductionCapacity()[i][instanz_preplanning.getT()
 									- 1]);
 					sheet.addCell(label5);
 
-					// Production Monopoly and Regular Market pre-planning
+					// Production Monopoly and Regular Market first investment decision
 					Number label500 = new Number(13, 15 + counter1,
 							instanz_preplanning.getResult_consumedOrProducedAPI()[i][instanz_preplanning
 									.getRemainingTimeofClinicalTrials()+instanz_preplanning.getTimeM()-1]);
@@ -1719,7 +1719,7 @@ public class ReadAndWrite {
 									.getRemainingTimeofClinicalTrials() + instanz_preplanning.getTimeM()+instanz_preplanning.getTimeR()-1]);
 					sheet.addCell(label501);
 
-					// GrossIncome pre-planning
+					// GrossIncome first investment decision
 					double grossincome = 0;
 					for (int l = 0; l < instanz_preplanning.getT(); l++) {
 						grossincome += instanz_preplanning.getResult_grossIncome()[i][l];
@@ -1728,7 +1728,7 @@ public class ReadAndWrite {
 					Number label6 = new Number(12, 15 + counter1, grossincome);
 					sheet.addCell(label6);
 
-					// Construction costs pre-planning
+					// Construction costs first investment decision
 					if (counter1 == 0) {
 						Number label8 = new Number(9, 21, instanz_preplanning.getResult_capitalExpenditure()[j]);
 						sheet.addCell(label8);
@@ -1741,7 +1741,7 @@ public class ReadAndWrite {
 
 		}
 
-		// Assumed Production Cost Pre Planning pre-planning
+		// Assumed Production Cost first investment decision
 
 		double productionCost1 = 0;
 		for (int i = 0; i < instanz_preplanning.getF(); i++) {
@@ -1766,7 +1766,7 @@ public class ReadAndWrite {
 		Number label90 = new Number(9, 23, corporateTax1);
 		sheet.addCell(label90);
 
-		// Custom Duties pre-planning
+		// Custom Duties first investment decision
 		double customDuties1 = 0;
 
 		for (int m = 0; m < instanz_preplanning.getF(); m++) {
