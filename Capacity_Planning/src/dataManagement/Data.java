@@ -99,8 +99,7 @@ public class Data {
 	private int timeR;
 	
 	//Result Arrays
-	private double[][][][] result_shippedMaterialUnitsFacilityToCustomer; // F_ifct
-	//private double[][][][] result_shippedMaterialUnitsSupplierToFacility; // F_isft
+	private double[][][][] result_shippedMaterialUnits; 					// F
 	private double[][] result_availableProductionCapacity; 				// Q_ft
 	private double[][] result_taxableIncome; 							// TI_nt
 	private double[][] result_consumedOrProducedAPI; 						// X_ft
@@ -1222,7 +1221,7 @@ public class Data {
 	 * @return the result_shippedMaterialUnitsFacilityToCustomer
 	 */
 	public double[][][][] getResult_shippedMaterialUnits() {
-		return result_shippedMaterialUnitsFacilityToCustomer;
+		return result_shippedMaterialUnits;
 	}
 
 
@@ -1230,8 +1229,8 @@ public class Data {
 	 * @param result_shippedMaterialUnitsFacilityToCustomer the result_shippedMaterialUnitsFacilityToCustomer to set
 	 */
 	public void setResult_shippedMaterialUnits(
-			double[][][][] result_shippedMaterialUnitsFacilityToCustomer) {
-		this.result_shippedMaterialUnitsFacilityToCustomer = result_shippedMaterialUnitsFacilityToCustomer;
+			double[][][][] result_shippedMaterialUnits) {
+		this.result_shippedMaterialUnits = result_shippedMaterialUnits;
 	}
 
 
@@ -1849,7 +1848,7 @@ public class Data {
 		copy.timeM = this.timeM;
 		copy.timeR = this.timeR;
 		
-		copy.result_shippedMaterialUnitsFacilityToCustomer = Data.clone(this.result_shippedMaterialUnitsFacilityToCustomer);
+		copy.result_shippedMaterialUnits = Data.clone(this.result_shippedMaterialUnits);
 		//copy.result_shippedMaterialUnitsSupplierToFacility = Data.clone(this.result_shippedMaterialUnitsSupplierToFacility);
 		//copy.result_depreciationChargePrimaryFacility = Data.clone(this.result_depreciationChargePrimaryFacility);
 		//copy.result_depreciationChargeSecondaryFacility = Data.clone(this.result_depreciationChargeSecondaryFacility);
