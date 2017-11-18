@@ -1849,12 +1849,8 @@ public class Data {
 		copy.timeR = this.timeR;
 		
 		copy.result_shippedMaterialUnits = Data.clone(this.result_shippedMaterialUnits);
-		//copy.result_shippedMaterialUnitsSupplierToFacility = Data.clone(this.result_shippedMaterialUnitsSupplierToFacility);
-		//copy.result_depreciationChargePrimaryFacility = Data.clone(this.result_depreciationChargePrimaryFacility);
-		//copy.result_depreciationChargeSecondaryFacility = Data.clone(this.result_depreciationChargeSecondaryFacility);
 		copy.result_availableProductionCapacity = Data.clone(this.result_availableProductionCapacity);				
 		copy.result_taxableIncome = Data.clone(this.result_taxableIncome);				
-		//copy.result_consumedOrProducedMaterial = Data.clone(this.result_consumedOrProducedMaterial);			
 		copy.result_consumedOrProducedAPI = Data.clone(this.result_consumedOrProducedAPI); 						
 		copy.result_capitalExpenditure = Data.clone(this.result_capitalExpenditure);					
 		copy.result_grossIncome = Data.clone(this.result_grossIncome);							
