@@ -21,7 +21,7 @@ public class Algorithm {
 	// ---------- Can be modified
 	// ------------------------------------------------------------------------------//
 
-	public static int numberOfTestRuns = 1;
+	public static int numberOfTestRuns = 10;
 	// ---------------------------------------------------------------------------------------------------------------//
 
 	// ---------- Cannot be modified
