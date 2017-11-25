@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"dataManagement"},{"l":"helper"},{"l":"optimizationModels"},{"l":"test"}]
+packageSearchIndex = [{"l":"dataManagement"},{"l":"helper"},{"l":"optimizationModels"}]
